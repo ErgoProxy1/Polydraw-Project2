@@ -29,7 +29,7 @@ Following features were implemented during first sprint:
     
 Curent shortcuts:
 
-Ctrl+O: Create new drawing
-C: Pencil
-W: Paintbrush
-1: Rectangle
+    Ctrl+O: Create new drawing
+    C: Pencil
+    W: Paintbrush
+    1: Rectangle
