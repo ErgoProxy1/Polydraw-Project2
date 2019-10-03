@@ -33,3 +33,4 @@ Curent shortcuts:
     C: Pencil
     W: Paintbrush
     1: Rectangle
+    R: Color applicator
