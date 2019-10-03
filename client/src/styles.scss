@@ -1,0 +1,48 @@
+/* You can add global styles to this file, and also import other style files */
+body{
+  margin:0;
+}
+
+.clickable{
+  cursor: pointer;
+}
+
+
+p, button, input, label {
+  font-family: roboto, Verdana, Geneva, Tahoma, sans-serif;
+
+}
+
+.menu-option{
+  color: #90C6CB;
+}
+
+.menu-option:hover{
+  background-color :  #DC3B16;
+}
+
+.toolSelected, .toolSelected:hover{
+  color : #DC3B16;
+  background-color:#292A29;
+  border-right-style:solid;
+  border-right-width: 5px;
+}
+
+
+.bg-horizontale-bar{
+  background-color:#292A29;
+}
+.bg-side-bar{
+  background-color:#292A29;
+}
+.bg-properties{
+  color: #90C6CB;
+  background-color:rgb(82, 85, 82);
+
+}
+
+.color-blue{
+  border-color:#90C6CB;
+  background-color:#90C6CB;
+  color:black;
+}

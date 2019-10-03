@@ -1,0 +1,31 @@
+<div class="row">
+  <div class="col-md-12">
+    <small for="rangeEpaisseur">Épaisseur : {{strokeWidth}} px</small>
+    <input id="strokewidthinput" type="range" class="custom-range" [(ngModel)]="strokeWidth" (change)="onChangeStrokeWidth()" 
+      [min]="MIN_STROKE_WIDTH" [max]="MAX_STROKE_WIDTH" step="1">
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-12">
+    <small>Choix de la forme</small>
+  </div>
+  <div class="form-check col-md-12">
+    <select class="form-control form-control-sm">
+      <option value="1">Rectangle</option>
+      <!-- <option value="2" disabled>Ellipse</option>
+          <option value="3" disabled>Polygone</option> -->
+    </select>
+  </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+      <small>Choix du style</small>
+    </div>
+    <div class="form-check col-md-12">
+        <select class="form-control form-control-sm" [(ngModel)]="strokeType" (change)="onChangeStrokeType()">
+            <option *ngFor="let strokeType of STROKE_TYPE_NAMES_MAP | keyvalue" [ngValue]="strokeType.value">{{strokeType.key}}
+            </option>
+          </select>
+    </div>
+  </div>

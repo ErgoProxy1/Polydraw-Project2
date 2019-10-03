@@ -1,0 +1,91 @@
+<div [style.height.%]="100" [style.width.%]="100">
+    <div class="canvas" #canvas [style.height.px]="canvasHeight" [style.width.px]="canvasWidth"
+        [style.background-color]="canvasBackground">
+        <svg width="100%" height="100%">
+            <g *ngFor="let i of primitives" [ngSwitch]="i.type">
+                <rect *ngSwitchCase="PrimitiveType.Rectangle" [attr.x]="i.position.x" [attr.y]="i.position.y"
+                    [attr.width]="i.getAbsoluteWidth()" [attr.height]="i.getAbsoluteHeight()"
+                    [attr.fill]="i.fillColor.asString()" [attr.stroke]="i.strokeColor.asString()"
+                    [attr.stroke-width]="i.strokeWidth" (mousedown)="primitiveLeftClicked($event,i);"
+                    (contextmenu)="primitiveRightClicked($event, i)"></rect>
+
+                <defs *ngSwitchCase="PrimitiveType.Path" [ngSwitch]="i.texture">
+                    <filter *ngSwitchCase="Texture.Basic" [attr.id]="filterIds[0]" filterUnits="userSpaceOnUse" x="0"
+                        y="0" width="100%" height="100%">
+                        <feOffset in="gauss" dx="0" dy="0" result="offSet" />
+                        <feMerge>
+                            <feMergeNode in="offSet" />
+                        </feMerge>
+                    </filter>
+
+                    <filter *ngSwitchCase="Texture.Degraded" [attr.id]="filterIds[1]" filterUnits="userSpaceOnUse" x="0"
+                        y="0" width="100%" height="100%">
+                        <feTurbulence type="turbulence" baseFrequency="0.06" numOctaves="6" result="turb" />
+                        <feDisplacementMap in2="turb" in="SourceGraphic" scale="50" xChannelSelector="R"
+                            yChannelSelector="G" result="turb-disp" />
+                        <feGaussianBlur in="SourceGraphic" in2="turb-disp" result="gauss" stdDeviation="4" />
+                        <feSpecularLighting in="gauss" result="gauss-spec" surfaceScale="10" specularExponent="15"
+                            specularConstant=".75" lighting-color="white">
+                            <fePointLight x="60" y="60" z="10000" />
+                        </feSpecularLighting>
+                        <feOffset in="gauss" dx="2" dy="3" result="gauss-offSet" />
+                        <feComposite in="gauss-spec" in2="SourceAlpha" operator="in" result="gauss-spec" />
+                        <feComposite in="SourceGraphic" in2="gauss-spec" operator="arithmetic" k1="1" k2="1" k3="1"
+                            k4="0" result="paintShadow" />
+                        <feMerge>
+                            <feMergeNode in="gauss-offSet" />
+                            <feMergeNode in="paintShadow" />
+                        </feMerge>
+                    </filter>
+
+                    <filter *ngSwitchCase="Texture.Grayed" [attr.id]="filterIds[2]" filterUnits="userSpaceOnUse" x="0"
+                        y="0" width="100%" height="100%">
+                        <feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="3" result="turb" />
+                        <feDisplacementMap in2="turb" in="SourceGraphic" scale="90" xChannelSelector="R"
+                            yChannelSelector="G" result="turb-disp" />
+                        <feGaussianBlur in="SourceGraphic" in2="turb-disp" result="gauss" stdDeviation="4" />
+                        <feSpecularLighting in="gauss" result="gauss-spec" surfaceScale="70" specularExponent="15"
+                            specularConstant=".75" lighting-color="white">
+                            <fePointLight x="-6000" y="10000" z="20000" />
+                        </feSpecularLighting>
+                        <feOffset in="gauss" dx="2" dy="3" result="gauss-offSet" />
+                        <feComposite in="gauss-spec" in2="SourceAlpha" operator="in" result="gauss-spec" />
+                        <feComposite in="SourceGraphic" in2="gauss-spec" operator="arithmetic" k1="1" k2="1" k3="1"
+                            k4="0" result="paintShadow" />
+                        <feMerge>
+                            <feMergeNode in="gauss-offSet" />
+                            <feMergeNode in="paintShadow" />
+                        </feMerge>
+                    </filter>
+
+                    <filter *ngSwitchCase="Texture.Light" [attr.id]="filterIds[3]" filterUnits="userSpaceOnUse" x="0"
+                        y="0" width="100%" height="100%">
+                        <feTurbulence type="turbulence" baseFrequency="0.2" numOctaves="5" result="turb2" />
+                        <feDisplacementMap in2="turb2" in="SourceGraphic" result="disp-turb2" scale="30"
+                            xChannelSelector="R" yChannelSelector="G" />
+                        <feMerge>
+                            <feMergeNode in="disp-turb2" />
+                        </feMerge>
+                    </filter>
+
+                    <filter *ngSwitchCase="Texture.Frothy" [attr.id]="filterIds[4]" filterUnits="userSpaceOnUse" x="0"
+                        y="0" width="100%" height="100%">
+                        <feTurbulence type="turbulence" baseFrequency="0.08" numOctaves="2" result="turb1" />
+                        <feDisplacementMap in2="turb1" in="SourceGraphic" result="disp-turb1" scale="20"
+                            xChannelSelector="R" yChannelSelector="G" />
+                        <feMerge>
+                            <feMergeNode in="disp-turb1" />
+                        </feMerge>
+                    </filter>
+
+                </defs>
+                <g [attr.filter]="'url('+'#'+filterIds[i.texture]+')'">
+                    <path [attr.d]="i.points" [attr.stroke]="i.strokeColor.asString()" fill="none"
+                        [attr.stroke-width]="i.strokeWidth" stroke-linejoin="round" stroke-linecap="round"
+                        (mousedown)="primitiveLeftClicked($event,i);" (contextmenu)="primitiveRightClicked($event, i)">
+                    </path>
+                </g>
+            </g>
+        </svg>
+    </div>
+</div>

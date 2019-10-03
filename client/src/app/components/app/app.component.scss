@@ -1,0 +1,34 @@
+//---------- Grid Items ----------//
+.head{
+    grid-area:head;
+}
+
+.toolbar{
+    grid-area:toolbar;
+}
+
+.properties{
+    grid-area:properties; 
+}
+
+.workspace{
+    grid-area:workspace;
+    background-color:#ffffff;
+    overflow: auto;
+}
+
+.gridContainer{
+    display:grid;
+    grid-template-areas:
+    "head head head"
+    "toolbar properties workspace";
+    grid-template-columns: 4% 15% 81%;
+    grid-template-rows: 5%;
+    height: 100vh;
+    max-height: 100vh;
+    width: 100vw;
+    max-width: 100vw;
+    background-color:#ffffff;
+    z-index: 0;
+}
+

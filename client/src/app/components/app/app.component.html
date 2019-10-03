@@ -1,0 +1,9 @@
+<div class="gridContainer" (window:resize)="resendDimensions()">
+  <app-horizontal-menu class="head bg-horizontale-bar"></app-horizontal-menu>
+  <app-side-bar class="toolbar bg-side-bar"></app-side-bar>
+  <app-properties-bar class="properties bg-properties"></app-properties-bar>
+  <div #workspace class="workspace">
+    <app-canvas></app-canvas>
+  </div>
+</div>
+<app-welcome-message></app-welcome-message>

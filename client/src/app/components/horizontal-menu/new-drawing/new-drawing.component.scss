@@ -1,0 +1,43 @@
+#currentColor{
+    stroke: #000000;
+}
+
+#paletteNc{
+    border:1px solid #000000;
+    margin-bottom: 16px;
+    cursor: pointer;
+}
+
+#background{
+    padding-top: 10px;
+}
+
+#width{
+    margin: 0px 0px 0px;
+}
+
+#height{
+    margin: 0px 0px 0px;
+}
+
+#hexGroupNc{
+    margin: 0px 0px 0px !important;
+}
+
+#dataAlert{
+    margin-bottom:0px;
+}
+
+
+.left-form-group{
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+.center-form-group{
+    border-radius: 0;
+}
+
+.right-form-group{
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
