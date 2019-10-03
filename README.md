@@ -1,5 +1,5 @@
 # Polydraw-Project2
-Second university development project. Run commands "npm install" then "npm start" under client folder to view website.
+Second university development project. Run commands "npm install" then "npm start" under client folder to view website. Currently only in French.
 
 Currently undergoing second sprint. This will introduce server for saving, editing, and filtering drawings, the ability to select objects, new shapes (Line, Ellipse, Polygon), and new tools (Eyedropper, Stamp)  
 
