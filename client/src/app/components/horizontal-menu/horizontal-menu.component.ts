@@ -5,6 +5,6 @@ import { Component } from '@angular/core';
   templateUrl: './horizontal-menu.component.html',
   styleUrls: ['./horizontal-menu.component.scss'],
 })
-export class HorizontalMenuComponent {
 
+export class HorizontalMenuComponent {
 }

@@ -8,7 +8,7 @@ import { ShapeToolCommand } from './shapeToolCommand';
 export class RectangleCommand extends ShapeToolCommand {
 
   constructor(fillColor: Color, strokeColor: Color, strokeWidth: number, strokeType: StrokeType, position: Point) {
-    super(fillColor, strokeColor, strokeWidth, strokeType);
+    super();
     this.shape = new Rectangle(fillColor, strokeColor, strokeWidth, strokeType, position, 0, 0);
   }
 

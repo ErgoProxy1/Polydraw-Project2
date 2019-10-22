@@ -7,8 +7,8 @@ import { KeyboardShortcutType } from '../utils/constantsAndEnums';
 })
 
 export class KeyboardShortcutService {
-  private modalWindowActive = false;
-  private inputFocusedActive = false;
+  modalWindowActive = false;
+  inputFocusedActive = false;
   readonly subject: Subject<KeyboardShortcutType>;
   readonly shortcutMap: Map<string, KeyboardShortcutType>;
   readonly ctrlShortcutMap: Map<string, KeyboardShortcutType>;
@@ -53,26 +53,10 @@ export class KeyboardShortcutService {
     ]);
   }
 
-  getActiveModalStatus(): boolean {
-    return this.modalWindowActive;
-  }
-
-  getFocusActiveStatus(): boolean {
-    return this.inputFocusedActive;
-  }
-
-  setActiveModalStatus(activeStatus: boolean): void {
-    this.modalWindowActive = activeStatus;
-  }
-
-  setFocusActive(activeStatus: boolean): void {
-    this.inputFocusedActive = activeStatus;
-  }
-
   // Valide l'entrée pour gérer les undefined
-  validateEntry(entryString: string, entryMap: Map<string, KeyboardShortcutType>): KeyboardShortcutType {
+  validateEntry(entryString: string, entryMap: Map<string, KeyboardShortcutType>) {
     if (entryMap.has(entryString)) {
-      return  (entryMap.get(entryString)) as KeyboardShortcutType;
+      return entryMap.get(entryString);
     } else {
       return KeyboardShortcutType.None;
     }
@@ -81,6 +65,7 @@ export class KeyboardShortcutService {
   onKeyPress(keyboard: KeyboardEvent): void {
     this.preventDefaultKeyboardEvent(keyboard);
     let keyboardCommandType: KeyboardShortcutType | undefined = KeyboardShortcutType.None;
+    const key = keyboard.key.toLowerCase();
 
     // si pas de fenêtre modale ou qu'il n'y a pas d'input form
     if (!this.modalWindowActive) {
@@ -88,18 +73,20 @@ export class KeyboardShortcutService {
       if (keyboard.ctrlKey) {
         // CTRL+SHIFT+z
         if (keyboard.shiftKey) {
-          keyboardCommandType = this.validateEntry(keyboard.key.toLowerCase(), this.ctrlShiftShortcutMap);
+          keyboardCommandType = this.validateEntry(key, this.ctrlShiftShortcutMap);
         } else {
-          keyboardCommandType = this.validateEntry(keyboard.key.toLowerCase(), this.ctrlShortcutMap);
+          keyboardCommandType = this.validateEntry(key, this.ctrlShortcutMap);
         }
         // clés seules
       } else if (!this.inputFocusedActive) {
         // Delete Key
-        // tslint:disable-next-line
-        if (keyboard.which === 46) {
+        if (keyboard.code === '46') {
           keyboardCommandType = KeyboardShortcutType.Delete;
+        } else if (keyboard.altKey) {
+          keyboard.preventDefault();
+          keyboardCommandType = KeyboardShortcutType.ChangeRotationRate;
         }
-        keyboardCommandType = this.validateEntry(keyboard.key.toLowerCase(), this.shortcutMap);
+        keyboardCommandType = this.validateEntry(key, this.shortcutMap);
       }
     }
     this.subject.next(keyboardCommandType);
@@ -107,21 +94,22 @@ export class KeyboardShortcutService {
 
   // empêcher les clés par défaut du browser (ie. ouvrir un nouveau document HTML, sauvegarder HTML, etc.)
   private preventDefaultKeyboardEvent(keyboard: KeyboardEvent): void {
+    const key = keyboard.key.toLowerCase();
     if (keyboard.ctrlKey &&
-      (keyboard.key.toLowerCase() === 'o'
-        || keyboard.key.toLowerCase() === 's'
-        || keyboard.key.toLowerCase() === 'g'
-        || keyboard.key.toLowerCase() === 'e'
-
-        || (keyboard.key.toLowerCase() === 'x' && !this.inputFocusedActive)
-        || (keyboard.key.toLowerCase() === 'c' && !this.inputFocusedActive)
-        || (keyboard.key.toLowerCase() === 'v' && !this.inputFocusedActive)
-        || keyboard.key.toLowerCase() === 'd'
-        || (keyboard.key.toLowerCase() === 'a' && !this.inputFocusedActive)
-
-        || (keyboard.key.toLowerCase() === 'z' && !this.inputFocusedActive))) {
+      (key === 'o'
+        || key === 's'
+        || key === 'g'
+        || key === 'e'
+        || (key === 'x' && !this.inputFocusedActive)
+        || (key === 'c' && !this.inputFocusedActive)
+        || (key === 'v' && !this.inputFocusedActive)
+        || key === 'd'
+        || (key === 'a' && !this.inputFocusedActive)
+        || (key === 'z' && !this.inputFocusedActive))) {
       keyboard.preventDefault();
       keyboard.stopPropagation();
+    } else if (keyboard.altKey) {
+      keyboard.preventDefault();
     }
   }
 

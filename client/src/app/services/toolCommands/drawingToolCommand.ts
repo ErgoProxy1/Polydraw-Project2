@@ -1,3 +1,4 @@
+import { Line } from '../svgPrimitives/line/line';
 import { Path } from '../svgPrimitives/path/path';
 import { SVGPrimitive } from '../svgPrimitives/svgPrimitive';
 import { Color } from '../utils/color';
@@ -5,6 +6,7 @@ import { ToolCommand } from './toolCommand';
 
 export abstract class DrawingToolCommand implements ToolCommand {
   path: Path;
+  line: Line;
 
   constructor(strokeColor: Color, strokeWidth: number) {
     // TODO lors de la coordination des undo/redo

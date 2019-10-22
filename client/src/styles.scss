@@ -46,3 +46,11 @@ p, button, input, label {
   background-color:#90C6CB;
   color:black;
 }
+
+.successMessage{
+  position: absolute;
+  top: 5px;
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+  transform: translateX(-50%);
+}

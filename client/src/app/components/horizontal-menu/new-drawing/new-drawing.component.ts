@@ -5,8 +5,8 @@ import { Subscription } from 'rxjs';
 import { ColorService } from 'src/app/services/colorService/color.service';
 import { KeyboardShortcutService } from 'src/app/services/keyboardShortcut/keyboard-shortcut.service';
 import { SVGPrimitive } from 'src/app/services/svgPrimitives/svgPrimitive';
-import { Color } from 'src/app/services/utils/color';
-import { KeyboardShortcutType, MAX_ALPHA, MAX_RGB, PaletteChoiceInfo, PaletteChoices } from 'src/app/services/utils/constantsAndEnums';
+import { Color, MAX_ALPHA, MAX_RGB } from 'src/app/services/utils/color';
+import { KeyboardShortcutType, PaletteChoicesRGB } from 'src/app/services/utils/constantsAndEnums';
 import { DrawingService } from '../../../services/drawing/drawing.service';
 import { NewDrawingInfo } from '../../../services/utils/newDrawingInfo';
 import { CanvasComponent } from '../../canvas/canvas.component';
@@ -28,7 +28,7 @@ import { CanvasComponent } from '../../canvas/canvas.component';
 
 export class NewDrawingComponent implements OnDestroy {
   subscription: Subscription;
-  readonly paletteChoices: PaletteChoiceInfo[] = PaletteChoices;
+  readonly palettesChoicesRGB: Color[] = PaletteChoicesRGB;
 
   @ViewChild('newDrawModal', { static: true }) newDrawModal: ElementRef;
 
@@ -71,10 +71,10 @@ export class NewDrawingComponent implements OnDestroy {
       hex: ['FFFFFF'],
     });
 
-    this.drawingService.workspaceObserver.subscribe((data) => {
+    this.drawingService.workspaceObservable.subscribe((data) => {
       this.confirmResentDimensions(data);
     });
-    this.drawingService.primtivesObserver.subscribe((data) => {
+    this.drawingService.primtivesObservable.subscribe((data) => {
       this.checkPrimitivesLength(data);
     });
   }
@@ -95,6 +95,8 @@ export class NewDrawingComponent implements OnDestroy {
       hex: 'FFFFFF',
     });
     this.currentColorHex = '#FFFFFF';
+    this.errorInColors = false;
+    this.errorsInDimensions = false;
     this.drawingForm.markAsPristine();
   }
 
@@ -133,20 +135,18 @@ export class NewDrawingComponent implements OnDestroy {
 
   // Applique la couleur RBG. Convertie aussi le RGB en Hex.
   confirmRGBColor(): void {
-    const currentRGB: number[] = [this.drawingForm.value.red,
-    this.drawingForm.value.green, this.drawingForm.value.blue];
-    this.errorInColors = this.colorSelection.confirmRGBColor(currentRGB[0],
-      currentRGB[1], currentRGB[2]);
-    const converted: string = this.colorSelection.convertRgbToHex(currentRGB[0],
-      currentRGB[1], currentRGB[2]);
-    this.drawingForm.patchValue({ hex: converted });
-    this.currentColorHex = this.colorSelection.stringToHexForm(converted);
+    const currentRGB: Color =  new Color(this.drawingForm.value.red,
+    this.drawingForm.value.green, this.drawingForm.value.blue);
+    this.errorInColors = this.colorSelection.confirmRGBColor(currentRGB);
+    const converted: string = this.colorSelection.convertRgbToHex(currentRGB);
+    this.drawingForm.patchValue({ hex: converted.split('#')[1] });
+    this.currentColorHex = converted;
   }
 
   // Confirme la valeur du alpha. Valeur est mise a 1 si une erreur est detecté
   confirmAlpha(): void {
     this.currentAlpha = this.colorSelection.confirmAlpha(this.drawingForm.value.alpha);
-    this.drawingForm.patchValue({alpha: this.currentAlpha});
+    this.drawingForm.patchValue({ alpha: this.currentAlpha });
   }
 
   // Applique la couleur HEX. Convertie aussi le Hex en RGB.
@@ -154,8 +154,8 @@ export class NewDrawingComponent implements OnDestroy {
     const currentHex: string = this.drawingForm.value.hex;
     if (currentHex.length === 6) {
       this.errorInColors = false;
-      const converted: number[] = this.colorSelection.convertHextoRgb(currentHex);
-      this.drawingForm.patchValue({ red: converted[0], green: converted[1], blue: converted[2] });
+      const converted: Color = this.colorSelection.convertHextoRgb(currentHex);
+      this.drawingForm.patchValue({ red: converted.r, green: converted.g, blue: converted.b });
       const formattedHex = '';
       this.currentColorHex = formattedHex.concat('#', currentHex);
       const paletteString = '#';
@@ -182,9 +182,9 @@ export class NewDrawingComponent implements OnDestroy {
   }
 
   // Update les valeurs de couleur en fonction de la couleur cliquer sur la palette
-  updateFromPalette(mouseEvent: MouseEvent): void {
+  updateFromPalette(color: Color): void {
     this.drawingForm.markAsDirty();
-    const currentHex: string = String((mouseEvent.target as SVGElement).getAttribute('fill'));
+    const currentHex: string = this.colorSelection.convertRgbToHex(color);
     this.currentColorHex = currentHex;
     this.drawingForm.patchValue({ hex: currentHex.split('#')[1] });
     this.confirmHexColor();
@@ -194,7 +194,7 @@ export class NewDrawingComponent implements OnDestroy {
 
   // Ouvre la fenêtre modal quand le bouton ou CTRL+o est appuyé
   openModal(): boolean {
-    this.keyboardShortcutService.setActiveModalStatus(true);
+    this.keyboardShortcutService.modalWindowActive = true;
     this.modalService.open(this.newDrawModal, this.newDrawingModalConfig);
     this.resetForm();
     return this.modalService.hasOpenModals();
@@ -202,17 +202,17 @@ export class NewDrawingComponent implements OnDestroy {
 
   // Ferme la fenêtre modal
   closeModal(): boolean {
-    this.keyboardShortcutService.setActiveModalStatus(false);
+    this.keyboardShortcutService.modalWindowActive = false;
     this.modalService.dismissAll();
     return this.modalService.hasOpenModals();
   }
 
   // Méthodes pour configurer le booléen correctement:
-  setInactiveFocus(): void {
-    this.keyboardShortcutService.setFocusActive(false);
+  setInactiveFocus() {
+    this.keyboardShortcutService.inputFocusedActive = false;
   }
 
-  setActiveFocus(): void {
-    this.keyboardShortcutService.setFocusActive(true);
+  setActiveFocus() {
+    this.keyboardShortcutService.inputFocusedActive = true;
   }
 }

@@ -1,20 +1,21 @@
-import {Container} from 'inversify';
-import {Application} from './app';
-import {DateController} from './controllers/date.controller';
-import {IndexController} from './controllers/index.controller';
-import {Server} from './server';
-import {DateService} from './services/date.service';
-import {IndexService} from './services/index.service';
+import { Container } from 'inversify';
+import { Application } from './app';
+import { Server } from './server';
 import Types from './types';
+import { DrawingController } from './controllers/drawing.controller';
+import { DrawingService } from './services/drawing.service';
+import { TagsController } from './controllers/tags.controller';
+import { TagsService } from './services/tags.service';
 
 const container: Container = new Container();
 
 container.bind(Types.Server).to(Server);
 container.bind(Types.Application).to(Application);
-container.bind(Types.IndexController).to(IndexController);
-container.bind(Types.IndexService).to(IndexService);
 
-container.bind(Types.DateController).to(DateController);
-container.bind(Types.DateService).to(DateService);
+container.bind(Types.DrawingController).to(DrawingController);
+container.bind(Types.DrawingService).to(DrawingService);
 
-export {container};
+container.bind(Types.TagsController).to(TagsController);
+container.bind(Types.TagsService).to(TagsService);
+
+export { container };

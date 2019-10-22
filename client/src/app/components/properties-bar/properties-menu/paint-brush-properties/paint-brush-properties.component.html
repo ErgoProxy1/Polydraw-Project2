@@ -1,7 +1,7 @@
 <div class="row">
   <div class="col-md-12">
     <small for="rangeEpaisseur">Épaisseur : {{strokeWidth}} px</small>
-    <input id="strokewidthinput" type="range" class="custom-range" [(ngModel)]="strokeWidth" (change)="onChangeStrokeWidth()" 
+    <input id="strokewidthinput" type="range" class="custom-range" [(ngModel)]="strokeWidth" (change)="onChangeStrokeWidth()"
       [min]="MIN_STROKE_WIDTH" [max]="MAX_STROKE_WIDTH" step="1">
   </div>
 </div>
@@ -10,7 +10,7 @@
     <small>Choix du style</small>
   </div>
   <div class="form-check col-md-12">
-    <select id="textureinput" class="form-control form-control-sm" [(ngModel)]="texture" (change)="onChangeTexture()">
+    <select class="form-control form-control-sm" [(ngModel)]="texture" (change)="onChangeTexture()">
       <option *ngFor="let texture of TEXTURE_NAMES_MAP | keyvalue" [ngValue]="texture.value">{{texture.key}}</option>
     </select>
   </div>

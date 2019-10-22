@@ -1,19 +1,33 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes} from '@angular/router';
+import { EyeDropperPropertiesComponent
+} from '../components/properties-bar/properties-menu/eye-dropper-properties/eye-dropper-properties.component';
+import { GridPropertiesComponent } from '../components/properties-bar/properties-menu/grid-properties/grid-properties.component';
+import { LinePropertiesComponent } from '../components/properties-bar/properties-menu/line-properties/line-properties.component';
 // tslint:disable-next-line
 import { PaintBrushPropertiesComponent } from '../components/properties-bar/properties-menu/paint-brush-properties/paint-brush-properties.component';
 // tslint:disable-next-line
 import { PaintBucketPropertiesComponent } from '../components/properties-bar/properties-menu/paint-bucket-properties/paint-bucket-properties.component';
 import { PencilPropertiesComponent } from '../components/properties-bar/properties-menu/pencil-properties/pencil-properties.component';
+// tslint:disable-next-line
+import { SelectionPropertiesComponent } from '../components/properties-bar/properties-menu/selection-properties/selection-properties.component';
 import { ShapePropertiesComponent } from '../components/properties-bar/properties-menu/shape-properties/shape-properties.component';
+import { StampPropertiesComponent } from '../components/properties-bar/properties-menu/stamp-properties/stamp-properties.component';
+import { RoutingConstants } from '../services/utils/routingConstants';
 
 const appRoutes: Routes = [
-  { path: '', redirectTo: 'pencil', pathMatch: 'full' },
-  { path: 'shapes', component: ShapePropertiesComponent },
-  { path: 'paint-brush', component: PaintBrushPropertiesComponent },
-  { path: 'pencil', component: PencilPropertiesComponent },
-  { path: 'paint-bucket', component: PaintBucketPropertiesComponent },
-  { path: '**', redirectTo: 'pencil'},
+  { path: '', redirectTo: RoutingConstants.ROUTE_TO_PENCIL, pathMatch: 'full' },
+  { path: RoutingConstants.ROUTE_TO_SHAPE, component: ShapePropertiesComponent },
+  { path: RoutingConstants.ROUTE_TO_SHAPE + '/:shapeType', component: ShapePropertiesComponent },
+  { path: RoutingConstants.ROUTE_TO_PAINT_BRUSH, component: PaintBrushPropertiesComponent },
+  { path: RoutingConstants.ROUTE_TO_PENCIL, component: PencilPropertiesComponent },
+  { path: RoutingConstants.ROUTE_TO_LINE, component: LinePropertiesComponent },
+  { path: RoutingConstants.ROUTE_TO_PAINT_BUCKET, component: PaintBucketPropertiesComponent },
+  { path: RoutingConstants.ROUTE_TO_SELECTION, component: SelectionPropertiesComponent },
+  { path: RoutingConstants.ROUTE_TO_STAMP, component: StampPropertiesComponent},
+  { path: RoutingConstants.ROUTE_TO_EYEDROPPER, component: EyeDropperPropertiesComponent},
+  { path: RoutingConstants.ROUTE_TO_GRID, component: GridPropertiesComponent },
+  { path: '**', redirectTo: RoutingConstants.ROUTE_TO_PENCIL},
 ];
 
 @NgModule({

@@ -1,6 +1,6 @@
-import { async, ComponentFixture, TestBed} from '@angular/core/testing';
-import { FormBuilder, FormsModule, ReactiveFormsModule} from '@angular/forms';
-import { NgbModalModule} from '@ng-bootstrap/ng-bootstrap';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
 import { KeyboardShortcutService } from 'src/app/services/keyboardShortcut/keyboard-shortcut.service';
 import { DrawingService } from '../../../services/drawing/drawing.service';
 import { NewDrawingComponent } from './new-drawing.component';
@@ -15,12 +15,12 @@ describe('NewDrawingComponent', () => {
       providers: [FormBuilder, DrawingService],
       imports: [FormsModule, ReactiveFormsModule, NgbModalModule],
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [ NewDrawingComponent],
+      declarations: [NewDrawingComponent],
       providers: [FormBuilder, DrawingService],
       imports: [FormsModule, ReactiveFormsModule, NgbModalModule],
     });
@@ -160,51 +160,51 @@ describe('NewDrawingComponent', () => {
   });
 
   it('Alpha is properly read and corrected', () => {
-    component.drawingForm.patchValue({alpha: 1});
+    component.drawingForm.patchValue({ alpha: 1 });
     component.confirmAlpha();
     expect(component.drawingForm.value.alpha).toEqual(1);
 
-    component.drawingForm.patchValue({alpha: 0});
+    component.drawingForm.patchValue({ alpha: 0 });
     component.confirmAlpha();
     expect(component.drawingForm.value.alpha).toEqual(0);
 
-    component.drawingForm.patchValue({alpha: -1});
+    component.drawingForm.patchValue({ alpha: -1 });
     component.confirmAlpha();
     expect(component.drawingForm.value.alpha).toEqual(1);
 
-    component.drawingForm.patchValue({alpha: 0.45});
+    component.drawingForm.patchValue({ alpha: 0.45 });
     component.confirmAlpha();
     expect(component.drawingForm.value.alpha).toEqual(0.45);
 
-    component.drawingForm.patchValue({alpha: 2});
+    component.drawingForm.patchValue({ alpha: 2 });
     component.confirmAlpha();
     expect(component.drawingForm.value.alpha).toEqual(1);
   });
 
   it('Hex input is properly corrected', () => {
-    component.drawingForm.patchValue({hex: '10a0Ff'});
+    component.drawingForm.patchValue({ hex: '10a0Ff' });
     component.correctHexInput();
     expect(component.drawingForm.value.hex).toBe('10A0FF');
 
-    component.drawingForm.patchValue({hex: 'Q'});
+    component.drawingForm.patchValue({ hex: 'Q' });
     component.correctHexInput();
     expect(component.drawingForm.value.hex).toBe('');
   });
 
   it('Conversion from RGB to HEX is correct', () => {
-    component.drawingForm.patchValue({hex: '000000'});
+    component.drawingForm.patchValue({ hex: '000000' });
     component.confirmHexColor();
     expect(component.drawingForm.value.red).toEqual(0);
     expect(component.drawingForm.value.green).toEqual(0);
     expect(component.drawingForm.value.blue).toEqual(0);
 
-    component.drawingForm.patchValue({hex: '804020'});
+    component.drawingForm.patchValue({ hex: '804020' });
     component.confirmHexColor();
     expect(component.drawingForm.value.red).toEqual(128);
     expect(component.drawingForm.value.green).toEqual(64);
     expect(component.drawingForm.value.blue).toEqual(32);
 
-    component.drawingForm.patchValue({hex: 'ABCDEF'});
+    component.drawingForm.patchValue({ hex: 'ABCDEF' });
     component.confirmHexColor();
     expect(component.drawingForm.value.red).toEqual(171);
     expect(component.drawingForm.value.green).toEqual(205);
@@ -212,19 +212,19 @@ describe('NewDrawingComponent', () => {
   });
 
   it('Errors in HEX colors are properly detected', () => {
-    component.drawingForm.patchValue({hex: '000000'});
+    component.drawingForm.patchValue({ hex: '000000' });
     component.confirmHexColor();
     expect(component.errorInColors).toBe(false);
 
-    component.drawingForm.patchValue({hex: 'A'});
+    component.drawingForm.patchValue({ hex: 'A' });
     component.confirmHexColor();
     expect(component.errorInColors).toBe(true);
 
-    component.drawingForm.patchValue({hex: 'FFFFFF'});
+    component.drawingForm.patchValue({ hex: 'FFFFFF' });
     component.confirmHexColor();
     expect(component.errorInColors).toBe(false);
 
-    component.drawingForm.patchValue({hex: '12345'});
+    component.drawingForm.patchValue({ hex: '12345' });
     component.confirmHexColor();
     expect(component.errorInColors).toBe(true);
   });
@@ -248,20 +248,18 @@ describe('NewDrawingComponent', () => {
   it('Input focus status is correctly detected and transmitted for keyboard events service', () => {
     const keyboardService: KeyboardShortcutService = TestBed.get(KeyboardShortcutService);
     component.setActiveFocus();
-    expect(keyboardService.getFocusActiveStatus()).toBe(true);
-
+    expect(keyboardService.inputFocusedActive).toBe(true);
     component.setInactiveFocus();
-    expect(keyboardService.getFocusActiveStatus()).toBe(false);
+    expect(keyboardService.inputFocusedActive).toBe(false);
   });
 
   it('Modal active status is correctly detected and transmitted for keyboard shortcuts service', () => {
     const keyboardService: KeyboardShortcutService = TestBed.get(KeyboardShortcutService);
     component.openModal();
-    expect(keyboardService.getActiveModalStatus()).toBe(true);
-
+    expect(keyboardService.modalWindowActive).toBe(true);
     component.closeModal();
     component.setInactiveFocus();
-    expect(keyboardService.getActiveModalStatus()).toBe(false);
+    expect(keyboardService.modalWindowActive).toBe(false);
   });
 
 });

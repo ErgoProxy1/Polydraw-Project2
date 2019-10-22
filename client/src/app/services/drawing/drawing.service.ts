@@ -9,27 +9,27 @@ import { NewDrawingInfo } from '../utils/newDrawingInfo';
 })
 export class DrawingService {
 
-  drawingObserver: Observable<NewDrawingInfo>;
+  drawingObservable: Observable<NewDrawingInfo>;
   drawingSubject  = new Subject<NewDrawingInfo>();
 
-  initWorkspaceObserver: Observable<number[]>;
+  initWorkspaceObservable: Observable<number[]>;
   initWorkspaceSubject = new BehaviorSubject<number[]>([0, 0]);
 
-  workspaceObserver: Observable<number[]>;
+  workspaceObservable: Observable<number[]>;
   workspaceSubject = new BehaviorSubject<number[]>([0, 0]);
 
-  primtivesObserver: Observable<SVGPrimitive[]>;
+  primtivesObservable: Observable<SVGPrimitive[]>;
   primitivesSubject = new Subject<SVGPrimitive[]>();
 
-  backgroundColorObserver: Observable<Color>;
+  backgroundColorObservable: Observable<Color>;
   backgroundColorSubject = new Subject<Color>();
 
   constructor() {
-    this.drawingObserver = this.drawingSubject.asObservable();
-    this.initWorkspaceObserver = this.initWorkspaceSubject.asObservable();
-    this.workspaceObserver = this.workspaceSubject.asObservable();
-    this.primtivesObserver = this.primitivesSubject.asObservable();
-    this.backgroundColorObserver = this.backgroundColorSubject.asObservable();
+    this.drawingObservable = this.drawingSubject.asObservable();
+    this.initWorkspaceObservable = this.initWorkspaceSubject.asObservable();
+    this.workspaceObservable = this.workspaceSubject.asObservable();
+    this.primtivesObservable = this.primitivesSubject.asObservable();
+    this.backgroundColorObservable = this.backgroundColorSubject.asObservable();
   }
 
   // Envoie les donnees du nouveau dessin au canvas

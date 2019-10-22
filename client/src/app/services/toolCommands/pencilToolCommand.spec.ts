@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { Path } from '../svgPrimitives/path/path';
+import { SVGPrimitive } from '../svgPrimitives/svgPrimitive';
 import { Color } from '../utils/color';
 import { PencilToolCommand } from './pencilToolCommand';
 
@@ -17,17 +18,10 @@ describe('PaintBrushCommand', () => {
       });
 
     it('#apply should return the current path', () => {
-      pencilToolCmd.apply();
-      expect(pencilToolCmd.path).not.toBeNull();
-      expect(pencilToolCmd.path).toEqual(new Path(new Color(200, 150, 100, 1), 10));
+      const path: SVGPrimitive | null = pencilToolCmd.apply();
+      expect(path).not.toBeNull();
+      expect(path).toEqual(new Path(new Color(200, 150, 100, 1), 10));
 
     });
-
-    it('#cancel should cancel  path', () => {
-        const currentPath = pencilToolCmd.path;
-        pencilToolCmd.cancel();
-        expect(pencilToolCmd.path).toEqual(currentPath);
-        expect(pencilToolCmd.path).toEqual(new Path(new Color(200, 150, 100, 1), 10));
-      });
 
   });

@@ -17,26 +17,6 @@ describe('KeyboardShortcutService', () => {
     expect(keybdService).toBeTruthy();
   });
 
-  it('getActiveModalStatus should return correct default value', () => {
-    expect(keyboardService.getActiveModalStatus()).toBe(false);
-  });
-
-  it('getFocusActiveStatus should return correct default value', () => {
-    expect(keyboardService.getFocusActiveStatus()).toBe(false);
-  });
-
-  it('setActiveModalStatus should modify the value correctly', () => {
-    const newActiveValue = true;
-    keyboardService.setActiveModalStatus(newActiveValue);
-    expect(keyboardService.getActiveModalStatus()).toBe(true);
-  });
-
-  it('setFocusActive should modify the value correctly', () => {
-    const newActiveValue = true;
-    keyboardService.setFocusActive(newActiveValue);
-    expect(keyboardService.getFocusActiveStatus()).toBe(true);
-  });
-
   it('validateEntry should return the correct KeyboardShortcutType', () => {
     // Valeurs de string indéfinies
     expect(keyboardService.validateEntry('oihaieruhge', keyboardService.shortcutMap)).toBe(KeyboardShortcutType.None);

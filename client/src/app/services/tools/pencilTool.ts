@@ -1,6 +1,5 @@
-import { SVGPrimitive } from '../svgPrimitives/svgPrimitive';
+import { Path } from '../svgPrimitives/path/path';
 import { PencilToolCommand } from '../toolCommands/pencilToolCommand';
-import { ToolCommand } from '../toolCommands/toolCommand';
 import { Color } from '../utils/color';
 import { ToolType } from '../utils/constantsAndEnums';
 import { Point } from '../utils/point';
@@ -9,39 +8,14 @@ import { Tool } from './tool';
 
 export class PencilTool extends DrawingTool implements Tool {
   type = ToolType.Pencil;
-  private command: PencilToolCommand;
-  private isCreatingPath = false;
+  path: Path;
 
   constructor(strokeColor: Color) {
     super(strokeColor);
   }
 
-  begin(position: Point): SVGPrimitive[] {
+  protected begin(position: Point): void {
     this.command = new PencilToolCommand(this.strokeColor, this.strokeWidth);
-    this.command.path.addPoint(position);
-    this.isCreatingPath = true;
-    return [this.command.path];
-  }
-
-  update(position: Point): SVGPrimitive[] {
-    if (this.isCreatingPath) {
-      this.command.path.addPoint(position);
-    }
-    return this.isCreatingPath ?  [this.command.path] : [];
-  }
-
-  finish(position: Point): ToolCommand {
-    if (this.isCreatingPath) {
-      this.isCreatingPath = false;
-    }
-    return this.command;
-  }
-
-  keyDown(key: string): SVGPrimitive[] {
-    return [];
-  }
-
-  keyUp(key: string): SVGPrimitive[] {
-    return [];
+    super.begin(position);
   }
 }

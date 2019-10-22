@@ -5,7 +5,6 @@ import { Texture } from '../utils/constantsAndEnums';
 import { DrawingToolCommand } from './drawingToolCommand';
 
 export class PencilToolCommand extends DrawingToolCommand {
-
   constructor(strokeColor: Color, strokeWidth: number) {
     super(strokeColor, strokeWidth);
     this.path = new Path(strokeColor, strokeWidth, Texture.Basic);

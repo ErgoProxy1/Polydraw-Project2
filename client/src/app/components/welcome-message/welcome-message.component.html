@@ -1,38 +1,34 @@
 <ng-template #welcomeModal let-modal>
   <div class="modal-header">
-    <h5 class="modal-title" id="ModalLabel">Bienvenue dans Polydessin! Première utilisation?</h5>
+    <h5 class="modal-title">Bienvenue dans Polydessin! Première utilisation?</h5>
   </div>
 
   <div class="modal-body">
     <div class="row ">
       <div class="col text-justify p-3">
-        <p>{{getModalText()}}</p>
+        <p>Une application développée par des étudiants de l'École Polytechnique. Notez que ce site
+          utilise des cookies. Vous pouvez retrouver ce menu de première visite en fermant
+          complètement votre navigateur et en ouvrant de nouveau cette page. Nous espérons que ce logiciel
+          vous plaira. Maintenant, soyez créatif!</p>
       </div>
     </div>
     <div class="row p-0">
-      <div class="col-md-12 ">
-        <button class="btn btn-outline-secondary float-left " type="button" [disabled]="checkIfFirst()"
-          (click)="changeTab('previous')">Précédent</button>
-        <button class="btn btn-outline-secondary float-right" [disabled]="checkIfLast()" type="button"
-          (click)="changeTab('next')">Suivant</button>
-      </div>
     </div>
     <div class="row border-top mt-3 pt-3">
-        <div class="col-md-8">
-          <div class="input-group ">
-            <div class="input-group-prepend float-left">
-              <div class="input-group-text">
-                <input type="checkbox" id="checkBox" (click)="tickCheckBox()">
-              </div>
+      <div class="col-md-8">
+        <div class="input-group ">
+          <div class="input-group-prepend float-left">
+            <div class="input-group-text">
+              <input type="checkbox" (click)="tickCheckBox()">
             </div>
-            <p class="form-control" style="width:auto">Ne plus afficher ce message</p>
           </div>
+          <p class="form-control w-auto">Ne plus afficher ce message</p>
         </div>
-        <div class="col-md-4">
-          <button type="button" class="btn btn-outline-dark float-right align-middle"
-            (click)="closeModal()">Fermer</button>
-        </div>
-
+      </div>
+      <div class="col-md-4">
+        <button type="button" class="btn btn-outline-dark float-right align-middle"
+          (click)="closeModal()">Fermer</button>
+      </div>
     </div>
   </div>
 </ng-template>

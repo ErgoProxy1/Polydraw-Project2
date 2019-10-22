@@ -1,0 +1,71 @@
+import { inject, injectable } from 'inversify';
+import 'reflect-metadata';
+import { DrawingInfo } from '../../../common/communication/drawingInfo';
+import { TagsService } from '../services/tags.service';
+import Types from '../types';
+
+@injectable()
+export class DrawingService {
+  private fs = require('fs');
+  readonly path = './data/drawings.json';
+  drawings: DrawingInfo[];
+
+  constructor(@inject(Types.TagsService) private tagsService: TagsService) {
+    if (!this.fs.existsSync(this.path)) {
+      // Le fichier doit être créé
+      this.drawings = [];
+      this.fs.closeSync(this.fs.openSync(this.path, 'w'));
+      this.fs.writeFile(this.path, '[]', () => { });
+    } else {
+      // Le fichier existe
+      const file = this.fs.readFileSync(this.path);
+      this.drawings = JSON.parse(file);
+    }
+  }
+
+  getDrawings(): DrawingInfo[] | Error {
+    try {
+      if (this.drawings.length !== 0) {
+        return this.drawings;
+      } else { return []; }
+    } catch (e) { return e; }
+  }
+
+  saveDrawing(drawing: DrawingInfo): Error | boolean {
+    try {
+      // Validation du nom et des tags
+      if (drawing.name.length === 0) {
+        throw new Error('Veuillez entrer un nom SVP.');
+      } else if (!this.tagsService.validateTags(drawing.tags)) {
+        throw new Error('Veuillez vérifier les étiquettes SVP.');
+      }
+      // On trie d'abord les nouveaux tags
+      drawing.tags = this.tagsService.manageNewTags(drawing.tags);
+      // Si le tableau existe
+      if (this.drawings.length !== 0) {
+        this.drawings.push(drawing);
+        this.fs.writeFileSync(this.path, JSON.stringify(this.drawings));
+        return true;
+      } else {
+        // S'il n'y aucun dessin, on crée le fichier avec le nouveau dessin
+        this.drawings.push(drawing);
+        this.fs.writeFileSync(this.path, JSON.stringify(this.drawings));
+        return true;
+      }
+    } catch (e) { return e; }
+  }
+
+  deleteDrawing(id: string): Error | boolean {
+    try {
+      let drawingsToReturn: DrawingInfo[] = [];
+      for (const drawing of this.drawings) {
+        if (drawing.name !== id) {
+          drawingsToReturn.push(drawing);
+        }
+      }
+      this.drawings = drawingsToReturn;
+      this.fs.writeFileSync(this.path, JSON.stringify(this.drawings));
+      return true;
+    } catch (e) { return e; }
+  }
+}

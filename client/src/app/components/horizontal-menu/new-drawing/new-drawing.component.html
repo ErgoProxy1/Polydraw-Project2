@@ -7,15 +7,15 @@
     <h5 class="modal-title">Nouveau Dessin</h5>
   </div>
   <form [formGroup]="drawingForm" (ngSubmit)="newDrawing(drawingForm); closeModal();">
-    <div id="background" class="modal-body">
+    <div class="modal-body">
       <h6>Dimensions (50 à 5000)</h6>
       <div class="row mt-2">
         <div class="form-group col-md-6">
           <div class="form-group row">
             <label for="inputEmail3" class="col-md-5 col-form-label">Largeur: </label>
             <div class="col-md-7">
-              <input id="inputWidth" name="width" type="number" min="0" id="width" formControlName="width"
-                (click)="checkDimensionValues()" class="form-control" (focusin)="setActiveFocus()"
+              <input name="width" type="number" min="0" formControlName="width" (click)="checkDimensionValues()"
+                class="form-control m-0" (focusin)="setActiveFocus()"
                 (focusout)="checkDimensionValues(); setInactiveFocus()">
             </div>
           </div>
@@ -24,8 +24,8 @@
           <div class="form-group row">
             <label for="inputEmail3" class="col-md-5 col-form-label">Hauteur: </label>
             <div class="col-md-7">
-              <input id="inputHeight" name="height" type="number" min="0" id="height" formControlName="height"
-                (click)="checkDimensionValues()" class="form-control" (focusin)="setActiveFocus()"
+              <input name="height" type="number" min="0" formControlName="height" (click)="checkDimensionValues()"
+                class="form-control m-0" (focusin)="setActiveFocus()"
                 (focusout)="checkDimensionValues(); setInactiveFocus()">
             </div>
           </div>
@@ -36,7 +36,7 @@
         <div class="col-md-12">
           <label>Aperçu: </label>
           <svg width="30" height="30">
-            <circle id="currentColor" cx="15" cy="15" r="10" [attr.fill]="currentColorHex"
+            <circle class="currentColor" cx="15" cy="15" r="10" [attr.fill]="currentColorHex"
               [attr.fill-opacity]="currentAlpha" />
           </svg>
         </div>
@@ -46,13 +46,13 @@
           <label>Palette:</label>
         </div>
         <div class="col-md-10">
+            <div class="palette">
+                <div class="palette-badge" *ngFor="let choice of palettesChoicesRGB" [style.background-color]="choice.rgbaTextForm"
+                (click) = "updateFromPalette(choice)" ></div>
+              </div>
+            </div>
+          </div>
 
-          <svg #palette id="paletteNc" width="300" height="200">
-            <rect *ngFor="let choice of paletteChoices" [attr.x]="choice.positionX" [attr.y]="choice.positionY"
-              width="50" height="50" [attr.fill]="choice.color" (click)="updateFromPalette($event)"></rect>
-          </svg>
-        </div>
-      </div>
       <div class="row">
         <div class="col-md-12">
           <div class="input-group mb-3">
@@ -70,31 +70,30 @@
                 max="255" (click)="confirmRGBColor()" (input)="confirmRGBColor()" (focusin)="setActiveFocus()"
                 (focusout)="confirmRGBColor(); setInactiveFocus()">
               <input class="form-control right-form-group" name="alpha" formControlName="alpha" type="number"
-                step="0.01" min="0" max="1" (click)="confirmAlpha()" (input)="confirmAlpha()" (focusin)="setActiveFocus()"
-                (focusout)="confirmAlpha(); setInactiveFocus()">
+                step="0.01" min="0" max="1" (click)="confirmAlpha()" (input)="confirmAlpha()"
+                (focusin)="setActiveFocus()" (focusout)="confirmAlpha(); setInactiveFocus()">
             </div>
           </div>
         </div>
       </div>
 
-      <div class="input-group mb-3" id="hexGroupNc">
+      <div class="input-group mb-3 m-0">
         <div class="input-group-prepend">
           <span class="input-group-text left-form-group">HEX</span>
         </div>
         <input name="hex" formControlName="hex" class="form-control" type="text" (keyup)="correctHexInput()"
           (focusin)="setActiveFocus()" (keydown)="correctHexInput()" (focusout)="confirmHexColor(); setInactiveFocus()"
-          maxlength="6" aria-describedby="applyHex">
+          maxlength="6">
         <div class="input-group-append">
-          <button type="button" id="applyHex" class="btn btn-outline-secondary"
-            (click)="confirmHexColor()">Apply</button>
+          <button type="button" class="btn btn-outline-secondary" (click)="confirmHexColor()">Apply</button>
         </div>
       </div>
-      <div *ngIf="errorInColors || errorsInDimensions" id="dataAlert" class="alert alert-danger" role="alert">
+      <div *ngIf="errorInColors || errorsInDimensions" class="alert alert-danger mb-0" role="alert">
         Erreur dans vos données! Veuillez réviser vos valeurs.
       </div>
     </div>
     <div class="modal-footer">
-      <button id="dismiss" type="button" class="btn btn-outline-dark" (click)="closeModal()">Annuler</button>
+      <button type="button" class="btn btn-outline-dark" (click)="closeModal()">Annuler</button>
       <button type="submit" class="btn btn-outline-success" [disabled]="errorInColors || errorsInDimensions">Créer un
         nouveau
         dessin</button>

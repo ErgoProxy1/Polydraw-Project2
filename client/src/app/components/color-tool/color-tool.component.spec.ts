@@ -1,7 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NTimesPipe } from 'src/app/pipes/n-times.pipe';
 import { KeyboardShortcutService } from 'src/app/services/keyboardShortcut/keyboard-shortcut.service';
 import { Color } from 'src/app/services/utils/color';
 import { CanvasComponent } from '../canvas/canvas.component';
@@ -13,10 +13,10 @@ describe('ColorToolComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ColorToolComponent, CanvasComponent ],
+      declarations: [ColorToolComponent, CanvasComponent, NTimesPipe],
       imports: [FormsModule, ReactiveFormsModule, NgbModule],
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {
@@ -53,13 +53,13 @@ describe('ColorToolComponent', () => {
 
   it('Colors are applied properly', () => {
     component.primarySelected = true;
-    component.paletteForm.patchValue({hex: '80F000'});
-    component.applyClickedColor(component.paletteForm);
+    component.paletteForm.patchValue({ hex: '80F000' });
+    component.applyClickedColor();
     expect(component.currentPrimaryHex).toBe('#80F000');
 
     component.primarySelected = false;
-    component.paletteForm.patchValue({hex: 'FAEBDC'});
-    component.applyClickedColor(component.paletteForm);
+    component.paletteForm.patchValue({ hex: 'FAEBDC' });
+    component.applyClickedColor();
     expect(component.currentSecondaryHex).toBe('#FAEBDC');
   });
 
@@ -77,13 +77,13 @@ describe('ColorToolComponent', () => {
   });
 
   it('Hex color is properly converted to RGB (For form display)', () => {
-    component.paletteForm.patchValue({hex: '80F000'});
+    component.paletteForm.patchValue({ hex: '80F000' });
     component.confirmHexColor();
     expect(component.paletteForm.value.red).toEqual(128);
     expect(component.paletteForm.value.green).toEqual(240);
     expect(component.paletteForm.value.blue).toEqual(0);
 
-    component.paletteForm.patchValue({hex: 'FAEBDC'});
+    component.paletteForm.patchValue({ hex: 'FAEBDC' });
     component.confirmHexColor();
     expect(component.paletteForm.value.red).toEqual(250);
     expect(component.paletteForm.value.green).toEqual(235);
@@ -91,11 +91,11 @@ describe('ColorToolComponent', () => {
   });
 
   it('Hex color errors are properly detected', () => {
-    component.paletteForm.patchValue({hex: 'A'});
+    component.paletteForm.patchValue({ hex: 'A' });
     component.confirmHexColor();
     expect(component.hexError).toBe(true);
 
-    component.paletteForm.patchValue({hex: 'AAAAAA'});
+    component.paletteForm.patchValue({ hex: 'AAAAAA' });
     component.confirmHexColor();
     expect(component.hexError).toBe(false);
   });
@@ -195,80 +195,48 @@ describe('ColorToolComponent', () => {
   });
 
   it('New colors are properly added to the stack of previously used colors', () => {
-    component.addNewColor('#FF00FF');
-    expect(component.lastColorsUsed).toEqual([{positionX: 0, positionY: 0, color: '#FF00FF'}]);
+    const colorToAdd: Color[] = [
+      new Color(0, 0, 0, 1),
+      new Color(255, 0, 0, 1),
+      new Color(255, 165, 0, 1),
+      new Color(205, 255, 0, 1),
+      new Color(50, 255, 0, 1),
+      new Color(0, 255, 128, 1),
+      new Color(71, 71, 71, 1),
+      new Color(128, 0, 0, 1),
+      new Color(128, 76, 0, 1),
+      new Color(101, 127, 2, 1), ];
 
-    component.addNewColor('#00FF00');
-    expect(component.lastColorsUsed).toEqual([
-      {positionX: 0, positionY: 0, color: '#00FF00'},
-      {positionX: 40, positionY: 0, color: '#FF00FF'},
-    ]);
+    const color1: Color = new Color(26, 126, 0, 1);
+    const color2: Color = new Color(0, 127, 50, 1);
 
-    component.addNewColor('#123456');
-    component.addNewColor('#123457');
-    component.addNewColor('#987654');
-    component.addNewColor('#000000');
-    expect(component.lastColorsUsed).toEqual([
-      {positionX: 0, positionY: 0, color: '#000000'},
-      {positionX: 40, positionY: 0, color: '#987654'},
-      {positionX: 80, positionY: 0, color: '#123457'},
-      {positionX: 120, positionY: 0, color: '#123456'},
-      {positionX: 160, positionY: 0, color: '#00FF00'},
-      {positionX: 0, positionY: 40, color: '#FF00FF'},
-    ]);
+    component.addNewColor(colorToAdd[9]);
+    component.addNewColor(colorToAdd[8]); // car c'est une FIFO
+    component.addNewColor(colorToAdd[7]);
+    component.addNewColor(colorToAdd[6]);
+    component.addNewColor(colorToAdd[5]);
+    component.addNewColor(colorToAdd[4]);
+    component.addNewColor(colorToAdd[3]);
+    component.addNewColor(colorToAdd[2]);
+    component.addNewColor(colorToAdd[1]);
+    component.addNewColor(colorToAdd[0]);
 
-    component.addNewColor('#AAAAAA');
-    component.addNewColor('#BBBBBB');
-    component.addNewColor('#CCCCCC');
-    component.addNewColor('#DDDDDD');
-    expect(component.lastColorsUsed).toEqual([
-      {positionX: 0, positionY: 0, color: '#DDDDDD'},
-      {positionX: 40, positionY: 0, color: '#CCCCCC'},
-      {positionX: 80, positionY: 0, color: '#BBBBBB'},
-      {positionX: 120, positionY: 0, color: '#AAAAAA'},
-      {positionX: 160, positionY: 0, color: '#000000'},
-      {positionX: 0, positionY: 40, color: '#987654'},
-      {positionX: 40, positionY: 40, color: '#123457'},
-      {positionX: 80, positionY: 40, color: '#123456'},
-      {positionX: 120, positionY: 40, color: '#00FF00'},
-      {positionX: 160, positionY: 40, color: '#FF00FF'},
-    ]);
+    expect(component.lastColorsUsed).toEqual(colorToAdd);
 
-    component.addNewColor('#FFFFFF');
-    expect(component.lastColorsUsed).toEqual([
-      {positionX: 0, positionY: 0, color: '#FFFFFF'},
-      {positionX: 40, positionY: 0, color: '#DDDDDD'},
-      {positionX: 80, positionY: 0, color: '#CCCCCC'},
-      {positionX: 120, positionY: 0, color: '#BBBBBB'},
-      {positionX: 160, positionY: 0, color: '#AAAAAA'},
-      {positionX: 0, positionY: 40, color: '#000000'},
-      {positionX: 40, positionY: 40, color: '#987654'},
-      {positionX: 80, positionY: 40, color: '#123457'},
-      {positionX: 120, positionY: 40, color: '#123456'},
-      {positionX: 160, positionY: 40, color: '#00FF00'},
-    ]);
+    component.addNewColor(color1);
 
-    component.addNewColor('#00FF00');
-    expect(component.lastColorsUsed).toEqual([
-      {positionX: 0, positionY: 0, color: '#FFFFFF'},
-      {positionX: 40, positionY: 0, color: '#DDDDDD'},
-      {positionX: 80, positionY: 0, color: '#CCCCCC'},
-      {positionX: 120, positionY: 0, color: '#BBBBBB'},
-      {positionX: 160, positionY: 0, color: '#AAAAAA'},
-      {positionX: 0, positionY: 40, color: '#000000'},
-      {positionX: 40, positionY: 40, color: '#987654'},
-      {positionX: 80, positionY: 40, color: '#123457'},
-      {positionX: 120, positionY: 40, color: '#123456'},
-      {positionX: 160, positionY: 40, color: '#00FF00'},
-    ]);
+    expect(component.lastColorsUsed[0]).toEqual(color1);
+    component.addNewColor(color2);
+    expect(component.lastColorsUsed[0]).toEqual(color2);
+    expect(component.lastColorsUsed[1]).toEqual(color1);
   });
 
   it('Modal open/closed correctly detected and transmitted to keyboard shortcuts service', () => {
     const keyboarService: KeyboardShortcutService = TestBed.get(KeyboardShortcutService);
     component.openModal();
-    expect(keyboarService.getActiveModalStatus()).toBe(true);
+    expect(keyboarService.modalWindowActive).toBe(true);
 
     component.closeModal();
-    expect(keyboarService.getActiveModalStatus()).toBe(false);
+    expect(keyboarService.modalWindowActive).toBe(false);
   });
 });

@@ -42,4 +42,9 @@ describe('Path', () => {
     path.addPoint(new Point(50, 60));
     expect(path.points).toBe('M10 20 L10 20 L30 40 L50 60');
   });
+
+  it('#createCopy correctly copies the path', () => {
+    const newPath = Path.createCopy(path);
+    expect(newPath).toEqual(path);
+  });
 });

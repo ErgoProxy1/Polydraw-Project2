@@ -1,22 +1,53 @@
 <div class="gridContainer">
   <div class="grid-item border-top border-bottom">
-    <app-pencil-button class="clickable section p-1 menu-option" routerLink="/pencil" routerLinkActive="toolSelected"
-      placement="right" ngbTooltip="Crayon"></app-pencil-button>
+    <app-pencil-button class="clickable section p-1 menu-option" [routerLink]="_ROUTE_TO_PENCIL"
+      routerLinkActive="toolSelected" placement="right" ngbTooltip="Crayon"></app-pencil-button>
   </div>
+
   <div class="grid-item border-top border-bottom">
-    <app-paint-brush-button class="clickable section p-1 menu-option" routerLink="/paint-brush" routerLinkActive="toolSelected"
-      placement="right" ngbTooltip="Pinceau">
+    <app-line-button class="clickable section p-1 menu-option" [routerLink]="_ROUTE_TO_LINE"
+      routerLinkActive="toolSelected" placement="right" ngbTooltip="Line"></app-line-button>
+  </div>
+
+  <div class="grid-item border-top border-bottom">
+    <app-paint-brush-button class="clickable section p-1 menu-option" [routerLink]="_ROUTE_TO_PAINT_BRUSH"
+      routerLinkActive="toolSelected" placement="right" ngbTooltip="Pinceau">
     </app-paint-brush-button>
   </div>
+
   <div class="grid-item border-top border-bottom">
-    <app-shapes-button class="clickable section p-1 menu-option" routerLink="/shapes" routerLinkActive="toolSelected"
-      placement="right" ngbTooltip="Formes">
+    <app-shapes-button class="clickable section p-1 menu-option" [routerLink]="_ROUTE_TO_SHAPE"
+      routerLinkActive="toolSelected" placement="right" ngbTooltip="Formes">
     </app-shapes-button>
   </div>
 
   <div class="grid-item border-top border-bottom">
-    <app-paint-bucket-button class="clickable section p-1 menu-option" routerLink="/paint-bucket" routerLinkActive="toolSelected"
-      placement="right" ngbTooltip="Applicateur de couleur">
+    <app-paint-bucket-button class="clickable section p-1 menu-option" [routerLink]="_ROUTE_TO_PAINT_BUCKET"
+      routerLinkActive="toolSelected" placement="right" ngbTooltip="Applicateur de couleur">
     </app-paint-bucket-button>
+  </div>
+
+  <div class="grid-item border-top border-bottom">
+    <app-selection-button class="clickable section p-1 menu-option" [routerLink]="_ROUTE_TO_SELECTION"
+      routerLinkActive="toolSelected" placement="right" ngbTooltip="Sélection">
+    </app-selection-button>
+  </div>
+
+  <div class="grid-item border-top border-bottom">
+    <app-stamp-button class="clickable section p-1 menu-option" routerLink="/stamp" routerLinkActive="toolSelected"
+      placement="right" ngbTooltip="Étampe">
+    </app-stamp-button>
+  </div>
+
+  <div class="grid-item border-top border-bottom">
+    <app-eyedropper-button class="clickable section p-1 menu-option" routerLink="/dropper"
+      routerLinkActive="toolSelected" placement="right" ngbTooltip="Pipette">
+    </app-eyedropper-button>
+  </div>
+
+  <div class="grid-item border-top border-bottom">
+    <app-grid-button class="clickable section p-1 menu-option" [routerLink]="_ROUTE_TO_GRID"
+      routerLinkActive="toolSelected" placement="right" ngbTooltip="Afficher une grille au dessus">
+    </app-grid-button>
   </div>
 </div>

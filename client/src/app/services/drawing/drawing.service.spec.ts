@@ -1,8 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { NTimesPipe } from 'src/app/pipes/n-times.pipe';
 import { CanvasComponent } from '../../components/canvas/canvas.component';
 import { NewDrawingComponent } from '../../components/horizontal-menu/new-drawing/new-drawing.component';
 import { Rectangle } from '../svgPrimitives/rectangle/rectangle';
+import { SVGPrimitive } from '../svgPrimitives/svgPrimitive';
 import { Color } from '../utils/color';
 import { StrokeType } from '../utils/constantsAndEnums';
 import { Point } from '../utils/point';
@@ -16,7 +18,7 @@ describe('DrawingService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [NewDrawingComponent, CanvasComponent],
+      declarations: [NewDrawingComponent, CanvasComponent, NTimesPipe],
       imports: [FormsModule, ReactiveFormsModule]})
     .compileComponents();
 
@@ -43,12 +45,12 @@ describe('DrawingService', () => {
   });
 
   it('New Drawing properly detects if primitives are present', () => {
-    canvas.primitives = [];
-    newDrawing.checkPrimitivesLength(canvas.primitives);
+    let primitives: SVGPrimitive[] = [];
+    newDrawing.checkPrimitivesLength(primitives);
     expect(newDrawing.primitivesPresent).toBe(false);
-    canvas.primitives = [new Rectangle(new Color(255, 255, 255, 1), new Color(255, 255, 255, 1),
+    primitives = [new Rectangle(new Color(255, 255, 255, 1), new Color(255, 255, 255, 1),
     5, StrokeType.Full, new Point(0, 0), 100, 100)];
-    newDrawing.checkPrimitivesLength(canvas.primitives);
+    newDrawing.checkPrimitivesLength(primitives);
     expect(newDrawing.primitivesPresent).toBe(true);
   });
 });

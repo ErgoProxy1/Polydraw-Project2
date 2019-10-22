@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { BrowserDynamicTestingModule, platformBrowserDynamicTesting } from '@angular/platform-browser-dynamic/testing';
+import { Color } from '../utils/color';
 import { ColorService } from './color.service';
 
 describe('ColorSelectionService', () => {
@@ -16,17 +17,15 @@ describe('ColorSelectionService', () => {
     expect(aService).toBeTruthy();
   });
   it('RGB numbers are properly converted to hex strings' , () => {
-    const r = 1;
-    const g = 120;
-    const b = 78;
-    expect(service.convertRgbToHex(r, g, b)).toBe('01784E');
+    const color: Color = new Color(1, 120, 78);
+    expect(service.convertRgbToHex(color)).toBe('#01784E');
   });
   it('Hex Strings are properly converted to rgb numbers', () => {
     const hexValue = 'AA45BB';
-    const rgbNumber: number[] = service.convertHextoRgb(hexValue);
-    expect(rgbNumber[0]).toBe(170);
-    expect(rgbNumber[1]).toBe(69);
-    expect(rgbNumber[2]).toBe(187);
+    const rgbNumber: Color = service.convertHextoRgb(hexValue);
+    expect(rgbNumber.r).toBe(170);
+    expect(rgbNumber.g).toBe(69);
+    expect(rgbNumber.b).toBe(187);
   });
   it('Non-hexadecimal digit are switched to "" ', () => {
     const incorrectDigit1 = 'z';
@@ -38,13 +37,10 @@ describe('ColorSelectionService', () => {
     expect(service.correctHexInput(correctDigit)).toBe('C');
   });
   it('RGB value errors are properly detected', () => {
-    let r = -7;
-    const g = 155;
-    let b = 300;
-    expect(service.confirmRGBColor(r, g, b)).toBe(true);
-    r = 144;
-    b = 78;
-    expect(service.confirmRGBColor(r, g, b)).toBe(false);
+    const incorrectColor: Color = new Color(-7, 155, 300);
+    expect(service.confirmRGBColor(incorrectColor)).toBe(true);
+    const correctColor: Color = new Color(144, 38, 255);
+    expect(service.confirmRGBColor(correctColor)).toBe(false);
   });
   it('strings are properly converted into an hex form', () => {
     const hexValue = '457AB9';

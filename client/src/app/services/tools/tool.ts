@@ -1,45 +1,45 @@
 import { SVGPrimitive } from '../svgPrimitives/svgPrimitive';
 import { ToolCommand } from '../toolCommands/toolCommand';
-import { ToolType } from '../utils/constantsAndEnums';
+import { KeyboardEventType, MouseEventType, ToolType } from '../utils/constantsAndEnums';
 import { Point } from '../utils/point';
 
 export interface Tool {
-  type: ToolType;
+  readonly type: ToolType;
+
+   /**
+    * Envoie les informations d'un evenement de souris a l'outil pour qu'il le traite.
+    * Retourne une liste de primitives temporaires s'il y a lieu.
+    *
+    * @param eventType Le type d'evenement appelant cette fonction
+    * @param position La position du curseur dans le canevas
+    * @param primitive La primitive sur laquelle on a clique, s'il y a lieu
+    */
+  mouseEvent(eventType: MouseEventType, position: Point, primitive?: SVGPrimitive): SVGPrimitive[];
+
+   /**
+    * Envoie les informations d'un evenement de clavier a l'outil pour qu'il le traite.
+    * Retourne une liste de primitives temporaires s'il y a lieu.
+    *
+    * @param eventType Le type d'evenement appelant cette fonction
+    * @param key La touche du clavier affectee par cet evenement
+    */
+  keyboardEvent(eventType: KeyboardEventType, key: string): SVGPrimitive[];
+
+   /**
+    * Envoie les informations d'un evenement de la molette de souris a l'outil pour qu'il le traite.
+    * Retourne une liste de primitives temporaires s'il y a lieu.
+    *
+    * @param delta La variation dans l'orientation de la molette de la souris
+    */
+  mouseWheelEvent(delta: number): SVGPrimitive[];
 
   /**
-   * Commence une nouvelle utilisation de l'outil. Retourne une liste de primitives temporaires s'il y a lieu.
-   *
-   * @param position La position initiale de l'utilisation de l'outil
+   * Retourne vrai si l'outil a une commande prete a etre appliquee.
    */
-  begin(position: Point): SVGPrimitive[];
+  isCommandReady(): boolean;
 
   /**
-   * Met l'outil a jour selon une nouvelle position. Retourne une liste de primitives temporaires s'il y a lieu.
-   *
-   * @param position La nouvelle position
+   * Retourne la commande creee par l'outil, s'il y a lieu.
    */
-  update(position: Point): SVGPrimitive[];
-
-  /**
-   * Termine l'utilisation de l'outil. Retourne la commande cree.
-   *
-   * @param position La position finale de l'utilisation de l'outil
-   * @param isLeft Est vrai si la methode a ete appelee par un clic gauche de la souris
-   * @param primitive La primitive a modifier, s'il y a lieu
-   */
-  finish(position: Point, isLeft?: boolean, primitive?: SVGPrimitive): ToolCommand;
-
-  /**
-   * Applique l'utilisation d'une touche du clavier dans l'outil
-   *
-   * @param key La touche appuyee
-   */
-  keyDown(key: string): SVGPrimitive[];
-
-  /**
-   * Applique la fin de l'utilisation d'une touche du clavier dans l'outil
-   *
-   * @param key La touche qui vient d'etre relachee
-   */
-  keyUp(key: string): SVGPrimitive[];
+  getCommand(): ToolCommand | null;
 }

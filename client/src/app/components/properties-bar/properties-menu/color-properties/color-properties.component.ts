@@ -20,6 +20,7 @@ export class ColorPropertiesComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.selectedToolSubscription.unsubscribe();
+    this.selectedToolSubscription.remove(this.selectedToolSubscription);
+    // this.selectedToolSubscription.unsubscribe();
   }
 }

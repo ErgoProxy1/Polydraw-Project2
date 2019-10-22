@@ -1,3 +1,4 @@
+import { Line } from '../svgPrimitives/line/line';
 import { Path } from '../svgPrimitives/path/path';
 import { Shape } from '../svgPrimitives/shape/shape';
 import { SVGPrimitive } from '../svgPrimitives/svgPrimitive';
@@ -21,6 +22,7 @@ export class ColorApplicatorToolCommand implements ToolCommand {
     changeColor(color: Color): void {
         switch (this.primitive.type) {
             case PrimitiveType.Rectangle:
+            case PrimitiveType.Ellipse:
                 const shape: Shape = (this.primitive as Shape);
                 if (this.isPrimary && shape.strokeType !== StrokeType.Outline) {
                     this.lastColor = Color.copyColor(shape.fillColor);
@@ -30,11 +32,28 @@ export class ColorApplicatorToolCommand implements ToolCommand {
                     shape.strokeColor = Color.copyColor(color);
                 }
                 break;
+            case PrimitiveType.Polygon:
+                const polygon: Shape = (this.primitive as Shape);
+                if (this.isPrimary && polygon.strokeType !== StrokeType.Outline) {
+                    this.lastColor = polygon.fillColor;
+                    polygon.fillColor = color;
+                } else if (!this.isPrimary && polygon.strokeType !== StrokeType.Full) {
+                    this.lastColor = polygon.strokeColor;
+                    polygon.strokeColor = color;
+                }
+                break;
             case PrimitiveType.Path:
                 const path: Path = (this.primitive as Path);
                 if (this.isPrimary) {
                     this.lastColor = Color.copyColor(path.strokeColor);
                     path.strokeColor = Color.copyColor(color);
+                }
+                break;
+            case PrimitiveType.Line:
+                const line: Line = (this.primitive as Line);
+                if (this.isPrimary) {
+                    this.lastColor = Color.copyColor(line.strokeColor);
+                    line.strokeColor = Color.copyColor(color);
                 }
                 break;
             default:

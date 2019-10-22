@@ -5,8 +5,8 @@ import { ColorService } from 'src/app/services/colorService/color.service';
 import { DrawingService } from 'src/app/services/drawing/drawing.service';
 import { KeyboardShortcutService } from 'src/app/services/keyboardShortcut/keyboard-shortcut.service';
 import { ToolsService } from 'src/app/services/tools/tools.service';
-import { Color } from '../../services/utils/color';
-import { MAX_ALPHA, PaletteChoiceInfo, PaletteChoices } from '../../services/utils/constantsAndEnums';
+import { Color, MAX_ALPHA } from '../../services/utils/color';
+import { PaletteChoicesRGB } from '../../services/utils/constantsAndEnums';
 
 @Component({
   selector: 'app-color-tool',
@@ -14,7 +14,7 @@ import { MAX_ALPHA, PaletteChoiceInfo, PaletteChoices } from '../../services/uti
   styleUrls: ['./color-tool.component.scss'],
 })
 export class ColorToolComponent {
-  readonly paletteChoices: PaletteChoiceInfo[] = PaletteChoices;
+  readonly palettesChoicesRGB: Color[] = PaletteChoicesRGB;
 
   @ViewChild('paletteModal', { static: true }) paletteModal: ElementRef;
 
@@ -37,7 +37,7 @@ export class ColorToolComponent {
   hexError = false;
   rgbaError = false;
 
-  lastColorsUsed: PaletteChoiceInfo[] = [];
+  lastColorsUsed: Color[] = [];
 
   constructor(private formBuilder: FormBuilder, private drawingService: DrawingService, private modalService: NgbModal,
               private keyboardShortcutService: KeyboardShortcutService, private toolsService: ToolsService,
@@ -49,18 +49,17 @@ export class ColorToolComponent {
     this.rgbaPrimaryColor = this.toolsService.primaryColor;
     this.rgbaSecondaryColor = this.toolsService.secondaryColor;
     this.lastColorsUsed = this.colorService.lastColorsUsed;
-    this.currentPrimaryHex = '#' + this.colorService.convertRgbToHex(
-      this.rgbaPrimaryColor.r,
-      this.rgbaPrimaryColor.g,
-      this.rgbaPrimaryColor.b,
-    );
-    this.currentSecondaryHex = '#' + this.colorService.convertRgbToHex(
-      this.rgbaSecondaryColor.r,
-      this.rgbaSecondaryColor.g,
-      this.rgbaSecondaryColor.b,
-    );
+    this.currentPrimaryHex = this.colorService.convertRgbToHex(this.rgbaPrimaryColor);
+    this.currentSecondaryHex = this.colorService.convertRgbToHex(this.rgbaSecondaryColor);
     this.primaryAlpha = this.rgbaPrimaryColor.a;
     this.secondaryAlpha = this.rgbaSecondaryColor.a;
+
+    this.toolsService.eyeDropperPrimaryObservable.subscribe((data) => {
+      this.setPrimaryFromEyeDropper(data);
+    });
+    this.toolsService.eyeDropperSecondaryObservable.subscribe((data) => {
+      this.setSecondaryFromEyeDropper(data);
+    });
   }
 
   // Indique que l'utilisateur modifie la couleur primaire
@@ -88,8 +87,8 @@ export class ColorToolComponent {
   }
 
   // Determine la couleur cliquer sur la palette
-  getClickedColor(mouseEvent: MouseEvent): void {
-    this.currentHexSelectedColor = String((mouseEvent.target as SVGElement).getAttribute('fill'));
+  getClickedColor(color: Color): void {
+    this.currentHexSelectedColor = this.colorService.convertRgbToHex(color);
     this.paletteForm.patchValue({ hex: this.currentHexSelectedColor.split('#')[1] });
     this.confirmHexColor();
     this.confirmRGBColor();
@@ -97,21 +96,28 @@ export class ColorToolComponent {
   }
 
   // Determine la couleur cliquer sur la l'historique des couleurschoisies
-  getStackColor(mouseEvent: MouseEvent): void {
-    this.currentPrimaryHex = String((mouseEvent.target as SVGElement).getAttribute('fill'));
-    this.rgbaConversion();
+  getStackColor(mouseEvent: MouseEvent, color: Color): void {
+    if (mouseEvent.button === 0) {
+      this.currentPrimaryHex = this.colorService.convertRgbToHex(color);
+      this.rgbaConversion();
+    } else if (mouseEvent.button === 2) {
+      mouseEvent.preventDefault();
+      mouseEvent.stopPropagation();
+      this.currentSecondaryHex = this.colorService.convertRgbToHex(color);
+      this.rgbaConversion();
+    }
   }
 
   // Applique la couleur aprés l'évènement Click sur OK
-  applyClickedColor(paletteForm: FormGroup): void {
-    const tampon: string = this.colorService.stringToHexForm(this.paletteForm.value.hex);
+  applyClickedColor(): void {
+    const tampon: Color = this.colorService.convertHextoRgb(this.paletteForm.value.hex);
     if (this.primarySelected && !this.hexError) {
-      this.currentPrimaryHex = tampon;
+      this.currentPrimaryHex = this.colorService.convertRgbToHex(tampon);
       this.rgbaConversion();
       this.addNewColor(tampon);
       this.toolsService.primaryColor = this.rgbaPrimaryColor;
     } else if (!this.primarySelected && !this.hexError) {
-      this.currentSecondaryHex = tampon;
+      this.currentSecondaryHex = this.colorService.convertRgbToHex(tampon);
       this.rgbaConversion();
       this.addNewColor(tampon);
       this.toolsService.secondaryColor = this.rgbaSecondaryColor;
@@ -134,10 +140,10 @@ export class ColorToolComponent {
   // Confirme les valeurs hex et update les valeurs RGB du formulaire
   confirmHexColor(): void {
     const currentHex: string = this.colorService.correctHexInput(this.paletteForm.value.hex.toUpperCase());
-    const currentRgbaSelectedColor: number[] = this.colorService.convertHextoRgb(currentHex);
+    const currentRgbaSelectedColor: Color = this.colorService.convertHextoRgb(currentHex);
     this.paletteForm.patchValue({
-      red: currentRgbaSelectedColor[0],
-      green: currentRgbaSelectedColor[1], blue: currentRgbaSelectedColor[2],
+      red: currentRgbaSelectedColor.r,
+      green: currentRgbaSelectedColor.g, blue: currentRgbaSelectedColor.b,
     });
     this.paletteForm.patchValue({ hex: currentHex });
     if (this.paletteForm.value.hex.length === 6) {
@@ -149,13 +155,13 @@ export class ColorToolComponent {
 
   // Confirme les valeurs RGB et update les valeurs hex du formulaire
   confirmRGBColor(): void {
-    const currentRGB: number[] = [this.paletteForm.value.red, this.paletteForm.value.green,
-    this.paletteForm.value.blue];
-    this.rgbaError = this.colorService.confirmRGBColor(currentRGB[0], currentRGB[1], currentRGB[2]);
+    const currentRGB: Color = new Color(this.paletteForm.value.red, this.paletteForm.value.green,
+    this.paletteForm.value.blue);
+    this.rgbaError = this.colorService.confirmRGBColor(currentRGB);
     this.hexError = this.rgbaError;
-    const converted: string = this.colorService.convertRgbToHex(currentRGB[0], currentRGB[1], currentRGB[2]);
-    this.paletteForm.patchValue({ hex: converted });
-    this.currentHexSelectedColor = this.colorService.stringToHexForm(converted);
+    const converted: string = this.colorService.convertRgbToHex(currentRGB);
+    this.paletteForm.patchValue({ hex: converted.split('#')[1] });
+    this.currentHexSelectedColor = converted;
   }
 
   // Verifie et assigne les valeurs alpha
@@ -175,39 +181,32 @@ export class ColorToolComponent {
 
   // Convertie les valeurs hexademiales en RGB avant de les passer aux objets Color (Communication avec le tool service)
   rgbaConversion(): void {
-    const rgb1: number[] = this.colorService.convertHextoRgb(this.currentPrimaryHex.split('#')[1]);
-    const rgb2: number[] = this.colorService.convertHextoRgb(this.currentSecondaryHex.split('#')[1]);
-    this.rgbaPrimaryColor.changeColor(rgb1[0], rgb1[1], rgb1[2], this.primaryAlpha);
-    this.rgbaSecondaryColor.changeColor(rgb2[0], rgb2[1], rgb2[2], this.secondaryAlpha);
+    const rgb1: Color = this.colorService.convertHextoRgb(this.currentPrimaryHex.split('#')[1]);
+    const rgb2: Color = this.colorService.convertHextoRgb(this.currentSecondaryHex.split('#')[1]);
+    this.rgbaPrimaryColor.changeColor(rgb1, this.primaryAlpha);
+    this.rgbaSecondaryColor.changeColor(rgb2, this.secondaryAlpha);
   }
 
   // Ajoute une couleur a la liste des couleurs deja utiliser.
-  addNewColor(colorSelected: string): void {
-    for (const info of this.lastColorsUsed) {
-      if (info.color === colorSelected) { return; }
-    }
-    const tempColorStorage: PaletteChoiceInfo[] = [];
-    tempColorStorage[0] = { positionX: 0, positionY: 0, color: colorSelected };
-    for (let i = 0; i < this.lastColorsUsed.length; i++) {
-      if (i < 4) {
-        tempColorStorage[i + 1] = this.lastColorsUsed[i];
-        tempColorStorage[i + 1].positionX += 40;
-        tempColorStorage[i + 1].positionY = 0;
-      } else if (i === 4) {
-        tempColorStorage[i + 1] = this.lastColorsUsed[i];
-        tempColorStorage[i + 1].positionX = 0;
-        tempColorStorage[i + 1].positionY = 40;
-      } else if (i) {
-        tempColorStorage[i + 1] = this.lastColorsUsed[i];
-        tempColorStorage[i + 1].positionX += 40;
-        tempColorStorage[i + 1].positionY = 40;
-      }
-    }
-    if (tempColorStorage.length > 10) {
-      tempColorStorage.pop();
-    }
-    this.lastColorsUsed = tempColorStorage;
-    this.colorService.lastColorsUsed = this.lastColorsUsed;
+  addNewColor(colorSelected: Color): void {
+    this.colorService.addNewColor(colorSelected);
+    this.lastColorsUsed = this.colorService.getLastColorsUsed();
+  }
+
+  setPrimaryFromEyeDropper(color: Color) {
+    this.primarySelected = true;
+    this.paletteForm.patchValue({hex: this.colorService.convertRgbToHex(color).split('#')[1]});
+    this.primaryAlpha = color.a;
+    this.applyClickedColor();
+    this.toolsService.primaryColor = color;
+  }
+
+  setSecondaryFromEyeDropper(color: Color) {
+    this.primarySelected = false;
+    this.paletteForm.patchValue({hex: this.colorService.convertRgbToHex(color).split('#')[1]});
+    this.secondaryAlpha = color.a;
+    this.applyClickedColor();
+    this.toolsService.secondaryColor = color;
   }
 
   // Envoie la couleur primaire au canvas afin de changer la couleur de fond
@@ -216,24 +215,24 @@ export class ColorToolComponent {
   }
 
   // Ouvre la fenetre modale
-  openModal(): void {
-    this.keyboardShortcutService.setActiveModalStatus(true);
+  openModal() {
+    this.keyboardShortcutService.modalWindowActive = true;
     this.modalService.open(this.paletteModal, this.paletteModalConfig);
   }
 
   // Ferme la fenetre modale
-  closeModal(): void {
-    this.keyboardShortcutService.setActiveModalStatus(false);
+  closeModal() {
+    this.keyboardShortcutService.modalWindowActive = false;
     this.modalService.dismissAll();
     this.hexError = false;
   }
 
   // Méthodes pour configurer le booléen correctement:
-  setInactiveFocus(): void {
-    this.keyboardShortcutService.setFocusActive(false);
+  setInactiveFocus() {
+    this.keyboardShortcutService.inputFocusedActive = false;
   }
 
-  setActiveFocus(): void {
-    this.keyboardShortcutService.setFocusActive(true);
+  setActiveFocus() {
+    this.keyboardShortcutService.inputFocusedActive = true;
   }
 }

@@ -4,33 +4,31 @@ import { Point } from '../../utils/point';
 import { Shape } from '../shape/shape';
 import { SVGPrimitive } from '../svgPrimitive';
 
-export class Rectangle extends Shape implements SVGPrimitive {
+export class Rectangle extends Shape {
   position: Point; // coin superieur gauche du rectangle
-  corner1: Point; // coin representant la position initiale du rectangle englobant
-  corner2: Point; // coin oppose au coin1 sur le rectangle englobant
   type = PrimitiveType.Rectangle;
 
   constructor(fillColor: Color, strokeColor: Color, strokeWidth: number, strokeType: StrokeType,
               position: Point, width: number = 0, height: number = 0) {
-    super(fillColor, strokeColor, strokeWidth, strokeType, width, height);
-    this.corner1 = this.position = position;
-    this.corner2 = new Point(position.x + width, position.y + height);
+    super(fillColor, strokeColor, strokeWidth, strokeType, new Point(position.x + width / 2.0, position.y + height / 2.0), width, height);
+    this.position = position;
+  }
+
+  static createCopy(primitive: SVGPrimitive): Rectangle {
+    const rectangle: Rectangle = primitive as Rectangle;
+    const newRectangle: Rectangle = new Rectangle(Color.copyColor(rectangle.fillColor), Color.copyColor(rectangle.strokeColor),
+      rectangle.strokeWidth, rectangle.strokeType, rectangle.position, rectangle.width, rectangle.height);
+    newRectangle.absoluteHeight = rectangle.absoluteHeight;
+    newRectangle.absoluteWidth = rectangle.absoluteWidth;
+    newRectangle.corner1 = rectangle.corner1;
+    newRectangle.corner2 = rectangle.corner2;
+    newRectangle.center = rectangle.center;
+    return newRectangle;
   }
 
   resize(corner1: Point, corner2: Point, isRegular: boolean): void {
     super.resize(corner1, corner2, isRegular);
-    this.position = new Point(Math.min(corner1.x, corner2.x), Math.min(corner1.y, corner2.y));
-    this.corner1 = corner1;
-    this.corner2 = corner2;
-    if (isRegular) { // Si il est regulier, deplacer la position au bon endroit pour que le carre reste relie au coin1
-      const width = corner2.x - corner1.x;
-      const height = corner2.y - corner1.y;
-      if (width < 0 && Math.abs(width) > Math.abs(this.getWidth())) {
-        this.position.x -= width - this.getWidth();
-      }
-      if (height < 0 && Math.abs(height) > Math.abs(this.getHeight())) {
-        this.position.y -= height - this.getHeight();
-      }
-    }
+    this.position = this.center.addXY(-this.getAbsoluteWidth() / 2.0, -this.getAbsoluteHeight() / 2.0);
+    this.updateCorners();
   }
 }

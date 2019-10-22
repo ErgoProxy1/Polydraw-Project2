@@ -9,8 +9,9 @@ describe('Color', () => {
     });
 
     it('Color is properly changed', () => {
-        const testColor: Color = new Color(128, 64, 32, 1);
-        testColor.changeColor(32, 64, 128, 0.5);
+        const testColor: Color = new Color(45, 64, 32, 1);
+        const newColor: Color = new Color(32, 64, 128, 0.5);
+        testColor.changeColor(newColor, 0.5);
         expect(testColor.r).toBe(32);
         expect(testColor.g).toBe(64);
         expect(testColor.b).toBe(128);

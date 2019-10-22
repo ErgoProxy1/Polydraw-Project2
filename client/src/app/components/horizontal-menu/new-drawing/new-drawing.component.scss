@@ -1,33 +1,12 @@
-#currentColor{
+.currentColor{
     stroke: #000000;
 }
 
-#paletteNc{
+.new-color-palette{
     border:1px solid #000000;
     margin-bottom: 16px;
     cursor: pointer;
 }
-
-#background{
-    padding-top: 10px;
-}
-
-#width{
-    margin: 0px 0px 0px;
-}
-
-#height{
-    margin: 0px 0px 0px;
-}
-
-#hexGroupNc{
-    margin: 0px 0px 0px !important;
-}
-
-#dataAlert{
-    margin-bottom:0px;
-}
-
 
 .left-form-group{
     border-top-right-radius: 0;
@@ -40,4 +19,21 @@
 .right-form-group{
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
+}
+.palette {
+    width:95%;
+    margin:0 auto;
+    border-style:solid;
+    border-radius:5px;
+    border-width:2px;
+}
+.palette .palette-badge{
+    width:12%;
+    padding-bottom:11%;
+    margin:1%;
+    float:left;
+    border-radius: 50%;
+    border-style:solid;
+    border-width: 2px;
+    border-color: rgb(154, 161, 154);
 }

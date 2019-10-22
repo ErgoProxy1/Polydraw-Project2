@@ -5,7 +5,7 @@ import { StrokeType } from '../utils/constantsAndEnums';
 import { Point } from '../utils/point';
 import { RectangleCommand } from './rectangleCommand';
 
-describe('PaintBrushCommand', () => {
+describe('RectangleCommand', () => {
     let rectangleCmd: RectangleCommand;
 
     beforeEach(() => {
@@ -23,24 +23,12 @@ describe('PaintBrushCommand', () => {
         expect(rectangleCmd.shape).not.toBeNull();
       });
 
-    it('#apply should return the current path', () => {
-      rectangleCmd.apply();
-      expect(rectangleCmd.shape).toEqual(new Rectangle(new Color(200, 150, 100, 1),
+    it('#apply should return the current rectangle', () => {
+      expect(rectangleCmd.apply()).toEqual(new Rectangle(new Color(200, 150, 100, 1),
                                                         new Color(100, 100, 100, 1),
                                                         10,
                                                         StrokeType.Full,
                                                         new Point(200, 300), 0, 0));
 
     });
-
-    it('#cancel should cancel  path', () => {
-        const currentRect = rectangleCmd.shape;
-        rectangleCmd.cancel();
-        expect(rectangleCmd.shape).toEqual(currentRect);
-        expect(rectangleCmd.shape).toEqual(new Rectangle(new Color(200, 150, 100, 1),
-                                                        new Color(100, 100, 100, 1),
-                                                        10,
-                                                        StrokeType.Full,
-                                                        new Point(200, 300), 0, 0));
-      });
   });

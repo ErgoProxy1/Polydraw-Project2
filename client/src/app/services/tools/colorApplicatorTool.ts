@@ -2,7 +2,7 @@ import { SVGPrimitive } from '../svgPrimitives/svgPrimitive';
 import { ColorApplicatorToolCommand } from '../toolCommands/colorApplicatorCommand';
 import { ToolCommand } from '../toolCommands/toolCommand';
 import { Color } from '../utils/color';
-import { ToolType } from '../utils/constantsAndEnums';
+import { KeyboardEventType, MouseEventType, ToolType } from '../utils/constantsAndEnums';
 import { Point } from '../utils/point';
 import { Tool } from './tool';
 
@@ -11,32 +11,40 @@ export class ColorApplicatorTool implements Tool {
   private command: ColorApplicatorToolCommand;
   private primaryColor: Color;
   private secondaryColor: Color;
+  private commandReady = false;
 
   constructor(primaryColor: Color, secondaryColor: Color) {
     this.primaryColor = primaryColor;
     this.secondaryColor = secondaryColor;
   }
 
-  begin(position: Point): SVGPrimitive[] {
+  mouseEvent(eventType: MouseEventType, position: Point, primitive?: SVGPrimitive | undefined): SVGPrimitive[] {
+    if (primitive && (eventType === MouseEventType.MouseClickLeft || eventType === MouseEventType.MouseClickRight)) {
+      this.createCommand(eventType === MouseEventType.MouseClickLeft, primitive);
+    }
     return [];
   }
 
-  update(position: Point): SVGPrimitive[] {
+  keyboardEvent(eventType: KeyboardEventType, key: string): SVGPrimitive[] {
     return [];
   }
 
-  finish(position: Point, isLeft: boolean, primitive: SVGPrimitive): ToolCommand {
-    const color: Color = isLeft ? Color.copyColor(this.primaryColor) : Color.copyColor(this.secondaryColor);
-    this.command = new ColorApplicatorToolCommand(primitive, isLeft, color);
-    this.command.apply();
+  mouseWheelEvent(delta: number): SVGPrimitive[] {
+    return [];
+  }
+
+  isCommandReady(): boolean {
+    return this.commandReady;
+  }
+
+  getCommand(): ToolCommand {
+    this.commandReady = false;
     return this.command;
   }
 
-  keyDown(key: string): SVGPrimitive[] {
-    return [];
-  }
-
-  keyUp(key: string): SVGPrimitive[] {
-    return [];
+  private createCommand(isLeft: boolean, primitive: SVGPrimitive): void {
+    const color: Color = isLeft ? Color.copyColor(this.primaryColor) : Color.copyColor(this.secondaryColor);
+    this.command = new ColorApplicatorToolCommand(primitive, isLeft, color);
+    this.commandReady = true;
   }
 }

@@ -1,8 +1,11 @@
 import { Component, OnDestroy, OnInit} from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { RectangleTool } from 'src/app/services/tools/rectangleTool';
+import { PolygonTool } from 'src/app/services/tools/polygonTool';
+import { ShapeTool } from 'src/app/services/tools/shapeTool';
 import { ToolsService } from 'src/app/services/tools/tools.service';
-import { MAX_STROKE_WIDTH, MIN_STROKE_WIDTH, StrokeType, ToolType } from 'src/app/services/utils/constantsAndEnums';
+import { MAX_STROKE_WIDTH, MIN_STROKE_WIDTH, POLYGON_NAMES, StrokeType, ToolType } from 'src/app/services/utils/constantsAndEnums';
+import { RoutingConstants } from 'src/app/services/utils/routingConstants';
 
 @Component({
   selector: 'app-shape-properties',
@@ -11,33 +14,79 @@ import { MAX_STROKE_WIDTH, MIN_STROKE_WIDTH, StrokeType, ToolType } from 'src/ap
 })
 export class ShapePropertiesComponent implements OnInit, OnDestroy {
   private selectedToolSubscription: Subscription;
-  rectangle: RectangleTool;
+  private routeParametersSubscription: Subscription;
+  tool: ShapeTool;
+  private toolType: ToolType = ToolType.RectangleTool;
+  readonly SHAPE_TYPE_NAMES_MAP: Map<string, ToolType> = new Map([
+    ['Rectangle', ToolType.RectangleTool],
+    ['Ellipse', ToolType.EllipseTool],
+    ['Polygone', ToolType.PolygonTool],
+  ]);
   readonly STROKE_TYPE_NAMES_MAP: Map<string, StrokeType> = new Map([
     ['Contour et remplissage', StrokeType.FullWithOutline],
     ['Remplissage seulement', StrokeType.Full],
     ['Contour seulement', StrokeType.Outline],
   ]);
+  readonly polygonNames: Map<number, string> = POLYGON_NAMES;
   private strokeWidth: number;
+  private numberSidesPolygon = 3;
   private strokeType: StrokeType;
 
   readonly MAX_STROKE_WIDTH = MAX_STROKE_WIDTH;
   readonly MIN_STROKE_WIDTH = MIN_STROKE_WIDTH;
 
-  constructor(private toolsService: ToolsService) { }
+  constructor(private toolsService: ToolsService, private router: Router, private route: ActivatedRoute) {
+    this.ngOnInit();
+    if (this.tool.type === ToolType.PolygonTool) {
+     this.numberSidesPolygon = (this.tool as PolygonTool).numberOfSides;
+    }
+   }
 
   ngOnInit() {
     this.selectedToolSubscription = this.toolsService.subscribeToToolChanged().subscribe((toolSelected) => {
-      this.rectangle = toolSelected as RectangleTool;
+      this.tool = toolSelected as ShapeTool;
+      this.toolType = this.tool.type;
+      this.strokeWidth = this.tool.strokeWidth;
+      this.strokeType = this.tool.strokeType;
     });
 
-    this.toolsService.newToolSelected(ToolType.RectangleTool);
-
-    this.strokeWidth = this.rectangle.strokeWidth;
-    this.strokeType = this.rectangle.strokeType;
+    this.routeParametersSubscription = this.route.params.subscribe((params) => {
+      const shapeType: string = params.shapeType;
+      if (shapeType) {
+        if (shapeType === RoutingConstants.RECTANGLE_SHAPE_TYPE) {
+          this.toolType = ToolType.RectangleTool;
+          this.toolsService.newToolSelected(this.toolType);
+        } else if (shapeType === RoutingConstants.ELLIPSE_SHAPE_TYPE) {
+          this.toolType = ToolType.EllipseTool;
+          this.toolsService.newToolSelected(this.toolType);
+        } else if (shapeType === RoutingConstants.POLYGON_SHAPE_TYPE) {
+          this.toolType = ToolType.PolygonTool;
+          this.toolsService.newToolSelected(this.toolType);
+        }
+      } else {
+        this.toolType = this.toolsService.getCurrentShapeToolTypeSelected();
+        this.onChangeShapeType();
+      }
+    });
   }
 
   ngOnDestroy() {
     this.selectedToolSubscription.unsubscribe();
+    this.routeParametersSubscription.unsubscribe();
+  }
+
+  onChangeShapeType(): void {
+    switch (this.toolType) {
+      case ToolType.RectangleTool:
+        this.router.navigate([RoutingConstants.ROUTE_TO_SHAPE, RoutingConstants.RECTANGLE_SHAPE_TYPE]);
+        break;
+      case ToolType.EllipseTool:
+        this.router.navigate([RoutingConstants.ROUTE_TO_SHAPE, RoutingConstants.ELLIPSE_SHAPE_TYPE]);
+        break;
+      case ToolType.PolygonTool:
+        this.router.navigate([RoutingConstants.ROUTE_TO_SHAPE, RoutingConstants.POLYGON_SHAPE_TYPE]);
+    }
+    this.toolsService.newToolSelected(this.toolType);
   }
 
   onChangeStrokeWidth(): void {
@@ -46,14 +95,27 @@ export class ShapePropertiesComponent implements OnInit, OnDestroy {
     } else if (this.strokeWidth < MIN_STROKE_WIDTH) {
       this.strokeWidth = MIN_STROKE_WIDTH;
     }
-    this.rectangle.strokeWidth = this.strokeWidth;
+    this.tool.strokeWidth = this.strokeWidth;
+  }
+
+  setNumberOfSide(value: number) {
+    this.numberSidesPolygon = value;
+  }
+
+  getNumberOfSide(): number {
+    return this.numberSidesPolygon;
   }
 
   onChangeStrokeType(): void {
     if (this.strokeType in StrokeType) {
-      this.rectangle.strokeType = this.strokeType;
+      this.tool.strokeType = this.strokeType;
     } else {
-      this.strokeType = this.rectangle.strokeType;
+      this.strokeType = this.tool.strokeType;
+    }
+  }
+  onChangeSidesNumber(): void {
+    if (this.toolType === ToolType.PolygonTool) {
+      (this.tool as PolygonTool).numberOfSides = this.numberSidesPolygon;
     }
   }
 }

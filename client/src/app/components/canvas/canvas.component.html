@@ -1,16 +1,62 @@
 <div [style.height.%]="100" [style.width.%]="100">
-    <div class="canvas" #canvas [style.height.px]="canvasHeight" [style.width.px]="canvasWidth"
-        [style.background-color]="canvasBackground">
-        <svg width="100%" height="100%">
-            <g *ngFor="let i of primitives" [ngSwitch]="i.type">
+    <div class="canvas" #canvas [style.height.px]="canvasHeight" [style.width.px]="canvasWidth" [style.cursor]="cursor"
+        [style.background-color]="canvasBackground" (mousedown)="mouseDownOnCanvas($event);"
+        (mouseup)="mouseUpOnCanvas($event);" (mousemove)="mouseMoveOnCanvas($event);" (click)="clickOnCanvas($event);"
+        (contextmenu)="clickOnCanvas($event);">
+
+        <svg #svgPrimitives [attr.viewBox]="viewBox" width="100%" height="100%" [style.background-color]="canvasBackground">
+            
+            <g *ngIf="gridInfo.toShow && !screenShoting">
+                <line *ngFor="let dummy of numberOfSquareWidth | nTimes, let n = index"
+                    [attr.x1]="(n+1)*gridInfo.sizeOfSquare()" y1="0" [attr.x2]="(n+1)*gridInfo.sizeOfSquare()"
+                    [attr.y2]="canvasHeight" [attr.stroke]="gridInfo.colorStroke.asString()" [attr.stroke-width]="2" />
+                <line *ngFor="let dummy of numberOfSquareHeight | nTimes, let n = index" [attr.x1]="0"
+                    [attr.y1]="(n+1)*gridInfo.sizeOfSquare()" [attr.x2]="canvasWidth"
+                    [attr.y2]="(n+1)*gridInfo.sizeOfSquare()" [attr.stroke]="gridInfo.colorStroke.asString()"
+                    [attr.stroke-width]="2" />
+            </g>
+
+            <g *ngFor="let i of controller.primitivesToDraw" [ngSwitch]="i.type"
+                (mousedown)="mouseDownOnCanvas($event,i);" (mouseup)="mouseUpOnCanvas($event,i);"
+                (mousemove)="mouseMoveOnCanvas($event,i);" (click)="clickOnCanvas($event,i);"
+                (contextmenu)="clickOnCanvas($event,i);">
+
+                <rect *ngSwitchCase="PrimitiveType.Perimeter" [attr.x]="i.position.x" [attr.y]="i.position.y"
+                    [attr.width]="i.getAbsoluteWidth()" [attr.height]="i.getAbsoluteHeight()"
+                    [attr.fill]="i.fillColor.asString()" [attr.stroke]="i.strokeColor.asString()"
+                    [attr.stroke-width]="i.strokeWidth" [attr.stroke-dasharray]="'4'"></rect>
+
                 <rect *ngSwitchCase="PrimitiveType.Rectangle" [attr.x]="i.position.x" [attr.y]="i.position.y"
                     [attr.width]="i.getAbsoluteWidth()" [attr.height]="i.getAbsoluteHeight()"
                     [attr.fill]="i.fillColor.asString()" [attr.stroke]="i.strokeColor.asString()"
-                    [attr.stroke-width]="i.strokeWidth" (mousedown)="primitiveLeftClicked($event,i);"
-                    (contextmenu)="primitiveRightClicked($event, i)"></rect>
+                    [attr.stroke-width]="i.strokeWidth"></rect>
+
+                <ellipse *ngSwitchCase="PrimitiveType.Ellipse" [attr.cx]="i.center.x" [attr.cy]="i.center.y"
+                    [attr.rx]="i.radiusX" [attr.ry]="i.radiusY" [attr.fill]="i.fillColor.asString()"
+                    [attr.stroke]="i.strokeColor.asString()" [attr.stroke-width]="i.strokeWidth"></ellipse>
+
+                <path *ngSwitchCase="PrimitiveType.Stamp" [attr.transform]="i.transformations"
+                    [attr.fill]="i.info.color.rgbaTextForm" [attr.d]="i.info.image" (wheel)="onScroll($event)"
+                    [attr.transform-origin]="i.origin"></path>
+
+                <polygon *ngSwitchCase="PrimitiveType.Polygon" [attr.points]="i.listPoints"
+                    [attr.fill]="i.fillColor.asString()" [attr.stroke]="i.strokeColor.asString()"
+                    [attr.stroke-width]="i.strokeWidth"></polygon>
+
+                <g *ngSwitchCase="PrimitiveType.Line">
+                    <path [attr.d]="i.linePoints" [attr.stroke-linejoin]="LINE_JOIN_TYPE[i.lineJoin]"
+                        [attr.stroke-linecap]="LINE_CAP_TYPE[i.lineCap]"
+                        [attr.stroke-dasharray]="PATTERN_TYPE[i.pattern]" [attr.stroke]="i.strokeColor.asString()"
+                        [attr.stroke-width]="i.strokeWidth" fill="none" 
+                        (dblclick)="ondblclick($event);">
+                    </path>
+                    <g *ngFor="let cercle of i.circlePoints">
+                        <circle [attr.cx]="cercle.x" [attr.cy]="cercle.y" [attr.r]="i.circleRadius" [attr.fill]="i.strokeColor.asString()" />
+                    </g>
+                </g>
 
                 <defs *ngSwitchCase="PrimitiveType.Path" [ngSwitch]="i.texture">
-                    <filter *ngSwitchCase="Texture.Basic" [attr.id]="filterIds[0]" filterUnits="userSpaceOnUse" x="0"
+                    <filter *ngSwitchCase="Texture.Basic" [attr.id]="FILTER_IDS[0]" filterUnits="userSpaceOnUse" x="0"
                         y="0" width="100%" height="100%">
                         <feOffset in="gauss" dx="0" dy="0" result="offSet" />
                         <feMerge>
@@ -18,8 +64,8 @@
                         </feMerge>
                     </filter>
 
-                    <filter *ngSwitchCase="Texture.Degraded" [attr.id]="filterIds[1]" filterUnits="userSpaceOnUse" x="0"
-                        y="0" width="100%" height="100%">
+                    <filter *ngSwitchCase="Texture.Degraded" [attr.id]="FILTER_IDS[1]" filterUnits="userSpaceOnUse"
+                        x="0" y="0" width="100%" height="100%">
                         <feTurbulence type="turbulence" baseFrequency="0.06" numOctaves="6" result="turb" />
                         <feDisplacementMap in2="turb" in="SourceGraphic" scale="50" xChannelSelector="R"
                             yChannelSelector="G" result="turb-disp" />
@@ -38,7 +84,7 @@
                         </feMerge>
                     </filter>
 
-                    <filter *ngSwitchCase="Texture.Grayed" [attr.id]="filterIds[2]" filterUnits="userSpaceOnUse" x="0"
+                    <filter *ngSwitchCase="Texture.Grayed" [attr.id]="FILTER_IDS[2]" filterUnits="userSpaceOnUse" x="0"
                         y="0" width="100%" height="100%">
                         <feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="3" result="turb" />
                         <feDisplacementMap in2="turb" in="SourceGraphic" scale="90" xChannelSelector="R"
@@ -58,7 +104,7 @@
                         </feMerge>
                     </filter>
 
-                    <filter *ngSwitchCase="Texture.Light" [attr.id]="filterIds[3]" filterUnits="userSpaceOnUse" x="0"
+                    <filter *ngSwitchCase="Texture.Light" [attr.id]="FILTER_IDS[3]" filterUnits="userSpaceOnUse" x="0"
                         y="0" width="100%" height="100%">
                         <feTurbulence type="turbulence" baseFrequency="0.2" numOctaves="5" result="turb2" />
                         <feDisplacementMap in2="turb2" in="SourceGraphic" result="disp-turb2" scale="30"
@@ -68,7 +114,7 @@
                         </feMerge>
                     </filter>
 
-                    <filter *ngSwitchCase="Texture.Frothy" [attr.id]="filterIds[4]" filterUnits="userSpaceOnUse" x="0"
+                    <filter *ngSwitchCase="Texture.Frothy" [attr.id]="FILTER_IDS[4]" filterUnits="userSpaceOnUse" x="0"
                         y="0" width="100%" height="100%">
                         <feTurbulence type="turbulence" baseFrequency="0.08" numOctaves="2" result="turb1" />
                         <feDisplacementMap in2="turb1" in="SourceGraphic" result="disp-turb1" scale="20"
@@ -77,12 +123,11 @@
                             <feMergeNode in="disp-turb1" />
                         </feMerge>
                     </filter>
-
                 </defs>
-                <g [attr.filter]="'url('+'#'+filterIds[i.texture]+')'">
+
+                <g *ngSwitchCase="PrimitiveType.Path" [attr.filter]="'url('+'#'+FILTER_IDS[i.texture]+')'">
                     <path [attr.d]="i.points" [attr.stroke]="i.strokeColor.asString()" fill="none"
-                        [attr.stroke-width]="i.strokeWidth" stroke-linejoin="round" stroke-linecap="round"
-                        (mousedown)="primitiveLeftClicked($event,i);" (contextmenu)="primitiveRightClicked($event, i)">
+                        [attr.stroke-width]="i.strokeWidth" stroke-linejoin="round" stroke-linecap="round">
                     </path>
                 </g>
             </g>

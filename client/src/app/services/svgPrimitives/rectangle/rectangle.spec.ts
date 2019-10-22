@@ -19,8 +19,8 @@ describe('Rectangle', () => {
     expect(rectangle).toBeTruthy();
     expect(rectangle.fillColor).toEqual(Color.WHITE);
     expect(rectangle.strokeColor).toEqual(Color.BLACK);
-    expect(rectangle.strokeWidth).toBe(MIN_STROKE_WIDTH);
-    expect(rectangle.strokeType).toBe(StrokeType.FullWithOutline);
+    expect(rectangle.strokeWidth).toEqual(MIN_STROKE_WIDTH);
+    expect(rectangle.strokeType).toEqual(StrokeType.FullWithOutline);
     expect(rectangle.position).toEqual(origin);
     expect(rectangle.corner1).toEqual(origin);
     expect(rectangle.corner2).toEqual(new Point(100, 50));
@@ -30,7 +30,6 @@ describe('Rectangle', () => {
   it('should return the correct absolute width and height when asked', () => {
     expect(rectangle.getAbsoluteWidth()).toEqual(100);
     expect(rectangle.getAbsoluteHeight()).toEqual(50);
-    rectangle = new Rectangle(Color.WHITE, Color.BLACK, MIN_STROKE_WIDTH, StrokeType.FullWithOutline, origin, -100, -50);
   });
 
   it('should have width and height equal to 0 if not specified', () => {
@@ -90,6 +89,11 @@ describe('Rectangle', () => {
     rectangle.resize(bottomRight, topRight, false);
     expect(rectangle.getAbsoluteWidth()).toEqual(0);
     expect(rectangle.getAbsoluteHeight()).toEqual(20);
+  });
+
+  it('#createCopy correctly copies the rectangle', () => {
+    const newRectangle = Rectangle.createCopy(rectangle);
+    expect(newRectangle).toEqual(rectangle);
   });
 
 });

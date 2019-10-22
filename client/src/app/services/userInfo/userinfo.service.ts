@@ -37,7 +37,7 @@ export class UserInfoService {
   }
 
   // Méthode publique pour le component Welcome Message
-  getnoMessage(): boolean {
+  getNoMessage(): boolean {
     return this.noMessage;
   }
 }

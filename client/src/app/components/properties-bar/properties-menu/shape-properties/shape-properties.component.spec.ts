@@ -1,7 +1,10 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { FormsModule } from '@angular/forms';
-import { MAX_STROKE_WIDTH, MIN_STROKE_WIDTH } from 'src/app/services/utils/constantsAndEnums';
+import { RouterTestingModule } from '@angular/router/testing';
+// import { PolygonTool } from 'src/app/services/tools/polygonTool';
+import { MAX_STROKE_WIDTH, MIN_STROKE_WIDTH} from 'src/app/services/utils/constantsAndEnums';
+import { RoutingConstants } from 'src/app/services/utils/routingConstants';
 import { ShapePropertiesComponent } from './shape-properties.component';
 
 describe('ShapePropertiesComponent', () => {
@@ -11,7 +14,10 @@ describe('ShapePropertiesComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ ShapePropertiesComponent ],
-      imports: [FormsModule],
+      imports: [FormsModule, RouterTestingModule.withRoutes([
+        { path: RoutingConstants.ROUTE_TO_SHAPE, component: ShapePropertiesComponent },
+        { path: RoutingConstants.ROUTE_TO_SHAPE + '/:shapeType', component: ShapePropertiesComponent },
+      ])],
     })
     .compileComponents();
   }));
@@ -28,12 +34,12 @@ describe('ShapePropertiesComponent', () => {
 
   it('should correctly update the tool\'s strokeWidth if input is a valid value', () => {
     setInputValue('#strokewidthinput', String(Math.round((MAX_STROKE_WIDTH + MIN_STROKE_WIDTH) / 2)));
-    expect(component.rectangle.strokeWidth).toEqual(Math.round((MAX_STROKE_WIDTH + MIN_STROKE_WIDTH) / 2));
+    expect(component.tool.strokeWidth).toEqual(Math.round((MAX_STROKE_WIDTH + MIN_STROKE_WIDTH) / 2));
   });
 
   it('should set the tool\'s strokeWidth to minimum value if input value is too low', () => {
     setInputValue('#strokewidthinput', String(MIN_STROKE_WIDTH - MAX_STROKE_WIDTH));
-    expect(component.rectangle.strokeWidth).toEqual(MIN_STROKE_WIDTH);
+    expect(component.tool.strokeWidth).toEqual(MIN_STROKE_WIDTH);
   });
 
   const setInputValue = (selector: string, value: string) => {
@@ -45,7 +51,11 @@ describe('ShapePropertiesComponent', () => {
 
   it('should set the tool\'s strokeWidth to maximum value if input value is too high', () => {
     setInputValue('#strokewidthinput', String(MAX_STROKE_WIDTH + MAX_STROKE_WIDTH));
-    expect(component.rectangle.strokeWidth).toEqual(MAX_STROKE_WIDTH);
+    expect(component.tool.strokeWidth).toEqual(MAX_STROKE_WIDTH);
   });
+  it('should set the tool numberOfSides to the right value when the input is set ', () => {
+    component.setNumberOfSide(6);
+    expect(component.getNumberOfSide()).toEqual(6);
 
+  });
 });

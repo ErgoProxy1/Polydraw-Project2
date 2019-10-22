@@ -20,7 +20,6 @@ export class PaintBucketPropertiesComponent implements OnInit, OnDestroy {
      // TODO: a ajouter si on ajoute des proprietes modifiables dans ce component a cet outil:
      // this.bucket = toolSelected as BucketTool;
     });
-
     this.toolsService.newToolSelected(ToolType.ColorApplicator);
   }
 

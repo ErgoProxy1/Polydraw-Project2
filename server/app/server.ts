@@ -58,7 +58,7 @@ export class Server {
      */
     private onListening(): void {
         const addr = this.server.address();
-        // tslint:disable-next-line:no-non-null-assertion
         const bind: string = (typeof addr === 'string') ? `pipe ${addr}` : `port ${addr!.port}`;
+        console.log(bind);
     }
 }
