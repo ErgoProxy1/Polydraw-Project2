@@ -17,7 +17,8 @@ Following features were implemented during second sprint:
     
     - Eyedropper tool for getting color of clicked element. Left click applies to primary color, right to secondary.
     
-    - Stamp tool for adding stickers. Mousewheel rotates stamp by 15 degrees. Can be set to 1 degrees by holding alt (Chrome) or         ctrl+alt (Firefox, Opera)
+    - Stamp tool for adding stickers. Mousewheel rotates stamp by 15 degrees. Can be set to 1 degrees by holding alt (Chrome) or          
+    ctrl+alt (Firefox, Opera)
     
     - A grid with adjustable scale and opacity.
 
