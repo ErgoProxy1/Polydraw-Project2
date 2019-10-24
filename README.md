@@ -1,5 +1,5 @@
 # Polydraw-Project2
-Second university development project. Run commands "npm install" then "npm start" after installing [NodeJS](https://nodejs.org/en/) under client folder to view website. Do the same but under server folder to start server.
+Second university development project. Recquires installing [NodeJS](https://nodejs.org/en/) as there is currently no host. Run commands "npm install" then "npm start" under client folder to view website. Do the same but under server folder to start server.
 
 Currently undergoing third sprint. This will introduce local saving, clipboard maniuplations (copy, cut, paste, etc), image format exporting (PNG, Jpeg, BMP, SVG), a tool for adding text, an erase tool, a pen tool, and the ability to cancel/redo (ctrl-z/ctrl-y).
 
