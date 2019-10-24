@@ -18,6 +18,8 @@ Following features were implemented during second sprint:
     - Eyedropper tool for getting color of clicked element. Left click applies to primary color, right to secondary.
     
     - Stamp tool for adding stickers. Mousewheel rotates stamp by 15 degrees. Can be set to 1 degrees by holding alt (Chrome) or         ctrl+alt (Firefox, Opera)
+    
+    - A grid with adjustable scale and opacity.
 
 Following features were implemented during first sprint:
 
@@ -44,7 +46,19 @@ Following features were implemented during first sprint:
 Curent shortcuts:
 
     Ctrl+O: Create new drawing
+    Ctrl+S: Save drawing
+    Ctrl+G: Drawing gallery
+    
     C: Pencil
     W: Paintbrush
     1: Rectangle
+    2: Ellipses
+    3: Polygon
     R: Color applicator
+    L: Line
+    I: Eyedropper
+    S: Selection
+    G: Show grid
+    +: Increase grid square size
+    -: Decrease grid square size
+    
