@@ -4,7 +4,7 @@
 
 <ng-template #newDrawModal let-modal>
   <div class="modal-header">
-    <h5 class="modal-title">Nouveau Dessin</h5>
+    <h5 class="modal-title">New Drawing</h5>
   </div>
   <form [formGroup]="drawingForm" (ngSubmit)="newDrawing(drawingForm); closeModal();">
     <div class="modal-body">
@@ -12,7 +12,7 @@
       <div class="row mt-2">
         <div class="form-group col-md-6">
           <div class="form-group row">
-            <label for="inputEmail3" class="col-md-5 col-form-label">Largeur: </label>
+            <label for="inputEmail3" class="col-md-5 col-form-label">Width: </label>
             <div class="col-md-7">
               <input name="width" type="number" min="0" formControlName="width" (click)="checkDimensionValues()"
                 class="form-control m-0" (focusin)="setActiveFocus()"
@@ -22,7 +22,7 @@
         </div>
         <div class="form-group col-md-6">
           <div class="form-group row">
-            <label for="inputEmail3" class="col-md-5 col-form-label">Hauteur: </label>
+            <label for="inputEmail3" class="col-md-5 col-form-label">Height: </label>
             <div class="col-md-7">
               <input name="height" type="number" min="0" formControlName="height" (click)="checkDimensionValues()"
                 class="form-control m-0" (focusin)="setActiveFocus()"
@@ -31,7 +31,7 @@
           </div>
         </div>
       </div>
-      <h6>Couleur de Fond</h6>
+      <h6>Background Color</h6>
       <div class="row">
         <div class="col-md-12">
           <label>Aperçu: </label>
@@ -89,14 +89,12 @@
         </div>
       </div>
       <div *ngIf="errorInColors || errorsInDimensions" class="alert alert-danger mb-0" role="alert">
-        Erreur dans vos données! Veuillez réviser vos valeurs.
+        Error in form! Please review data.
       </div>
     </div>
     <div class="modal-footer">
-      <button type="button" class="btn btn-outline-dark" (click)="closeModal()">Annuler</button>
-      <button type="submit" class="btn btn-outline-success" [disabled]="errorInColors || errorsInDimensions">Créer un
-        nouveau
-        dessin</button>
+      <button type="button" class="btn btn-outline-dark" (click)="closeModal()">Cancel</button>
+      <button type="submit" class="btn btn-outline-success" [disabled]="errorInColors || errorsInDimensions">Create new drawing</button>
     </div>
 
   </form>

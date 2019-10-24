@@ -103,15 +103,15 @@ export const PaletteChoicesRGB: Color[] = [
 
 export const POLYGON_NAMES: Map<number, string> = new Map([
   [3, '3(triangle)'],
-  [4, '4(diamant)'],
-  [5, '5(pentagone)'],
-  [6, '6(hexagone)'],
-  [7, '7(heptagone)'],
-  [8, '8(octagone)'],
-  [9, '9(nonagone)'],
-  [10, '10(decagone)'],
-  [11, '11(hendecagone)'],
-  [12, '12(dodecagone)'],
+  [4, '4(diamond)'],
+  [5, '5(pentagon)'],
+  [6, '6(hexagon)'],
+  [7, '7(heptagon)'],
+  [8, '8(octagon)'],
+  [9, '9(nonagon)'],
+  [10, '10(decagon)'],
+  [11, '11(hendecagon)'],
+  [12, '12(dodecagon)'],
 ]);
 
 export enum ToolType {
@@ -227,7 +227,7 @@ export interface SavingTypeInterface  {
 }
 
 export const SavingTypeChoice: SavingTypeInterface[] = [
-  {id: SavingType.SaveOnServer, text: 'Sauvegarder sur le serveur'},
+  {id: SavingType.SaveOnServer, text: 'Save on server'},
   // {id: SavingType.SaveLocally, text : 'Sauvegarder localement - Non disponible'},
 ];
 

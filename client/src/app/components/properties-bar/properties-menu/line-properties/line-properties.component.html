@@ -1,6 +1,6 @@
 <div class="row">
   <div class="col-md-12">
-    <small for="rangeEpaisseur">Taille : {{strokeWidth}} px</small>
+    <small for="rangeEpaisseur">Size : {{strokeWidth}} px</small>
     <input id="LineStrokewidthinput" type="range" class="custom-range" [(ngModel)]="strokeWidth" (change)="onChangeStrokeWidth()"
       [min]="MIN_STROKE_WIDTH" [max]="MAX_STROKE_WIDTH" step="1">
   </div>
@@ -17,7 +17,7 @@
     </div>
 
     <div class="col-md-12">
-        <small>Jonction</small>
+        <small>Junction</small>
     </div>
     <div class="form-check col-md-12">
         <select class="form-control form-control-sm" [(ngModel)]="lineJoin" (change)="onChangeJoin()">
@@ -25,19 +25,19 @@
         </select>
     </div>
     <div class="col-md-12" *ngIf="lineJoin === 4 "> <!-- lineJoin.Point === 4 -->
-        <small for="rangeEpaisseur">Diamètre : {{circleRadius}} px</small>
+        <small for="rangeEpaisseur">Diameter : {{circleRadius}} px</small>
         <input id="LineCercleRadius" type="range" class="custom-range" [(ngModel)]="circleRadius" (change)="onChangeCircleRadius()"
           [min]="MIN_STROKE_WIDTH" [max]="MAX_STROKE_WIDTH" step="1">
     </div>
 
     <div class="col-md-12" *ngIf="lineJoin === 6 "> <!-- lineJoin.Special === 6 -->
-        <small for="rangeEpaisseur">Coefficient de courbure : {{lineRounding}}</small>
+        <small for="rangeEpaisseur">Curve Ratio : {{lineRounding}}</small>
         <input id="LineCercleRadius" type="range" class="custom-range" [(ngModel)]="lineRounding" (change)="onChangeRounding()"
           [min]="DEFAULT_LINE_ROUNDING" [max]="MAX_LINE_ROUNDING" step="1">
     </div>
 
     <div class="col-md-12">
-        <small>Forme du bout</small> 
+        <small>Edge Shape</small> 
     </div>
     <div class="form-check col-md-12">
         <select class="form-control form-control-sm" [(ngModel)]="lineCap" (change)="onChangeCap()">

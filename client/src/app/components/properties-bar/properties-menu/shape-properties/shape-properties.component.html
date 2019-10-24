@@ -1,13 +1,13 @@
 <div class="row">
   <div class="col-md-12">
-    <small for="rangeEpaisseur">Épaisseur : {{strokeWidth}} px</small>
+    <small for="rangeEpaisseur">Border Size : {{strokeWidth}} px</small>
     <input id="strokewidthinput" type="range" class="custom-range" [(ngModel)]="strokeWidth" (change)="onChangeStrokeWidth()"
       [min]="MIN_STROKE_WIDTH" [max]="MAX_STROKE_WIDTH" step="1">
   </div>
 </div>
 <div class="row">
   <div class="col-md-12">
-    <small>Choix de la forme</small>
+    <small>Shape Choice</small>
   </div>
   <div class="form-check col-md-12">
     <select class="form-control form-control-sm" [(ngModel)]="toolType" (change)="onChangeShapeType()">
@@ -19,7 +19,7 @@
 
 <div class="row">
   <div class="col-md-12">
-    <small>Choix du style</small>
+    <small>Style Choice</small>
   </div>
   <div class="form-check col-md-12">
     <select  class="form-control form-control-sm" [(ngModel)]="strokeType" (change)="onChangeStrokeType()">
@@ -31,7 +31,7 @@
 </div>
 <div *ngIf="toolType == 6" class="row">
   <div class="col-md-12">
-    <small>Nombre de côtés</small>
+    <small>Number of Sides</small>
   </div>
   <div class="form-check col-md-12">
     <select id="numberofsidesinput" class="form-control form-control-sm" [(ngModel)]="numberSidesPolygon" (change)="onChangeSidesNumber()">

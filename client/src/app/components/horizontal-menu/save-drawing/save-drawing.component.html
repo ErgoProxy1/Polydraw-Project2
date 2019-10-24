@@ -1,11 +1,11 @@
 <div class="text-center p-0" (click)="openModal()">
   <i class="far fa-save clickable fa-2x align-middle"></i>
 </div>
-<ngb-alert *ngIf="saveSuccessful" class="successMessage" type="success">Sauvegarde réussie</ngb-alert>
+<ngb-alert *ngIf="saveSuccessful" class="successMessage" type="success">Save Successful!</ngb-alert>
 
 <ng-template #saveDrawingModal let-modal>
   <div class="modal-header">
-    <h5 class="modal-title">Sauvegarder un dessin</h5>
+    <h5 class="modal-title">Save Drawing</h5>
   </div>
   
   <div *ngIf="loading" class="modal-body text-center">
@@ -17,7 +17,7 @@
   <div class="modal-body">
       <div class="modal-body">
         <div class="row align-middle mt-3">
-          <label class="col-md-5">Nom: </label>
+          <label class="col-md-5">Name: </label>
           <div class="col-md-7">
             <input class="form-control" id="drawingName" name="drawingName" type="text" id="drawingName"
               [(ngModel)]="drawingInfo.name" (focusin)="setActiveFocus()"
@@ -25,7 +25,7 @@
           </div>
         </div>
         <div class="row mt-3">
-          <label class="col-md-5 my-auto">Type de sauvegarde:</label>
+          <label class="col-md-5 my-auto">Save type:</label>
           <div class="col-md-7 ">
             <select class="custom-select" name="typeSave" [(ngModel)]="drawingInfo.typeOfSave"
               (focusout)="checkErrorsInForm()">
@@ -36,7 +36,7 @@
 
 
         <div class="row mt-3">
-          <label class="col-md-5 my-auto">Étiquettes: </label>
+          <label class="col-md-5 my-auto">Tags: </label>
           <div class="col-md-7">
             <div class="input-group">
               <input class="form-control" id="tags" name="tags" type="text" id="tags" [(ngModel)]="currentTagInput"
@@ -60,21 +60,21 @@
         <div class="row mt-4">
           <div *ngIf="this.controllerService.isEmptyPrimitives()" id="dataAlert" class="alert alert-danger"
             role="alert">
-            Le dessin est vide, mais vous pouvez quand même le sauvegarder.
+            Drawing is empty, but you can still save.
           </div>
         </div>
         <div *ngIf="tagsAllreadyExist" id="dataAlert" class="alert alert-danger" role="alert">
-          Étiquette déjà présente. Veuillez choisir un nouveau tag.
+          Tag already exists
         </div>
         <div *ngIf="errorInForm" id="dataAlert" class="alert alert-danger" role="alert">
-          Erreur dans le formulaire! Veuillez réviser vos valeurs.
+          Error in form! Please review data.
         </div>
       </div>
       <div *ngIf="errorDuringSave" id="dataAlert" class="alert alert-danger" role="alert">
-        Erreur durant la sauvegarde. Veuillez annuler ou réessayer.
+        Error while saving. Please try again or cancel.
       </div>
       <div class="modal-footer mt-4">
-        <button id="dismiss" type="button" class="btn btn-outline-dark" (click)="closeModal()">Annuler</button>
+        <button id="dismiss" type="button" class="btn btn-outline-dark" (click)="closeModal()">Cancel</button>
         <button type="submit" class="btn btn-outline-success" [disabled]="errorInForm || saveInProgress">
           {{textSaveButton}}</button>
       </div>

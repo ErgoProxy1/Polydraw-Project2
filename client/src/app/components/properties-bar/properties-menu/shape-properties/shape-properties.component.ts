@@ -19,13 +19,13 @@ export class ShapePropertiesComponent implements OnInit, OnDestroy {
   private toolType: ToolType = ToolType.RectangleTool;
   readonly SHAPE_TYPE_NAMES_MAP: Map<string, ToolType> = new Map([
     ['Rectangle', ToolType.RectangleTool],
-    ['Ellipse', ToolType.EllipseTool],
-    ['Polygone', ToolType.PolygonTool],
+    ['Ellipses', ToolType.EllipseTool],
+    ['Polygon', ToolType.PolygonTool],
   ]);
   readonly STROKE_TYPE_NAMES_MAP: Map<string, StrokeType> = new Map([
-    ['Contour et remplissage', StrokeType.FullWithOutline],
-    ['Remplissage seulement', StrokeType.Full],
-    ['Contour seulement', StrokeType.Outline],
+    ['Stroke and Fill', StrokeType.FullWithOutline],
+    ['Fill Only', StrokeType.Full],
+    ['Stroke Only', StrokeType.Outline],
   ]);
   readonly polygonNames: Map<number, string> = POLYGON_NAMES;
   private strokeWidth: number;

@@ -1,6 +1,6 @@
 <div class="row">
   <div class="col-md-12">
-    <small for="rangeEpaisseur">Épaisseur : {{strokeWidth}} px</small>
+    <small for="rangeEpaisseur">Size : {{strokeWidth}} px</small>
     <input id="strokewidthinput" type="range" class="custom-range" [(ngModel)]="strokeWidth" (change)="onChangeStrokeWidth()"
       [min]="MIN_STROKE_WIDTH" [max]="MAX_STROKE_WIDTH" step="1">
   </div>

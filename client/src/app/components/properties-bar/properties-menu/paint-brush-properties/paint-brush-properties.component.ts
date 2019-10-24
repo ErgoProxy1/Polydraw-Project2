@@ -13,11 +13,11 @@ export class PaintBrushPropertiesComponent implements OnInit, OnDestroy {
   private selectedToolSubscription: Subscription;
   paintBrush: PaintBrushTool;
   TEXTURE_NAMES_MAP: Map<string, Texture> = new Map([
-    ['Basique', Texture.Basic],
-    ['Grisée', Texture.Degraded],
-    ['Lumineuse', Texture.Grayed],
-    ['Mousseuse', Texture.Light],
-    ['Dégradée', Texture.Frothy],
+    ['Base', Texture.Basic],
+    ['Neon', Texture.Degraded],
+    ['Reflect', Texture.Grayed],
+    ['Mossy', Texture.Light],
+    ['Frothy', Texture.Frothy],
   ]);
   private strokeWidth: number;
   private texture: Texture;
