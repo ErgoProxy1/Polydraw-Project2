@@ -22,7 +22,7 @@
                 (keyup)="onKeyPressedTags($event)">
               <div class="input-group-append ">
                 <div class="input-group-text clickable">
-                  <i class="fas fa-plus " (click)="addNewTag();" placement="bottom" ngbTooltip="Ajouter"></i>
+                  <i class="fas fa-plus " (click)="addNewTag();" placement="bottom" ngbTooltip="Add"></i>
                 </div>
               </div>
             </div>
@@ -42,7 +42,7 @@
     <div class="row mt-1 form-inline">
       <label *ngFor="let tag of tagsSelected" class="bg-secondary m-1 form-inline form-control-sm text-light">
         {{tag.tagName}}
-        <i class="fas fa-times clickable ml-1" placement="bottom" ngbTooltip="Retirer" (click)="removeTag(tag)"></i>
+        <i class="fas fa-times clickable ml-1" placement="bottom" ngbTooltip="Remove" (click)="removeTag(tag)"></i>
       </label>
     </div>
     <hr />

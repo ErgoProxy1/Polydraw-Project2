@@ -113,7 +113,7 @@ export class SaveDrawingComponent implements OnDestroy {
     this.errorDuringSave = false;
     // si drawing allready save prendre info
     this.drawingInfo = {
-      name: 'Nouveau Dessin',
+      name: 'My Drawing',
       typeOfSave: 0,
       primitives: JSON.stringify(this.controllerService.getPrimitives()),
       tags: [],
