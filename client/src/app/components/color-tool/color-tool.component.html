@@ -1,7 +1,7 @@
 <div class="row form-inline">
   <small class="col-md-7 ">Primary</small>
   <div class="col-md-4 form-control form-control-sm clickable p-0 bg-white" (click)="colorPrimarySelected();openModal()"
-    placement="top" ngbTooltip="Changer">
+    placement="top" ngbTooltip="Change">
     <div class="form-control form-control-sm full-size" [style.background-color]="rgbaPrimaryColor.asString()"></div>
   </div>
 </div>
@@ -14,15 +14,15 @@
 </div>
 <div class="row mt-1">
   <button (click)="setBackgroundColor()" class="btn btn-secondary btn-sm col-md-5 offset-md-1 p-0 text-small"
-    placement="top" ngbTooltip="Changer la couleur de fond">Background</button>
+    placement="top" ngbTooltip="Change Background Color">Background</button>
   <button (click)="switchColor()" class="btn btn-secondary btn-sm col-md-4 offset-md-1 p-0 text-small" placement="top"
-    ngbTooltip="Inverser les couleurs">↑↓</button>
+    ngbTooltip="Invert Colors">↑↓</button>
 </div>
 
 <div class="row form-inline mt-3">
   <small class="col-md-7 ">Secondary</small>
   <div class="col-md-4 form-control form-control-sm clickable p-0 bg-white"
-    (click)="colorSecondarySelected();openModal()" placement="top" ngbTooltip="Changer">
+    (click)="colorSecondarySelected();openModal()" placement="top" ngbTooltip="Change">
     <div class="form-control form-control-sm full-size" [style.background-color]="rgbaSecondaryColor.asString()"></div>
   </div>
 </div>
@@ -57,7 +57,7 @@
     <div class="modal-body">
       <div class="row">
         <div class="col-md-12">
-          <label>Aperçu: </label>
+          <label>Preview: </label>
           <svg width="30" height="30">
             <circle class="preview-color" cx="15" cy="15" r="10" [attr.fill]="currentHexSelectedColor"
               [attr.fill-opacity]="currentAlpha" />

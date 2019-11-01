@@ -146,6 +146,8 @@ export class ColorToolComponent {
       green: currentRgbaSelectedColor.g, blue: currentRgbaSelectedColor.b,
     });
     this.paletteForm.patchValue({ hex: currentHex });
+    this.currentHexSelectedColor = '#' + currentHex;
+    console.log(this.currentHexSelectedColor);
     if (this.paletteForm.value.hex.length === 6) {
       this.hexError = false;
     } else {
