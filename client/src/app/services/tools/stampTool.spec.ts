@@ -70,7 +70,7 @@ describe('StampTool', () => {
         tool.mouseEvent(MouseEventType.MouseMove, new Point(50, 50));
         const command: StampToolCommand = (tool.getCommand() as StampToolCommand);
         expect(command.stamp.angle).toBe(0);
-        expect(command.stamp.info.name).toBe('Ancre');
+        expect(command.stamp.info.name).toBe('Anchor');
         expect(command.stamp.position).toEqual(new Point(50, 50));
         expect(command.stamp.scale).toBe(0.2);
     });
