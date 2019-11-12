@@ -54,10 +54,11 @@ export class Server {
     }
 
     /**
-     * Se produit lorsque le serveur se met à écouter sur le port.
+     * Se produit lorsque le serveur se met à écouter sur le port. Affiche le port sur lequel le serveur écoute à la console.
      */
     private onListening(): void {
         const addr = this.server.address();
+        // tslint:disable-next-line: no-non-null-assertion
         const bind: string = (typeof addr === 'string') ? `pipe ${addr}` : `port ${addr!.port}`;
         console.log(bind);
     }

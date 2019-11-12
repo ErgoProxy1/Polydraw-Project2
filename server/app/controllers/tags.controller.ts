@@ -1,7 +1,7 @@
 import { Request, Response, Router } from 'express';
 import { inject, injectable } from 'inversify';
-import Types from '../types';
 import { TagsService } from '../services/tags.service';
+import Types from '../types';
 
 @injectable()
 export class TagsController {
@@ -16,8 +16,8 @@ export class TagsController {
 
     this.router.get('/',
       (req: Request, res: Response) => {
-        let msg = this.tagsService.getTags();
+        const msg = this.tagsService.getTags();
         res.json(msg);
       });
   }
-} 
+}

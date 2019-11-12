@@ -1,13 +1,14 @@
+import { Observable, Subject } from 'rxjs';
 import { Perimeter } from '../svgPrimitives/rectangle/perimeter/perimeter';
 import { SVGPrimitive } from '../svgPrimitives/svgPrimitive';
 import { ShapeToolCommand } from '../toolCommands/shapeToolCommand';
 import { ToolCommand } from '../toolCommands/toolCommand';
 import { Color } from '../utils/color';
-import { DEFAULT_STROKE_WIDTH, KeyboardEventType, MouseEventType, StrokeType, ToolType } from '../utils/constantsAndEnums';
+import { CROSSHAIR_CURSOR, DEFAULT_STROKE_WIDTH, MouseEventType, StrokeType, ToolType } from '../utils/constantsAndEnums';
 import { Point } from '../utils/point';
 import { Tool } from './tool';
 
-export abstract class ShapeTool implements Tool {
+export abstract class ShapeTool extends Tool {
   type = ToolType.None;
   protected fillColor: Color;
   protected strokeColor: Color;
@@ -15,16 +16,18 @@ export abstract class ShapeTool implements Tool {
   strokeType: StrokeType = StrokeType.FullWithOutline;
   protected perimeter: Perimeter;
   protected command: ShapeToolCommand;
+  private commandSubject: Subject<ShapeToolCommand> = new Subject<ShapeToolCommand>();
   protected isCreatingShape = false;
-  protected commandReady = false;
   protected initialPosition: Point;
+  isRegular = false;
 
   constructor(fillColor: Color, strokeColor: Color) {
+    super();
     this.fillColor = fillColor;
     this.strokeColor = strokeColor;
   }
 
-  mouseEvent(eventType: MouseEventType, position: Point, primitive?: SVGPrimitive | undefined): SVGPrimitive[] {
+  mouseEvent(eventType: MouseEventType, position: Point, primitive?: SVGPrimitive | undefined): void {
     switch (eventType) {
       case MouseEventType.MouseDownLeft:
         this.begin(position);
@@ -37,44 +40,38 @@ export abstract class ShapeTool implements Tool {
         this.finish();
         break;
     }
+    this.temporaryPrimitivesAvailable.next();
+  }
+
+  subscribeToCommand(): Observable<ToolCommand> {
+    return this.commandSubject.asObservable();
+  }
+
+  getTemporaryPrimitives(): SVGPrimitive[] {
     return this.isCreatingShape ? [this.command.shape, this.perimeter] : [];
   }
 
-  keyboardEvent(eventType: KeyboardEventType, key: string): SVGPrimitive[] {
-    return this.isCreatingShape ? [this.command.shape, this.perimeter] : [];
-  }
-
-  mouseWheelEvent(delta: number): SVGPrimitive[] {
-    return this.isCreatingShape ? [this.command.shape, this.perimeter] : [];
-  }
-
-  isCommandReady(): boolean {
-    return this.commandReady;
-  }
-
-  getCommand(): ToolCommand {
-    this.commandReady = false;
-    return this.command;
+  getCursor(): string {
+    return CROSSHAIR_CURSOR;
   }
 
   protected begin(position: Point): void {
     this.initialPosition = position;
     this.perimeter = new Perimeter(position);
     this.isCreatingShape = true;
-    this.commandReady = false;
   }
 
-  protected update(position: Point, setRegular: boolean = false): void {
+  protected update(position: Point): void {
     if (this.isCreatingShape && this.command && this.perimeter) {
       this.perimeter.resize(this.initialPosition, position);
-      this.command.resize(this.initialPosition, position, setRegular);
+      this.command.resize(this.initialPosition, position, this.isRegular);
     }
   }
 
   protected finish(): void {
     if (this.isCreatingShape) {
       this.isCreatingShape = false;
-      this.commandReady = true;
+      this.commandSubject.next(this.command);
     }
   }
 }

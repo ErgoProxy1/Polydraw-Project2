@@ -15,12 +15,12 @@ export class StampInfo {
 
 export const DefaultStamps: StampInfo[] = [
  {
-    name: 'None', color: new Color(0, 0, 0, 0), adjustedScale: 0, initRotation: 0, centerX: 0, centerY: 0,
+    name: 'Aucun', color: new Color(0, 0, 0, 0), adjustedScale: 0, initRotation: 0, centerX: 0, centerY: 0,
     image: 'None',
   },
 
   {
-    name: 'Anchor', color: new Color(0, 0, 0, 1), adjustedScale: 0.2, initRotation: 0, centerX: 500, centerY: 500,
+    name: 'Ancre', color: new Color(0, 0, 0, 1), adjustedScale: 0.2, initRotation: 0, centerX: 500, centerY: 500,
     image: 'M89,701.2c2.7,20.5,8.4,40.6,16.4,59.7c5.2,12.4,15.8,44.6,32.2,46.2c5.6,0.6,10.9-3.5,13.5-8.5c3.9-7.4,5.4-16.6,9-24.3\
     c3.9,4.2,7.2,9.5,10.5,14.3c9.3,13.4,18.2,27.1,27.9,40.2c17.6,23.7,40.2,41.8,66.3,55.1c25.8,13.2,52.3,25,78.6,37\
     c27.1,12.4,54.3,24.7,78.4,42.6c13.6,10.1,25.7,21.7,35.8,35.3c0.6,0.8,1.3,1.5,1.9,2.2c7.9-7.4,15.3-15,23.3-21.9\
@@ -141,7 +141,7 @@ export const DefaultStamps: StampInfo[] = [
     c4.9,1.3,8.9,4.3,11.2,10.1c-3.2,0.7-5.9,1.4-8.7,1.8c-13.9,1.7-27.6,1.2-40-6.4C347,823.2,343.6,817.9,343.9,811.3z'},
 
   {
-    name: 'Airplane', color: new Color(0, 0, 0, 1), adjustedScale: 0.5, initRotation: 0, centerX: 100, centerY: 110,
+    name: 'Avion', color: new Color(0, 0, 0, 1), adjustedScale: 0.5, initRotation: 0, centerX: 100, centerY: 110,
     image: 'M195.732,99.447c-0.619-3.613-3.726-6.235-7.387-6.235c-0.423,0-0.851,0.036-1.271,0.108l-57.527,9.849\
     c-4.661-13.083-16.063-23.985-25.472-27.167c0.321-2.469,0.512-5.092,0.512-7.706c0-10.744-3.054-21.25-5.333-21.25\
     c-2.351,0-5.333,10.005-5.333,21.25c0,2.59,0.179,5.164,0.48,7.582c-9.282,3.078-21.234,14.491-26.072,27.639L8.766,93.32\
@@ -156,7 +156,7 @@ export const DefaultStamps: StampInfo[] = [
     c3.038,0,5.5,2.462,5.5,5.5S113.958,117.92,110.92,117.92z'},
 
   {
-    name: 'Key', color: new Color(192, 167, 92, 1), adjustedScale: 0.1, initRotation: 0, centerX: 448, centerY: 432,
+    name: 'Clé', color: new Color(192, 167, 92, 1), adjustedScale: 0.1, initRotation: 0, centerX: 448, centerY: 432,
     image: 'M640.9 63.89999999999998c-141.4 0-256 114.6-256 256 0 19.6 2.2 38.6 6.4 56.9L0\
     768v64l64 64h128l64-64v-64h64v-64h64v-64h128l70.8-70.8c18.7 4.3 38.1 6.6 58.1 6.6 141.4\
     0 256-114.6 256-256S782.2 63.89999999999998 640.9 63.89999999999998zM384 512L64\
@@ -164,12 +164,12 @@ export const DefaultStamps: StampInfo[] = [
     64 64C768 291.29999999999995 739.3 320 704 320z'},
 
   {
-    name: 'Heart', color: new Color(232, 76, 61, 1), adjustedScale: 0.4, initRotation: 135, centerX: 150, centerY: 150,
+    name: 'Coeur', color: new Color(232, 76, 61, 1), adjustedScale: 0.4, initRotation: 135, centerX: 150, centerY: 150,
     image: 'M0 200 v-200 h200 a100,100 90 0,1 0,200 a100,100 90 0,1 -200,0 z',
   },
 
   {
-    name: 'Pencil', color: new Color(0, 0, 0, 1), adjustedScale: 0.01, initRotation: 270, centerX: 4885, centerY: 490,
+    name: 'Crayon', color: new Color(0, 0, 0, 1), adjustedScale: 0.01, initRotation: 270, centerX: 4885, centerY: 490,
     image: 'M8215.9,4442.7l-1676.6-560.5L3396.9,747.2C467.8-2171.9,249.5-2397.7,180-2546.5c-99.2-208.3-106.6-463.8-19.8-689.5\
     c52.1-136.4,109.1-203.4,677.1-773.8c731.7-739.1,771.3-763.9,1145.9-763.9c404.3,0,104.2-267.9,3655.8,3276.3\
     l3152.3,3144.9l558,1674.1c305.1,920.1,555.6,1676.6,550.6,1676.6C9897.4,5000.8,9141,4752.7,8215.9,4442.7z \
@@ -180,7 +180,7 @@ export const DefaultStamps: StampInfo[] = [
     l401.8,401.8l64.5-54.6C1782.3-2169.5,2035.2-2417.5,2313-2690.3z'},
 
   {
-    name: 'Magnifier', color: new Color(69, 63, 63, 1), adjustedScale: 0.01, initRotation: 270, centerX: 4990, centerY: 490,
+    name: 'Loupe', color: new Color(69, 63, 63, 1), adjustedScale: 0.01, initRotation: 270, centerX: 4990, centerY: 490,
     image: 'M2906.9,4986.5c-728.2-131.8-1320.2-437.8-1831.8-951.6c-480.3-478.1-788.6-1045.5-931.5-1720.1\
     c-58.1-270.3-58.1-1025.4,0-1295.7C398.2-176.1,1249.3-1141.1,2379.7-1514.2c377.5-125.1,592-156.4,1063.3-156.4\
     c366.4,0,471.4,6.7,663.5,49.2c402.1,87.1,815.4,254.7,1121.4,451.3l129.6,84.9l440.1-440.1l437.8-437.8v-149.7\
@@ -193,7 +193,7 @@ export const DefaultStamps: StampInfo[] = [
     c-198.8,406.6-272.5,797.5-239,1275.6c60.3,819.9,600.9,1588.3,1364.9,1941.3C2898,4097.4,3519,4148.8,4035,4001.4z'},
 
   {
-    name: 'Cloud', color: new Color(0, 0, 0, 1), adjustedScale: 0.3, initRotation: 0, centerX: 256, centerY: 256,
+    name: 'Nuage', color: new Color(0, 0, 0, 1), adjustedScale: 0.3, initRotation: 0, centerX: 256, centerY: 256,
     image: 'M320,96c53.031,0,96,42.969,96,96c0,12.625-2.594,24.625-7.031,35.688C449.813,238.75,480,275.688,480,320\
     c0,53.031-42.969,96-96,96H112c-44.188,0-80-35.813-80-80s35.813-80,80-80c2.453,0,4.75,0.5,7.141,0.719\
     c-4.5-10-7.141-21.031-7.141-32.719c0-44.188,35.813-80,80-80c14.438,0,27.797,4.125,39.484,10.813\

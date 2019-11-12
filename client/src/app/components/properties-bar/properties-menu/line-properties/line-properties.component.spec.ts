@@ -1,5 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
+import { KeyboardService } from 'src/app/services/keyboard/keyboard.service';
 import { LineTool } from 'src/app/services/tools/lineTool';
 import { Color } from 'src/app/services/utils/color';
 import { DEFAULT_LINE_STROKE_WIDTH, LineCap, LineJoin,
@@ -14,6 +15,7 @@ describe('LinePropertiesComponent', () => {
     TestBed.configureTestingModule({
       declarations: [ LinePropertiesComponent ],
       imports: [FormsModule],
+      providers: [KeyboardService],
     })
     .compileComponents();
   }));
@@ -92,7 +94,7 @@ describe('LinePropertiesComponent', () => {
   });
 
   it('#onChangeCircleRadius should change the line\'s width attribute', () => {
-    const line: LineTool = new LineTool(new Color(100, 100, 100, 0.5));
+    const line: LineTool = new LineTool(new Color(100, 100, 100, 0.5), );
     line.circleRadius = MIN_STROKE_WIDTH;
     component.circleRadius = line.circleRadius;
     component.onChangeCircleRadius();

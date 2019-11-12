@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { KeyboardShortcutService } from 'src/app/services/keyboardShortcut/keyboard-shortcut.service';
+import { KeyboardService } from 'src/app/services/keyboard/keyboard.service';
 import { KeyboardShortcutType } from 'src/app/services/utils/constantsAndEnums';
 import { RoutingConstants } from 'src/app/services/utils/routingConstants';
 
@@ -15,14 +15,19 @@ export class SideBarComponent {
 
   readonly _ROUTE_TO_PAINT_BRUSH = RoutingConstants.ROUTE_TO_PAINT_BRUSH;
   readonly _ROUTE_TO_PENCIL = RoutingConstants.ROUTE_TO_PENCIL;
+  readonly _ROUTE_TO_PEN = RoutingConstants.ROUTE_TO_PEN;
   readonly _ROUTE_TO_LINE = RoutingConstants.ROUTE_TO_LINE;
   readonly _ROUTE_TO_SHAPE = RoutingConstants.ROUTE_TO_SHAPE;
   readonly _ROUTE_TO_PAINT_BUCKET = RoutingConstants.ROUTE_TO_PAINT_BUCKET;
   readonly _ROUTE_TO_SELECTION = RoutingConstants.ROUTE_TO_SELECTION;
   readonly _ROUTE_TO_GRID = RoutingConstants.ROUTE_TO_GRID;
+  readonly _ROUTE_TO_ERASER = RoutingConstants.ROUTE_TO_ERASER;
+  readonly _ROUTE_TO_TEXT = RoutingConstants.ROUTE_TO_TEXT;
+  readonly _ROUTE_TO_EYEDROPPER = RoutingConstants.ROUTE_TO_EYEDROPPER;
+  readonly _ROUTE_TO_STAMP = RoutingConstants.ROUTE_TO_STAMP;
 
-  constructor(private keyboardShortcutService: KeyboardShortcutService, private router: Router) {
-    this.subscription = this.keyboardShortcutService.getKeyboardShortcutType().subscribe((keyboardShortcut: KeyboardShortcutType) => {
+  constructor(private keyboardService: KeyboardService, private router: Router) {
+    this.subscription = this.keyboardService.getKeyboardShortcutType().subscribe((keyboardShortcut: KeyboardShortcutType) => {
       switch (keyboardShortcut) {
         case KeyboardShortcutType.PaintBrush:
           this.router.navigate([RoutingConstants.ROUTE_TO_PAINT_BRUSH]);
@@ -35,6 +40,9 @@ export class SideBarComponent {
         case KeyboardShortcutType.Pencil:
           this.router.navigate([RoutingConstants.ROUTE_TO_PENCIL]);
           break;
+        case KeyboardShortcutType.Pen:
+            this.router.navigate([RoutingConstants.ROUTE_TO_PEN]);
+            break;
 
         case KeyboardShortcutType.Rectangle:
           this.router.navigate([RoutingConstants.ROUTE_TO_SHAPE, RoutingConstants.RECTANGLE_SHAPE_TYPE]);
@@ -56,6 +64,12 @@ export class SideBarComponent {
           break;
         case KeyboardShortcutType.Select:
           this.router.navigate([RoutingConstants.ROUTE_TO_SELECTION]);
+          break;
+        case KeyboardShortcutType.Eraser:
+          this.router.navigate([RoutingConstants.ROUTE_TO_ERASER]);
+          break;
+        case KeyboardShortcutType.Text:
+          this.router.navigate([RoutingConstants.ROUTE_TO_TEXT]);
           break;
       }
     });

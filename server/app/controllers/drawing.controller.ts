@@ -26,5 +26,11 @@ export class DrawingController {
         const msg = this.drawingService.saveDrawing(req.body.drawingInfo);
         res.json(msg);
       });
+
+    this.router.post('/delete',
+      (req: Request, res: Response) => {
+        const msg = this.drawingService.deleteDrawing(req.body.drawingInfo);
+        res.json(msg);
+      });
   }
 }

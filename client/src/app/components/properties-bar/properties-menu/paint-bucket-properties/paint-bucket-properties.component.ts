@@ -15,7 +15,7 @@ export class PaintBucketPropertiesComponent implements OnInit, OnDestroy {
 
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.selectedToolSubscription = this.toolsService.subscribeToToolChanged().subscribe((toolSelected) => {
      // TODO: a ajouter si on ajoute des proprietes modifiables dans ce component a cet outil:
      // this.bucket = toolSelected as BucketTool;
@@ -23,7 +23,7 @@ export class PaintBucketPropertiesComponent implements OnInit, OnDestroy {
     this.toolsService.newToolSelected(ToolType.ColorApplicator);
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.selectedToolSubscription.unsubscribe();
   }
 }

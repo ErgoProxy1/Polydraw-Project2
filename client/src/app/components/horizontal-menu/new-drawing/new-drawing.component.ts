@@ -3,10 +3,10 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angul
 import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
 import { ColorService } from 'src/app/services/colorService/color.service';
-import { KeyboardShortcutService } from 'src/app/services/keyboardShortcut/keyboard-shortcut.service';
+import { KeyboardService } from 'src/app/services/keyboard/keyboard.service';
 import { SVGPrimitive } from 'src/app/services/svgPrimitives/svgPrimitive';
 import { Color, MAX_ALPHA, MAX_RGB } from 'src/app/services/utils/color';
-import { KeyboardShortcutType, PaletteChoicesRGB } from 'src/app/services/utils/constantsAndEnums';
+import { KeyboardShortcutType, PALETTE_CHOICES_RGB } from 'src/app/services/utils/constantsAndEnums';
 import { DrawingService } from '../../../services/drawing/drawing.service';
 import { NewDrawingInfo } from '../../../services/utils/newDrawingInfo';
 import { CanvasComponent } from '../../canvas/canvas.component';
@@ -28,7 +28,7 @@ import { CanvasComponent } from '../../canvas/canvas.component';
 
 export class NewDrawingComponent implements OnDestroy {
   subscription: Subscription;
-  readonly palettesChoicesRGB: Color[] = PaletteChoicesRGB;
+  readonly palettesChoicesRGB: Color[] = PALETTE_CHOICES_RGB;
 
   @ViewChild('newDrawModal', { static: true }) newDrawModal: ElementRef;
 
@@ -50,12 +50,12 @@ export class NewDrawingComponent implements OnDestroy {
   private readonly MIN_CANVAS_SIZE = 50;
   private readonly MAX_CANVAS_SIZE = 5000;
 
-  constructor(private formBuilder: FormBuilder, private keyboardShortcutService: KeyboardShortcutService,
+  constructor(private formBuilder: FormBuilder, private keyboardService: KeyboardService,
               private drawingService: DrawingService, private modalService: NgbModal, private colorSelection: ColorService) {
 
     this.newDrawingInfo = new NewDrawingInfo(this.workspaceDimensions[0], this.workspaceDimensions[1], Color.WHITE);
 
-    this.subscription = this.keyboardShortcutService.getKeyboardShortcutType().subscribe((keyboardShortcut: KeyboardShortcutType) => {
+    this.subscription = this.keyboardService.getKeyboardShortcutType().subscribe((keyboardShortcut: KeyboardShortcutType) => {
       if (keyboardShortcut === KeyboardShortcutType.CreateDrawing) {
         this.openModal();
       }
@@ -79,7 +79,7 @@ export class NewDrawingComponent implements OnDestroy {
     });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.subscription.unsubscribe();
   }
 
@@ -137,7 +137,7 @@ export class NewDrawingComponent implements OnDestroy {
   confirmRGBColor(): void {
     const currentRGB: Color =  new Color(this.drawingForm.value.red,
     this.drawingForm.value.green, this.drawingForm.value.blue);
-    this.errorInColors = this.colorSelection.confirmRGBColor(currentRGB);
+    this.errorInColors = !this.colorSelection.isColorValid(currentRGB);
     const converted: string = this.colorSelection.convertRgbToHex(currentRGB);
     this.drawingForm.patchValue({ hex: converted.split('#')[1] });
     this.currentColorHex = converted;
@@ -194,7 +194,7 @@ export class NewDrawingComponent implements OnDestroy {
 
   // Ouvre la fenêtre modal quand le bouton ou CTRL+o est appuyé
   openModal(): boolean {
-    this.keyboardShortcutService.modalWindowActive = true;
+    this.keyboardService.modalWindowActive = true;
     this.modalService.open(this.newDrawModal, this.newDrawingModalConfig);
     this.resetForm();
     return this.modalService.hasOpenModals();
@@ -202,17 +202,8 @@ export class NewDrawingComponent implements OnDestroy {
 
   // Ferme la fenêtre modal
   closeModal(): boolean {
-    this.keyboardShortcutService.modalWindowActive = false;
+    this.keyboardService.modalWindowActive = false;
     this.modalService.dismissAll();
     return this.modalService.hasOpenModals();
-  }
-
-  // Méthodes pour configurer le booléen correctement:
-  setInactiveFocus() {
-    this.keyboardShortcutService.inputFocusedActive = false;
-  }
-
-  setActiveFocus() {
-    this.keyboardShortcutService.inputFocusedActive = true;
   }
 }

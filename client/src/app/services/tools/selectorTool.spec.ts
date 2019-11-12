@@ -1,3 +1,5 @@
+import { TestBed } from '@angular/core/testing';
+import { ClipboardService } from '../clipboard/clipboard.service';
 import { Handle } from '../svgPrimitives/ellipse/handle/handle';
 import { Rectangle } from '../svgPrimitives/rectangle/rectangle';
 import { Color } from '../utils/color';
@@ -12,7 +14,11 @@ describe('SelectorTool', () => {
     let rectangle3: Rectangle;
 
     beforeEach(() => {
-        tool = new SelectorTool();
+      TestBed.configureTestingModule({});
+    });
+
+    beforeEach(() => {
+        tool = new SelectorTool(TestBed.get(ClipboardService));
         const point1: Point = new Point(50, 50);
         const point2: Point = new Point(55, 55);
         const point3: Point = new Point(100, 100);
@@ -41,11 +47,6 @@ describe('SelectorTool', () => {
         expect(rectangle1.selected).toBe(false);
         expect(rectangle2.selected).toBe(false);
         expect(rectangle3.selected).toBe(false);
-    });
-
-    it('Unused inherited functions behave as expected', () => {
-        expect(tool.isCommandReady()).toBe(false);
-        expect(tool.getCommand()).toBeNull();
     });
 
     it('A left click on a selectable primitive should select it', () => {

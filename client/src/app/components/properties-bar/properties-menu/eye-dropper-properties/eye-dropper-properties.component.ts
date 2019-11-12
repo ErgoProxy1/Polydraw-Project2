@@ -16,7 +16,7 @@ export class EyeDropperPropertiesComponent implements OnInit, OnDestroy {
   constructor(private toolsService: ToolsService) {
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.selectedToolSubscription = this.toolsService.subscribeToToolChanged().subscribe((toolSelected) => {
       this.eyeDropper = toolSelected as EyeDropperTool;
     });
@@ -30,7 +30,7 @@ export class EyeDropperPropertiesComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.selectedToolSubscription.unsubscribe();
   }
 }

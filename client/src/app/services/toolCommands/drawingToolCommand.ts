@@ -1,17 +1,27 @@
-import { Line } from '../svgPrimitives/line/line';
 import { Path } from '../svgPrimitives/path/path';
+import { Pen } from '../svgPrimitives/pen/pen';
 import { SVGPrimitive } from '../svgPrimitives/svgPrimitive';
 import { Color } from '../utils/color';
+import { PrimitiveType, Texture } from '../utils/constantsAndEnums';
 import { ToolCommand } from './toolCommand';
 
-export abstract class DrawingToolCommand implements ToolCommand {
+export class DrawingToolCommand implements ToolCommand {
   path: Path;
-  line: Line;
-
-  constructor(strokeColor: Color, strokeWidth: number) {
-    // TODO lors de la coordination des undo/redo
+  readonly constantStrokeWidth: number;
+  constructor(strokeColor: Color, strokeWidth: number, type: PrimitiveType, texture: Texture = Texture.Basic) {
+    this.path = type === PrimitiveType.Pen ? new Pen(strokeColor, strokeWidth, type, texture) :
+    new Path(strokeColor, strokeWidth, type, texture);
+    this.constantStrokeWidth = this.path.strokeWidth;
   }
 
-  abstract apply(): SVGPrimitive | null;
-  abstract cancel(): void;
+  apply(primitives: SVGPrimitive[]): void {
+    primitives.push(this.path);
+  }
+
+  cancel(primitives: SVGPrimitive[]): void {
+    const index = primitives.indexOf(this.path, 0);
+    if (index > -1) {
+      primitives.splice(index, 1);
+    }
+  }
 }

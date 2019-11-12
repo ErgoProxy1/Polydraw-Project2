@@ -1,11 +1,10 @@
-import { PaintBrushCommand } from '../toolCommands/paintBrushCommand';
+import { DrawingToolCommand } from '../toolCommands/drawingToolCommand';
 import { Color } from '../utils/color';
-import { Texture, ToolType } from '../utils/constantsAndEnums';
+import { PrimitiveType, Texture, ToolType } from '../utils/constantsAndEnums';
 import { Point } from '../utils/point';
 import { DrawingTool } from './drawingTool';
-import { Tool } from './tool';
 
-export class PaintBrushTool extends DrawingTool implements Tool {
+export class PaintBrushTool extends DrawingTool {
   type = ToolType.PaintBrushTool;
   texture: Texture = Texture.Basic;
 
@@ -14,7 +13,7 @@ export class PaintBrushTool extends DrawingTool implements Tool {
   }
 
   protected begin(position: Point): void {
-    this.command = new PaintBrushCommand(this.strokeColor, this.strokeWidth, this.texture);
+    this.command = new DrawingToolCommand(this.strokeColor, this.strokeWidth, PrimitiveType.Paint, this.texture);
     super.begin(position);
   }
 }

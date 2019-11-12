@@ -3,10 +3,13 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbAlertModule, NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 import { TrustPipe } from 'src/app/pipes/trust-html.pipe';
+import { ExportDrawingComponent } from './export-drawing/export-drawing.component';
 import { HorizontalMenuComponent } from './horizontal-menu.component';
 import { NewDrawingComponent } from './new-drawing/new-drawing.component';
 import { OpenGalleryComponent } from './open-gallery/open-gallery.component';
+import { RedoComponent } from './redo/redo.component';
 import { SaveDrawingComponent } from './save-drawing/save-drawing.component';
+import { UndoComponent } from './undo/undo.component';
 
 describe('HorizontalMenuComponent', () => {
   let component: HorizontalMenuComponent;
@@ -19,7 +22,10 @@ describe('HorizontalMenuComponent', () => {
         NewDrawingComponent,
         SaveDrawingComponent,
         OpenGalleryComponent,
+        ExportDrawingComponent,
         TrustPipe,
+        UndoComponent,
+        RedoComponent,
       ],
       imports: [ FormsModule, ReactiveFormsModule, NgbAlertModule, NgbTypeaheadModule, HttpClientModule],
     })

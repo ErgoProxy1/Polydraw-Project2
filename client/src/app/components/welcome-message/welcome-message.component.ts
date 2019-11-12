@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
-import { KeyboardShortcutService } from 'src/app/services/keyboardShortcut/keyboard-shortcut.service';
+import { KeyboardService } from 'src/app/services/keyboard/keyboard.service';
 import { UserInfoService } from '../../services/userInfo/userinfo.service';
 
 @Component({
@@ -20,22 +20,22 @@ export class WelcomeMessageComponent implements OnInit {
   };
 
   constructor(private userInfoService: UserInfoService,
-              private keyBoardShortcutService: KeyboardShortcutService,
+              private keyboardService: KeyboardService,
               private modalService: NgbModal) { }
 
-  ngOnInit() {
+  ngOnInit(): void {
     if (!this.userInfoService.getNoMessage()) {
       this.openModal();
     }
   }
   // Fonctions d'ouverture et fermeture du modal
-  openModal() {
-    this.keyBoardShortcutService.modalWindowActive = true;
+  openModal(): void {
+    this.keyboardService.modalWindowActive = true;
     this.modalService.open(this.welcomeModal, this.welcomeModalConfig);
   }
 
-  closeModal() {
-    this.keyBoardShortcutService.modalWindowActive = false;
+  closeModal(): void {
+    this.keyboardService.modalWindowActive = false;
     this.modalService.dismissAll();
   }
 

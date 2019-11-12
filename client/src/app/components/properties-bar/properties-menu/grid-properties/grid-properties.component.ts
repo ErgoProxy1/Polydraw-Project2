@@ -16,8 +16,10 @@ export class GridPropertiesComponent implements OnInit {
   readonly MAX_TRANSPARENCY = MAX_ALPHA;
   readonly MIN_SQUARE_SIZE = MIN_GRID_SIZE;
   readonly MAX_SQUARE_SIZE = MAX_GRID_SIZE;
+
   constructor(private toolsService: ToolsService) { }
-  ngOnInit() {
+
+  ngOnInit(): void {
     this.gridInfo = this.toolsService.gridInfo;
     this.sizeOfSquare = this.gridInfo.sizeOfSquare();
     this.toolsService.newToolSelected(ToolType.GridTool);
@@ -28,7 +30,7 @@ export class GridPropertiesComponent implements OnInit {
     });
   }
 
-  onSquareChange() {
+  onSquareChange(): void {
     if (this.sizeOfSquare < this.MIN_SQUARE_SIZE) {
       this.sizeOfSquare = this.MIN_SQUARE_SIZE;
     } else if (this.sizeOfSquare > this.MAX_SQUARE_SIZE) {

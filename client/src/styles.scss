@@ -1,9 +1,9 @@
 /* You can add global styles to this file, and also import other style files */
 body{
   margin:0;
-  -webkit-user-select: none;  
-  -moz-user-select: none;    
-  -ms-user-select: none;      
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
   user-select: none;
 }
 
@@ -57,4 +57,8 @@ p, button, input, label {
   left: 50%;
   -webkit-transform: translateX(-50%);
   transform: translateX(-50%);
+}
+
+.icon-color-disabled{
+  color: rgb(83, 107, 109);
 }

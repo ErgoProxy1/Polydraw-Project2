@@ -4,8 +4,6 @@ import { Point } from '../../utils/point';
 import { SVGPrimitive } from '../svgPrimitive';
 
 export abstract class Shape extends SVGPrimitive {
-  fillColor: Color;
-  strokeColor: Color;
   strokeWidth: number;
   strokeType: StrokeType;
   protected width: number;
@@ -79,22 +77,24 @@ export abstract class Shape extends SVGPrimitive {
   }
 
   getAbsoluteWidth(): number {
-    return this.absoluteWidth;
+    const num = this.absoluteWidth;
+    return num;
   }
 
   getAbsoluteHeight(): number {
-    return this.absoluteHeight;
+    const num = this.absoluteHeight;
+    return num;
   }
 
   /**
    *  Met a jour les coins de la primitive directement pour eviter de passer par le calcul du boundingbox.
    */
-  protected updateCorners() {
+  protected updateCorners(): void {
     let topLeft: Point = new Point(Math.min(this.corner1.x, this.corner1.x + this.width),
-                                    Math.min(this.corner1.y, this.corner1.y + this.height));
+      Math.min(this.corner1.y, this.corner1.y + this.height));
     topLeft = this.strokeType === StrokeType.Full ? topLeft : topLeft.addXY(-this.strokeWidth / 2.0, -this.strokeWidth / 2.0);
     let bottomRight: Point = new Point(Math.max(this.corner1.x, this.corner1.x + this.width),
-                                        Math.max(this.corner1.y, this.corner1.y + this.height));
+      Math.max(this.corner1.y, this.corner1.y + this.height));
     bottomRight = this.strokeType === StrokeType.Full ? bottomRight : bottomRight.addXY(this.strokeWidth / 2.0, this.strokeWidth / 2.0);
     this.setCorners(topLeft, bottomRight);
   }

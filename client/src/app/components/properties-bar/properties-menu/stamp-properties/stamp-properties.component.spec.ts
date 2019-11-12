@@ -64,7 +64,7 @@ describe('StampPropertiesComponent', () => {
   });
 
   it('Stamp change is properly handled', () => {
-    component.onChangeStamp('Heart');
+    component.onChangeStamp('Coeur');
     expect(component.stamp.selected).toBe(4);
   });
 

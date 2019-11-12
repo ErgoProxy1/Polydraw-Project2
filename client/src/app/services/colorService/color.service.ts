@@ -5,8 +5,7 @@ import { Color, MAX_ALPHA, MAX_RGB } from '../utils/color';
   providedIn: 'root',
 })
 export class ColorService {
-
-  lastColorsUsed: Color[] = [new Color(255, 0, 0, 1), new Color(0, 255, 0, 1),
+  previousColors: Color[] = [new Color(255, 0, 0, 1), new Color(0, 255, 0, 1),
   new Color(0, 0, 255, 1), new Color(204, 0, 255, 1), new Color(1, 255, 255, 1)];
 
   // Convertie les couleurs RGB en Hex
@@ -19,18 +18,14 @@ export class ColorService {
         hexes[i] = '0' + hexes[i];
       }
     }
-    const hexString = '';
-    return  '#' + hexString.concat(hexes[0], hexes[1], hexes[2]);
+    return  `#${hexes.join('')}`;
   }
 
   // Convertie les couleurs Hex en RGB
   convertHextoRgb(currentHex: string): Color {
-    const redHex = '';
-    const greenHex = '';
-    const blueHex = '';
-    return new Color (parseInt(redHex.concat(currentHex[0], currentHex[1]), 16),
-    parseInt(greenHex.concat(currentHex[2], currentHex[3]), 16),
-    parseInt(blueHex.concat(currentHex[4], currentHex[5]), 16));
+    return new Color (parseInt(currentHex.slice(0, 2), 16),
+                      parseInt(currentHex.slice(2, 4), 16),
+                      parseInt(currentHex.slice(4, 6), 16));
   }
 
   // Corrige les inputs de l'utilisateur invalides dans le champ du Hex
@@ -40,59 +35,45 @@ export class ColorService {
   }
 
   // S'assure que les valeurs RGB entree sont valides
-  confirmRGBColor(color: Color): boolean {
-    if (color.r <= MAX_RGB && color.r >= 0 &&
-      color.g <= MAX_RGB && color.g >= 0 &&
-      color.b <= MAX_RGB && color.b >= 0) {
-        return false;
-    } else {
-      return true;
-    }
+  isColorValid(color: Color): boolean {
+    return (color.r <= MAX_RGB && color.r >= 0 &&
+            color.g <= MAX_RGB && color.g >= 0 &&
+            color.b <= MAX_RGB && color.b >= 0);
   }
 
   // Ajoute le # aux valeurs Hex afin de pouvoir les passer au html
   stringToHexForm(hex: string): string {
-    const paletteString = '#';
-    return paletteString.concat(hex);
+    return `#${hex}`;
   }
 
   // Corrige les inputs de l'utilisateur invalides dans les champs du alpha
   confirmAlpha(alpha: number): number {
-    if (alpha >= 0 && alpha <= MAX_ALPHA) {
-      return alpha;
-    } else {
-      return 1;
-    }
+    return (alpha >= 0 && alpha <= MAX_ALPHA) ? alpha : 1;
   }
+
   // Utilisation de la stack
   addNewColor(colorSelected: Color): void {
-    for (const info of this.lastColorsUsed) {
+    for (const info of this.previousColors) {
       if (info.isEquivalent(colorSelected)) {
-        const index: number = this.lastColorsUsed.indexOf(info);
-        this.lastColorsUsed.splice(index, 1);
-        this.lastColorsUsed  = this.decalageTableauCouleur(this.lastColorsUsed,
-          info);
+        const index: number = this.previousColors.indexOf(info);
+        this.previousColors.splice(index, 1);
+        this.previousColors  = this.decalageTableauCouleur(this.previousColors, info);
         return;
       }
     }
-    this.lastColorsUsed = this.decalageTableauCouleur(this.lastColorsUsed,
-      colorSelected);
-      }
+    this.previousColors = this.decalageTableauCouleur(this.previousColors, colorSelected);
+  }
 
   // Decalage du tableau des dernieres couleurs utilisées
-  decalageTableauCouleur(oldArray: Color[], lastColor: Color): Color[] {
+  private decalageTableauCouleur(oldArray: Color[], lastColor: Color): Color[] {
     const tempColorStorage: Color[] = [];
-    tempColorStorage[0] = new Color(lastColor.r, lastColor.g,
-      lastColor.b, lastColor.a);
-    for (let i  = 0; i < this.lastColorsUsed.length; i++) {
-        tempColorStorage[i + 1] = oldArray[i];
+    tempColorStorage[0] = new Color(lastColor.r, lastColor.g, lastColor.b, lastColor.a);
+    for (let i  = 0; i < this.previousColors.length; i++) {
+      tempColorStorage[i + 1] = oldArray[i];
     }
     if (tempColorStorage.length > 10) {
       tempColorStorage.pop();
     }
     return tempColorStorage;
-  }
-  getLastColorsUsed(): Color[] {
-    return this.lastColorsUsed;
   }
 }

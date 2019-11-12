@@ -22,19 +22,19 @@ describe('PolygonTest', () => {
     expect(polygon.strokeWidth).toEqual(DEFAULT_STROKE_WIDTH);
     expect(polygon.strokeType).toEqual(StrokeType.FullWithOutline);
     expect(polygon.center).toEqual(origin);
-    expect(polygon.radius).toEqual(50);
-    expect(polygon.sidesNumber).toEqual(4);
+    expect(polygon.radius).toEqual(4);
+    expect(polygon.sidesNumber).toEqual(50);
     expect(polygon.type).toEqual(PrimitiveType.Polygon);
   });
 
   it('should return the correct absolute width and height', () => {
-    expect(polygon.getAbsoluteHeight()).toEqual(100);
-    expect(polygon.getAbsoluteWidth()).toEqual(100);
+    expect(polygon.getAbsoluteHeight()).toEqual(8);
+    expect(polygon.getAbsoluteWidth()).toEqual(8);
   });
 
   it('should return the right number of coordinates for the polygon', () => {
     polygon.resize(corner1, corner2, true);
-    expect(polygon.points.length).toEqual(5);
+    expect(polygon.points.length).toEqual(51);
   });
 
   it('should return a good form of string', () => {

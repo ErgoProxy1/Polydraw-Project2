@@ -1,7 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
-import { KeyboardShortcutService } from 'src/app/services/keyboardShortcut/keyboard-shortcut.service';
+import { KeyboardService } from 'src/app/services/keyboard/keyboard.service';
 import { DrawingService } from '../../../services/drawing/drawing.service';
 import { NewDrawingComponent } from './new-drawing.component';
 
@@ -245,20 +245,12 @@ describe('NewDrawingComponent', () => {
     expect(component.drawingForm.value.height).toEqual(64);
   });
 
-  it('Input focus status is correctly detected and transmitted for keyboard events service', () => {
-    const keyboardService: KeyboardShortcutService = TestBed.get(KeyboardShortcutService);
-    component.setActiveFocus();
-    expect(keyboardService.inputFocusedActive).toBe(true);
-    component.setInactiveFocus();
-    expect(keyboardService.inputFocusedActive).toBe(false);
-  });
-
   it('Modal active status is correctly detected and transmitted for keyboard shortcuts service', () => {
-    const keyboardService: KeyboardShortcutService = TestBed.get(KeyboardShortcutService);
+    const keyboardService: KeyboardService = TestBed.get(KeyboardService);
     component.openModal();
     expect(keyboardService.modalWindowActive).toBe(true);
     component.closeModal();
-    component.setInactiveFocus();
+    keyboardService.inputFocusedActive = false;
     expect(keyboardService.modalWindowActive).toBe(false);
   });
 

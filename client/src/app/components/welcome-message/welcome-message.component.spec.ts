@@ -1,7 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { CookieService } from 'ngx-cookie-service';
-import { KeyboardShortcutService } from 'src/app/services/keyboardShortcut/keyboard-shortcut.service';
+import { KeyboardService } from 'src/app/services/keyboard/keyboard.service';
 import { UserInfoService } from 'src/app/services/userInfo/userinfo.service';
 import { WelcomeMessageComponent } from './welcome-message.component';
 
@@ -30,7 +30,7 @@ describe('WelcomeMessageComponent', () => {
 
   it('Modal properly set to active on init', () => {
     const userInfo: UserInfoService = TestBed.get(UserInfoService);
-    const keyboardService: KeyboardShortcutService = TestBed.get(KeyboardShortcutService);
+    const keyboardService: KeyboardService = TestBed.get(KeyboardService);
     userInfo.noMessage = false;
     keyboardService.modalWindowActive = false;
     component.ngOnInit();
@@ -39,7 +39,7 @@ describe('WelcomeMessageComponent', () => {
 
   it('Modal stays inactive on init if user asked it to', () => {
     const userInfo: UserInfoService = TestBed.get(UserInfoService);
-    const keyboardService: KeyboardShortcutService = TestBed.get(KeyboardShortcutService);
+    const keyboardService: KeyboardService = TestBed.get(KeyboardService);
     userInfo.noMessage = true;
     keyboardService.modalWindowActive = false;
     component.ngOnInit();
@@ -48,14 +48,14 @@ describe('WelcomeMessageComponent', () => {
 
   it('Modal set to active when opened', () => {
     component.openModal();
-    const keyboardService: KeyboardShortcutService = TestBed.get(KeyboardShortcutService);
+    const keyboardService: KeyboardService = TestBed.get(KeyboardService);
     expect(keyboardService);
     expect(keyboardService.modalWindowActive).toBe(true);
   });
 
   it('Modal set to inactive when closed', () => {
     component.closeModal();
-    const keyboardService: KeyboardShortcutService = TestBed.get(KeyboardShortcutService);
+    const keyboardService: KeyboardService = TestBed.get(KeyboardService);
     expect(keyboardService.modalWindowActive).toBe(false);
   });
 

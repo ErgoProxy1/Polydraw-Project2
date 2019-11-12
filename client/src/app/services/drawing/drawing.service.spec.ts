@@ -1,5 +1,7 @@
+import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { SvgComponent } from 'src/app/components/canvas/svg/svg.component';
 import { NTimesPipe } from 'src/app/pipes/n-times.pipe';
 import { CanvasComponent } from '../../components/canvas/canvas.component';
 import { NewDrawingComponent } from '../../components/horizontal-menu/new-drawing/new-drawing.component';
@@ -18,8 +20,8 @@ describe('DrawingService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [NewDrawingComponent, CanvasComponent, NTimesPipe],
-      imports: [FormsModule, ReactiveFormsModule]})
+      declarations: [NewDrawingComponent, CanvasComponent, SvgComponent, NTimesPipe],
+      imports: [FormsModule, ReactiveFormsModule, HttpClientModule]})
     .compileComponents();
 
     drawingFixture = TestBed.createComponent(NewDrawingComponent);

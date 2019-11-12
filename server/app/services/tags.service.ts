@@ -4,6 +4,7 @@ import { TagsInfo } from '../../../common/communication/tags';
 
 @injectable()
 export class TagsService {
+  // tslint:disable-next-line: no-require-imports
   private fs = require('fs');
   readonly path = './data/tags.json';
   tags: TagsInfo[];
@@ -13,10 +14,11 @@ export class TagsService {
       // Le fichier doit être créé
       this.tags = [];
       this.fs.closeSync(this.fs.openSync(this.path, 'w'));
+      // tslint:disable-next-line: no-empty
       this.fs.writeFile(this.path, '[]', () => { });
     } else {
       // Le fichier existe
-      let file = this.fs.readFileSync(this.path);
+      const file = this.fs.readFileSync(this.path);
       this.tags = JSON.parse(file);
     }
   }
@@ -43,7 +45,7 @@ export class TagsService {
 
   // Méthode appelée pour gérer les tags d'un nouveau dessin
   manageNewTags(tagsIn: TagsInfo[]): TagsInfo[] {
-    let tagsOut = [];
+    const tagsOut = [];
     // Tous les tags en entrée
     for (const tag of tagsIn) {
       if (tag.id !== -1) {

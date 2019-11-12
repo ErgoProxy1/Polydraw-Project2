@@ -4,10 +4,9 @@ import { Path } from '../svgPrimitives/path/path';
 import { Polygon } from '../svgPrimitives/polygon/polygon';
 import { Rectangle } from '../svgPrimitives/rectangle/rectangle';
 import { Stamp } from '../svgPrimitives/stamp/stamp';
-import { EyeDropperToolCommand } from '../toolCommands/eyeDropperCommand';
 import { Color } from '../utils/color';
 // tslint:disable-next-line
-import { DEFAULT_LINE_ROUNDING, KeyboardEventType, LineCap, LineJoin, MouseEventType, Pattern, StrokeType, Texture } from '../utils/constantsAndEnums';
+import { DEFAULT_LINE_ROUNDING, KeyboardEventType, LineCap, LineJoin, Pattern, PrimitiveType, StrokeType, Texture } from '../utils/constantsAndEnums';
 import { Point } from '../utils/point';
 import { DefaultStamps } from '../utils/stampData';
 import { EyeDropperTool } from './eyeDropperTool';
@@ -29,28 +28,17 @@ describe('EyeDropperTool', () => {
     const line: Line = new Line(
         new Color(64, 64, 64, 0.5), 10, Pattern.FullLine, LineJoin.Arcs, LineCap.Butt, 10, DEFAULT_LINE_ROUNDING,
     );
-    const path: Path = new Path(new Color(64, 64, 64, 0.5), 10, Texture.Basic);
+    const path: Path = new Path(new Color(64, 64, 64, 0.5), 10, PrimitiveType.Paint, Texture.Basic);
 
     beforeEach(() => {
         tool = new EyeDropperTool();
     });
 
-    it('Tool command is properly created', () => {
-        expect(tool.mouseEvent(MouseEventType.MouseDownLeft, new Point(50, 50), rectangle)).toEqual([]);
-        expect(tool.getCommand() as EyeDropperToolCommand).toEqual(new EyeDropperToolCommand(rectangle, true, rectangle.strokeColor));
-    });
-
     it('Other event commands do nothing', () => {
-        expect(tool.keyboardEvent(KeyboardEventType.KeyDown, 'a')).toEqual([]);
-        expect(tool.mouseWheelEvent(1)).toEqual([]);
-    });
-
-    it('Command is properly set to ready', () => {
-        expect(tool.isCommandReady()).toBe(false);
-        tool.mouseEvent(MouseEventType.MouseDownLeft, new Point(50, 50), rectangle);
-        expect(tool.isCommandReady()).toBe(true);
-        tool.getCommand();
-        expect(tool.isCommandReady()).toBe(false);
+        tool.keyboardEvent(KeyboardEventType.InvalidEvent);
+        expect(tool.getTemporaryPrimitives()).toEqual([]);
+        tool.mouseWheelEvent(1);
+        expect(tool.getTemporaryPrimitives()).toEqual([]);
     });
 
     it('Tool properly distinguishes between fill or stroke', () => {

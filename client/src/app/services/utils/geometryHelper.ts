@@ -5,29 +5,29 @@ import { Point } from './point';
 export class GeometryHelper {
 
   static isPrimitiveIntersectingRectangle(primitive: SVGPrimitive, rectangle: Rectangle): boolean {
-    const rectangleTopLeft: Point = rectangle.getTopLeftCorner();
-    const rectangleBottomRight: Point = rectangle.getBottomRightCorner();
-    const primitiveTopLeft: Point = primitive.getTopLeftCorner();
-    const primitiveBottomRight: Point = primitive.getBottomRightCorner();
+    const RECTANGLE_TOP_LEFT: Point = rectangle.getTopLeftCorner();
+    const RECTANGLE_BOTTOM_RIGHT: Point = rectangle.getBottomRightCorner();
+    const PRIMITIVE_TOP_LEFT: Point = primitive.getTopLeftCorner();
+    const PRIMITIVE_BOTTOM_RIGHT: Point = primitive.getBottomRightCorner();
 
-    const rectangleLeft: number = rectangleTopLeft.x;
-    const rectangleTop: number = rectangleTopLeft.y;
-    const rectangleRight: number = rectangleBottomRight.x;
-    const rectangleBottom: number = rectangleBottomRight.y;
+    const RECTANGLE_LEFT: number = RECTANGLE_TOP_LEFT.x;
+    const RECTANGLE_TOP: number = RECTANGLE_TOP_LEFT.y;
+    const RECTANGLE_RIGHT: number = RECTANGLE_BOTTOM_RIGHT.x;
+    const RECTANGLE_BOTTOM: number = RECTANGLE_BOTTOM_RIGHT.y;
 
-    const primitiveLeft: number = primitiveTopLeft.x;
-    const primitiveTop: number = primitiveTopLeft.y;
-    const primitiveRight: number = primitiveBottomRight.x;
-    const primitiveBottom: number = primitiveBottomRight.y;
+    const PRIMITIVE_LEFT: number = PRIMITIVE_TOP_LEFT.x;
+    const PRIMITIVE_TOP: number = PRIMITIVE_TOP_LEFT.y;
+    const PRIMITIVE_RIGHT: number = PRIMITIVE_BOTTOM_RIGHT.x;
+    const PRIMITIVE_BOTTOM: number = PRIMITIVE_BOTTOM_RIGHT.y;
 
-    return !(primitiveLeft > rectangleRight || primitiveTop > rectangleBottom
-            || primitiveRight < rectangleLeft || primitiveBottom < rectangleTop);
+    return !(PRIMITIVE_LEFT > RECTANGLE_RIGHT || PRIMITIVE_TOP > RECTANGLE_BOTTOM
+            || PRIMITIVE_RIGHT < RECTANGLE_LEFT || PRIMITIVE_BOTTOM < RECTANGLE_TOP);
   }
 
   static isPointInsideRectangle(point: Point, rectangle: Rectangle): boolean {
-    const rectangleTopLeft: Point = rectangle.getTopLeftCorner();
-    const rectangleBottomRight: Point = rectangle.getBottomRightCorner();
-    return point.x > rectangleTopLeft.x && point.y > rectangleTopLeft.y
-          && point.x < rectangleBottomRight.x && point.y < rectangleBottomRight.y;
+    const RECTANGLE_TOP_LEFT: Point = rectangle.getTopLeftCorner();
+    const RECTANGLE_BOTTOM_RIGHT: Point = rectangle.getBottomRightCorner();
+    return point.x > RECTANGLE_TOP_LEFT.x && point.y > RECTANGLE_TOP_LEFT.y
+          && point.x < RECTANGLE_BOTTOM_RIGHT.x && point.y < RECTANGLE_BOTTOM_RIGHT.y;
   }
 }

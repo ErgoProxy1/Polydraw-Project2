@@ -1,12 +1,11 @@
 import { Path } from '../svgPrimitives/path/path';
-import { PencilToolCommand } from '../toolCommands/pencilToolCommand';
+import { DrawingToolCommand } from '../toolCommands/drawingToolCommand';
 import { Color } from '../utils/color';
-import { ToolType } from '../utils/constantsAndEnums';
+import { PrimitiveType, ToolType } from '../utils/constantsAndEnums';
 import { Point } from '../utils/point';
 import { DrawingTool } from './drawingTool';
-import { Tool } from './tool';
 
-export class PencilTool extends DrawingTool implements Tool {
+export class PencilTool extends DrawingTool {
   type = ToolType.Pencil;
   path: Path;
 
@@ -15,7 +14,7 @@ export class PencilTool extends DrawingTool implements Tool {
   }
 
   protected begin(position: Point): void {
-    this.command = new PencilToolCommand(this.strokeColor, this.strokeWidth);
+    this.command = new DrawingToolCommand(this.strokeColor, this.strokeWidth, PrimitiveType.Pencil);
     super.begin(position);
   }
 }

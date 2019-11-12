@@ -13,6 +13,7 @@ export class Color {
 
   static readonly BLACK: Color = new Color(0, 0, 0, MAX_ALPHA);
   static readonly WHITE: Color = new Color(MAX_RGB, MAX_RGB, MAX_RGB, MAX_ALPHA);
+  static readonly TRANSPARENT_RGBA_TEXT_FORM: string = 'none';
 
   r: number; // Valeur du rouge, variant de 0 a 255
   g: number; // Valeur du vert, variant de 0 a 255
@@ -33,15 +34,14 @@ export class Color {
 
   asString(): string {
     this.rgbaTextForm = 'rgba(' + this.r + ',' + this.g + ',' + this.b + ',' + this.a + ')';
-    if (this.a === 0) { this.rgbaTextForm = 'none'; }
+    if (this.a === 0) {
+      this.rgbaTextForm = Color.TRANSPARENT_RGBA_TEXT_FORM;
+    }
     return this.rgbaTextForm;
   }
+
   isEquivalent(color: Color): boolean {
-    if (this.r === color.r && this.g === color.g && this.b === color.b) {
-      return true;
-    } else {
-      return false;
-    }
+    return (this.r === color.r && this.g === color.g && this.b === color.b);
 
   }
 }

@@ -10,14 +10,14 @@ describe('Stamp', () => {
   });
 
   it('Properly constructed', () => {
-    expect(stamp.scale).toBe(0.2);
+    expect(stamp.stampScale).toBe(0.2);
     expect(stamp.angle).toBe(135);
     expect(stamp.position).toEqual(new Point(100, 100));
     expect(stamp.info).toEqual(DefaultStamps[1]);
-    expect(stamp.translation).toBe('translate(100,100) ');
-    expect(stamp.rotation).toBe('rotate(135) ');
+    expect(stamp.stampTranslation).toBe('translate(100,100) ');
+    expect(stamp.stampRotation).toBe('rotate(135) ');
     expect(stamp.scaled).toBe('scale(0.2) ');
-    expect(stamp.transformations).toBe('translate(100,100) rotate(135) scale(0.2) ');
+    expect(stamp.stampTransformations).toBe('translate(100,100) rotate(135) scale(0.2) ');
     expect(stamp.origin).toBe('0px 0px');
   });
 

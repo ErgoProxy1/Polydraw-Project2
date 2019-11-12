@@ -6,6 +6,7 @@ import Types from '../types';
 
 @injectable()
 export class DrawingService {
+  // tslint:disable-next-line: no-require-imports
   private fs = require('fs');
   readonly path = './data/drawings.json';
   drawings: DrawingInfo[];
@@ -15,7 +16,8 @@ export class DrawingService {
       // Le fichier doit être créé
       this.drawings = [];
       this.fs.closeSync(this.fs.openSync(this.path, 'w'));
-      this.fs.writeFile(this.path, '[]', () => { });
+      // tslint:disable-next-line: no-empty
+      this.fs.writeFile(this.path, '[]', () => {});
     } else {
       // Le fichier existe
       const file = this.fs.readFileSync(this.path);
@@ -34,7 +36,7 @@ export class DrawingService {
   saveDrawing(drawing: DrawingInfo): Error | boolean {
     try {
       // Validation du nom et des tags
-      if (drawing.name.length === 0) {
+      if (drawing.name.length === 0 || drawing.name.length > 50) {
         throw new Error('Veuillez entrer un nom SVP.');
       } else if (!this.tagsService.validateTags(drawing.tags)) {
         throw new Error('Veuillez vérifier les étiquettes SVP.');
@@ -55,11 +57,13 @@ export class DrawingService {
     } catch (e) { return e; }
   }
 
-  deleteDrawing(id: string): Error | boolean {
+  deleteDrawing(drawingToDelete: DrawingInfo): Error | boolean {
     try {
-      let drawingsToReturn: DrawingInfo[] = [];
+      const drawingsToReturn: DrawingInfo[] = [];
       for (const drawing of this.drawings) {
-        if (drawing.name !== id) {
+        if (drawing.name !== drawingToDelete.name) {
+          drawingsToReturn.push(drawing);
+        } else if (drawing.primitives !== drawingToDelete.primitives) {
           drawingsToReturn.push(drawing);
         }
       }

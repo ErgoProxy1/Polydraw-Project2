@@ -3,18 +3,13 @@ import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 import { merge, Observable, Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { ControllerService } from 'src/app/services/controller/controller.service';
-import { KeyboardShortcutService } from 'src/app/services/keyboardShortcut/keyboard-shortcut.service';
-import { DrawingCommunicationService } from 'src/app/services/serverCommunication/drawing-communication.service';
-import { TagCommunicationService } from 'src/app/services/serverCommunication/tag-communication.service';
-import { Ellipse } from 'src/app/services/svgPrimitives/ellipse/ellispe';
-import { Line } from 'src/app/services/svgPrimitives/line/line';
-import { Path } from 'src/app/services/svgPrimitives/path/path';
-import { Polygon } from 'src/app/services/svgPrimitives/polygon/polygon';
-import { Rectangle } from 'src/app/services/svgPrimitives/rectangle/rectangle';
-import { Stamp } from 'src/app/services/svgPrimitives/stamp/stamp';
+import { DrawingHandlerService } from 'src/app/services/drawingHandler/drawing-handler.service';
+import { KeyboardService } from 'src/app/services/keyboard/keyboard.service';
+import { PrimitiveFactoryService } from 'src/app/services/primitivesFactory/primitive-factory.service';
 import { SVGPrimitive } from 'src/app/services/svgPrimitives/svgPrimitive';
+import { TagHandlerService } from 'src/app/services/tagHandler/tag-handler.service';
 import { Color } from 'src/app/services/utils/color';
-import { ENTER_KEY_CODE, KeyboardShortcutType, PrimitiveType, SPACE_KEY_CODE } from 'src/app/services/utils/constantsAndEnums';
+import { KeyboardEventType, KeyboardShortcutType } from 'src/app/services/utils/constantsAndEnums';
 import { NewDrawingInfo } from 'src/app/services/utils/newDrawingInfo';
 import { DrawingInfo } from '../../../../../../common/communication/drawingInfo';
 import { TagsInfo } from '../../../../../../common/communication/tags';
@@ -24,21 +19,26 @@ import { TagsInfo } from '../../../../../../common/communication/tags';
   templateUrl: './open-gallery.component.html',
   styleUrls: ['./open-gallery.component.scss'],
 })
+
 export class OpenGalleryComponent {
-  subscription: Subscription;
-  // TODO: changer cette fonction pour obtenir les dessins de l'utilisateur/galerie
-  drawings: DrawingInfo[] = [];
+  keyboardServiceSubscription: Subscription;
+  keyboardEventSubscription: Subscription;
   drawingsToShow: DrawingInfo[] = [];
   loading = false;
   // pour les tags
   currentTagInput = '';
-  allTags: TagsInfo[];
-  tagsName: string[] = [];
   tagsSelected: TagsInfo[] = [];
   focus$ = new Subject<string>();
   click$ = new Subject<string>();
   limitToEight = true;
   limitToShow = 8;
+  keyAdded = '';
+  tagEntryActive = false;
+
+  successMessage = '';
+  errorMessage = '';
+  isSuccess = false;
+  isError = false;
 
   @ViewChild('galleryModal', { static: true }) galleryModal: ElementRef;
 
@@ -49,216 +49,202 @@ export class OpenGalleryComponent {
     keyboard: false,
   };
 
-  constructor(private keyboardShortcutService: KeyboardShortcutService,
+  constructor(private keyboardService: KeyboardService,
               private modalService: NgbModal,
-              private controllerService: ControllerService, /* private tagCommunicationService: TagCommunicationService,*/
-              private drawingCommunicationService: DrawingCommunicationService,
-              private tagCommunicationService: TagCommunicationService) {
-    this.subscription = this.keyboardShortcutService.getKeyboardShortcutType().subscribe((keyboardShortcut: KeyboardShortcutType) => {
-      if (keyboardShortcut === KeyboardShortcutType.OpenGallery) {
-        this.openModal();
-      }
-    });
+              private controllerService: ControllerService,
+              private drawingHandler: DrawingHandlerService,
+              private tagHandlerService: TagHandlerService,
+              private primitiveFactory: PrimitiveFactoryService) {
+    this.keyboardServiceSubscription = this.keyboardService.getKeyboardShortcutType().subscribe(
+      (keyboardShortcut: KeyboardShortcutType) => {
+        if (keyboardShortcut === KeyboardShortcutType.OpenGallery) {
+          this.openModal();
+        }
+      });
+
+    this.keyboardEventSubscription = this.keyboardService.getKeyboardEventType().subscribe(
+      (keyboardEventType: KeyboardEventType) => {
+        this.keyAdded = this.keyboardService.getKeyOut();
+        this.keyboardEvent(keyboardEventType);
+      });
   }
 
-  // Ouvre la fenêtre modal quand le bouton ou CTRL+s est appuyé
+  keyboardEvent(keyboardEventType: KeyboardEventType): void {
+    if (this.tagEntryActive && (this.keyAdded === 'Enter' || this.keyAdded === ' ')) {
+      this.addNewTag();
+    }
+  }
+
   openModal(): boolean {
-    // reset les variables
-    this.drawings = [];
     this.drawingsToShow = [];
     this.loading = true;
     this.currentTagInput = '';
-    this.allTags = [];
-    this.tagsName = [];
     this.tagsSelected = [];
     this.limitToEight = true;
     this.limitToShow = 8;
 
     this.loadDrawingsAndTags();
 
-    this.keyboardShortcutService.modalWindowActive = true;
+    this.keyboardService.modalWindowActive = true;
     this.modalService.open(this.galleryModal, this.galleryModalConfig);
     return this.modalService.hasOpenModals();
   }
-  loadDrawingsAndTags() {
-    this.drawingCommunicationService.getAllDrawings().subscribe((drawings: DrawingInfo[]) => {
-      if (drawings) {
-        this.drawings = drawings;
-        this.drawingsToShow = this.drawings;
+
+  loadDrawingsAndTags(): void {
+    this.drawingHandler.loadDrawings().then((success) => {
+      if (!success) {
+        this.errorMessage = 'Erreur dans la tentative de récupération des dessins.';
+        this.showMessage(true);
       }
-      this.tagCommunicationService.getAllTags().subscribe((tags: TagsInfo[]) => {
-        this.allTags = (tags && tags.length !== 0) ? tags : [];
-        this.tagsName = [];
-        this.allTags.forEach((tag) => {
-          this.tagsName.push(tag.tagName);
-        });
-        this.loading = false;
-      });
+      this.filterDrawings();
+      this.loading = false;
+    }).catch((error) => {
+      this.errorMessage = `Erreur de communication avec le server (loadDrawing) ERREUR: ${error}`;
+      this.showMessage(true);
+      this.loading = false;
+    });
+
+    this.tagHandlerService.loadTags().then((success) => {
+      if (!success) {
+        this.errorMessage = 'Erreur dans la tentative de récupération des tags.';
+        this.showMessage(true);
+      }
+      this.loading = false;
+    }).catch((error) => {
+      this.errorMessage = `Erreur de communication avec le server (loadTags) ERREUR: ${error}`;
+      this.showMessage(true);
+      this.loading = false;
     });
   }
 
-  // Ferme la fenêtre modal
-  closeModal(): boolean {
-    this.keyboardShortcutService.modalWindowActive = false;
-    this.modalService.dismissAll();
-    return this.modalService.hasOpenModals();
-  }
-
-  // Méthodes pour configurer les input boxes et les shortcuts
-  setInactiveFocus() {
-    this.keyboardShortcutService.inputFocusedActive = false;
-  }
-
-  setActiveFocus() {
-    this.keyboardShortcutService.inputFocusedActive = true;
-  }
-
-  getTagString(drawing: DrawingInfo): string {
-
-    let msg: string;
-    if (drawing.tags.length !== 0) {
-      msg = 'Étiquettes: ';
-      drawing.tags.forEach((tag) => {
-        if (this.tagAllreadyExist(tag.tagName)) {
-          msg += '<mark><b>' + tag.tagName + '</b></mark>, ';
-        } else {
-          msg += tag.tagName + ', ';
+  readLocalFile(file: File): void {
+    if (file && file.type === 'application/json') {
+      this.loading = true;
+      const fileLoader = new FileReader();
+      fileLoader.readAsText(file);
+      fileLoader.onload = () => {
+        const unparsedFile = fileLoader.result as string;
+        try {
+          const unparsedDrawing: DrawingInfo = JSON.parse(unparsedFile);
+          this.selectDrawing(unparsedDrawing);
+        } catch (e) {
+          if (!confirm('Fichier non valide. Veuillez réessayer.')) {
+            this.setErrorInvalidFile();
+            return;
+          }
+          this.loading = false;
         }
-      });
-      // enlevons la dernière virgule
-      msg = msg.slice(0, msg.length - 2);
+      };
+      fileLoader.onerror = (error) => {
+        if (!confirm('Fichier non valide. Veuillez réessayer.')) {
+          this.setErrorInvalidFile();
+          return;
+        }
+        this.loading = false;
+      };
     } else {
-      msg = 'Aucune étiquette';
+      if (!confirm('Fichier non valide. Veuillez réessayer.')) {
+        this.setErrorInvalidFile();
+        return;
+      }
     }
-
-    return msg;
   }
 
-  selectDrawing(drawing: DrawingInfo) {
+  private setErrorInvalidFile(): void {
+    this.errorMessage = 'Erreur de fichier non valide, veuillez réessayer';
+    this.showMessage(true);
+  }
+
+  // TODO
+  // deleteDrawing(drawing: DrawingInfo) {
+  //   if (!confirm('Cette action supprimera le dessin de la galerie!')) {
+  //     return;
+  //   }
+  //   this.drawingCommunicationService.deleteDrawing(drawing);
+  // }
+
+  selectDrawing(drawing: DrawingInfo): void {
     if (drawing) {
-      if (this.controllerService.getPrimitives().length !== 0) {
+      if (!this.controllerService.isEmptyPrimitives()) {
         if (!confirm('Cette action supprimera votre dessin actuel!')) {
+          this.setErrorInvalidFile();
           return;
         }
       }
       const canvasInfo: NewDrawingInfo = JSON.parse(drawing.canvasInfo);
       canvasInfo.color = Color.copyColor(canvasInfo.color);
       this.controllerService.setCanvasInfo(canvasInfo);
-      const primitives: SVGPrimitive[] = [];
-      const tabTemp: SVGPrimitive[] = JSON.parse(drawing.primitives);
-      tabTemp.forEach((prim: SVGPrimitive) => {
-        switch (prim.type) {
-          case PrimitiveType.Rectangle: {
-            const rectangle: Rectangle = Rectangle.createCopy(prim);
-            primitives.push(rectangle);
-            break;
-          }
-          case PrimitiveType.Path: {
-            const path: Path = Path.createCopy(prim);
-            primitives.push(path);
-            break;
-          }
-          case PrimitiveType.Stamp: {
-            const stamp: Stamp = Stamp.createCopy(prim);
-            primitives.push(stamp);
-            break;
-          }
-          case PrimitiveType.Line: {
-            const line: Line = Line.createCopy(prim);
-            primitives.push(line);
-            break;
-          }
-          case PrimitiveType.Ellipse: {
-            const ellipse: Ellipse = Ellipse.createCopy(prim);
-            primitives.push(ellipse);
-            break;
-          }
-          case PrimitiveType.Polygon: {
-            const polygon: Polygon = Polygon.createCopy(prim);
-            primitives.push(polygon);
-            break;
-          }
-        }
-      });
+      const primitives: SVGPrimitive[] = this.primitiveFactory.generatePrimitives(drawing.primitives);
       this.controllerService.setPrimitives(primitives);
       this.closeModal();
+      this.successMessage = 'Ouverture réussie';
+      this.showMessage(false);
+    } else {
+      if (!confirm('L\'ouverture n\'a pas fonctionné. Veuillez réessayer.')) {
+        this.errorMessage = 'L\'ouverture n\'a pas fonctionné. Veuillez réessayer.';
+        this.showMessage(true);
+        return;
+      }
     }
+  }
+
+  getTagString(drawing: DrawingInfo): string {
+    return this.tagHandlerService.convertTagSelectedToString(drawing.tags, this.tagsSelected);
+  }
+
+  addNewTag(): void {
+    this.currentTagInput = this.currentTagInput.replace(/\s/g, ''); // enlève tous les espaces possibles
+    if (this.currentTagInput.length !== 0 && this.currentTagInput.length < 30) {
+      if (!this.tagHandlerService.isTagPresent(this.currentTagInput, this.tagsSelected)) {
+        this.tagsSelected.push(this.tagHandlerService.getTag(this.currentTagInput));
+        this.filterDrawings();
+      }
+      this.currentTagInput = '';
+    } else {
+      this.errorMessage = 'Étiquette trop longue (maximum 30 caractères), veuillez réviser.';
+      this.showMessage(true);
+    }
+  }
+
+  removeTag(tag: TagsInfo): void {
+    const index: number = this.tagsSelected.indexOf(tag, 0);
+    this.tagsSelected.splice(index, 1);
+    this.filterDrawings();
   }
 
   // utile pour le typeahead des tags. Code pris de la library ng-bootstrap
   searchTagName = (text$: Observable<string>) => {
     const debouncedText$ = text$.pipe(debounceTime(10), distinctUntilChanged());
     const inputFocus$ = this.focus$;
-
     return merge(debouncedText$, inputFocus$).pipe(
-      map((inputValue) => (inputValue === '' ? this.tagsName
-        : this.tagsName.filter((tagName) => tagName.toLowerCase().indexOf(inputValue.toLowerCase()) > -1)).slice(0, 10)),
+      map((inputValue) =>
+        (this.tagHandlerService.filterTagsName(inputValue).slice(0, 10)),
+      ),
     );
   }
 
-  onKeyPressedTags(keyboard: KeyboardEvent) {
-    if (keyboard.code === ENTER_KEY_CODE || keyboard.code === SPACE_KEY_CODE) {
-      this.addNewTag();
-    }
+  showMoreOrLess(): void {
+    this.limitToShow = this.limitToEight ? 8 : this.drawingsToShow.length;
   }
 
-  addNewTag() {
-    this.currentTagInput = this.currentTagInput.replace(/\s/g, ''); // enlève tous les espaces possibles
-    if (this.currentTagInput.length !== 0) {
-      let tagTemp = this.allTags.find((tag) => {
-        return tag.tagName === this.currentTagInput;
-      });
-      if (!tagTemp) {
-        tagTemp = {
-          id: -1,
-          tagName: this.currentTagInput,
-        };
-      }
-
-      if (!this.tagAllreadyExist(this.currentTagInput)) {
-        this.tagsSelected.push(tagTemp);
-      }
-      this.currentTagInput = '';
-      this.filterDrawings();
-    }
+  filterDrawings(): void {
+    this.drawingsToShow = this.drawingHandler.filterDrawingsByTags(this.tagsSelected);
   }
 
-  removeTag(tag: TagsInfo) {
-    const index: number = this.tagsSelected.indexOf(tag, 0);
-    this.tagsSelected.splice(index, 1);
-    this.filterDrawings();
+  closeModal(): boolean {
+    this.keyboardService.modalWindowActive = false;
+    this.modalService.dismissAll();
+    return this.modalService.hasOpenModals();
   }
 
-  tagAllreadyExist(tagName: string): boolean {
-    return (this.tagsSelected.find((tag) => {
-      return tag.tagName === tagName;
-    })) ? true : false;
-  }
+  showMessage(error: boolean) {
+    if (error) {
+      this.isError = true;
+      setTimeout(() => this.isError = false, 5000);
 
-  showMoreOrLess() {
-    this.limitToShow = this.limitToEight ? 8 : this.drawings.length;
-  }
-
-  filterDrawings() {
-    this.drawingsToShow = [];
-    if (!this.drawings) {
-      this.drawingsToShow = [];
-    } else if (!this.tagsSelected || this.tagsSelected.length === 0) {
-      this.drawingsToShow = this.drawings;
     } else {
-
-      for (const drawing of this.drawings) {
-        const allTagsAreIn: boolean = this.tagsSelected.every((tagFilter) => {
-          return drawing.tags.find((tag) => {
-            return tagFilter.id === tag.id;
-          }) ? true : false;
-        }) ? true : false;
-        if (allTagsAreIn) {
-          this.drawingsToShow.push(drawing);
-        }
-      }
-
+      this.isSuccess = true;
+      setTimeout(() => this.isSuccess = false, 5000);
     }
-
   }
 }

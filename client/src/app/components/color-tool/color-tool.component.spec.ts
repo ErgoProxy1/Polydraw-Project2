@@ -2,9 +2,10 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NTimesPipe } from 'src/app/pipes/n-times.pipe';
-import { KeyboardShortcutService } from 'src/app/services/keyboardShortcut/keyboard-shortcut.service';
+import { KeyboardService } from 'src/app/services/keyboard/keyboard.service';
 import { Color } from 'src/app/services/utils/color';
 import { CanvasComponent } from '../canvas/canvas.component';
+import { SvgComponent } from '../canvas/svg/svg.component';
 import { ColorToolComponent } from './color-tool.component';
 
 describe('ColorToolComponent', () => {
@@ -13,7 +14,7 @@ describe('ColorToolComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ColorToolComponent, CanvasComponent, NTimesPipe],
+      declarations: [ColorToolComponent, CanvasComponent, SvgComponent, NTimesPipe],
       imports: [FormsModule, ReactiveFormsModule, NgbModule],
     })
       .compileComponents();
@@ -232,7 +233,7 @@ describe('ColorToolComponent', () => {
   });
 
   it('Modal open/closed correctly detected and transmitted to keyboard shortcuts service', () => {
-    const keyboarService: KeyboardShortcutService = TestBed.get(KeyboardShortcutService);
+    const keyboarService: KeyboardService = TestBed.get(KeyboardService);
     component.openModal();
     expect(keyboarService.modalWindowActive).toBe(true);
 

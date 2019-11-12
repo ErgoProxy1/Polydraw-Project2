@@ -18,40 +18,43 @@ export class LinePropertiesComponent implements OnInit, OnDestroy {
   lineJoin: LineJoin = LineJoin.Round;
   lineCap: LineCap;
   line: LineTool;
+
   readonly PATTERN_NAMES_MAP: Map<string, Pattern> = new Map([
-    ['Dotted', Pattern.DottedLine],
-    ['Spaced #1', Pattern.SpacedLine1],
-    ['Spaced #2', Pattern.SpacedLine2],
-    ['Spaced #3', Pattern.SpacedLine3],
-    ['Spaced #4', Pattern.SpacedLine4],
-    ['Full', Pattern.FullLine],
+    ['Pointillé', Pattern.DottedLine],
+    ['Trait espacé #1', Pattern.SpacedLine1],
+    ['Trait espacé #2', Pattern.SpacedLine2],
+    ['Trait espacé #3', Pattern.SpacedLine3],
+    ['Trait espacé #4', Pattern.SpacedLine4],
+    ['Trait plein', Pattern.FullLine],
   ]);
 
   readonly LINE_JOIN_NAMES_MAP: Map<string, LineJoin> = new Map([
     ['Arcs', LineJoin.Arcs],
-    ['Bevel', LineJoin.Bevel],
-    ['Clip', LineJoin.MiterClip],
-    ['Miter', LineJoin.Miter],
+    ['Biseau', LineJoin.Bevel],
+    ['Clip d\'onglet', LineJoin.MiterClip],
+    ['Onglet', LineJoin.Miter],
     ['Point', LineJoin.Point],
-    ['Round', LineJoin.Round],
-    ['Curved', LineJoin.BezierRound],
+    ['Rond par defaut', LineJoin.Round],
+    ['Rond de Bezier', LineJoin.BezierRound],
   ]);
 
   readonly LINE_CAP_NAMES_MAP: Map<string, LineCap> = new Map([
-    ['None', LineCap.Butt],
-    ['Square', LineCap.Square],
-    ['Round', LineCap.Round],
+    ['Aucun', LineCap.Butt],
+    ['Carré', LineCap.Square],
+    ['Rond', LineCap.Round],
   ]);
 
-  readonly MAX_STROKE_WIDTH = MAX_STROKE_WIDTH;
-  readonly MIN_STROKE_WIDTH = MIN_STROKE_WIDTH;
+  readonly MAX_ROUNDING = MAX_LINE_ROUNDING;
+  readonly DEFAULT_ROUNDING = DEFAULT_LINE_ROUNDING;
+  readonly MAX_STROKE = MAX_STROKE_WIDTH;
+  readonly MIN_STROKE = MIN_STROKE_WIDTH;
 
   private selectedToolSubscription: Subscription;
 
   constructor(private toolsService: ToolsService) {
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.selectedToolSubscription = this.toolsService.subscribeToToolChanged().subscribe((toolSelected) => {
       this.line = toolSelected as LineTool;
     });
@@ -65,15 +68,15 @@ export class LinePropertiesComponent implements OnInit, OnDestroy {
     this.lineRounding = this.line.lineRounding;
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.selectedToolSubscription.unsubscribe();
   }
 
   onChangeStrokeWidth(): void {
-    if (this.strokeWidth > MAX_STROKE_WIDTH) {
-      this.strokeWidth = MAX_STROKE_WIDTH;
-    } else if (this.strokeWidth < MIN_STROKE_WIDTH) {
-      this.strokeWidth = MIN_STROKE_WIDTH;
+    if (this.strokeWidth > this.MAX_STROKE) {
+      this.strokeWidth = this.MAX_STROKE;
+    } else if (this.strokeWidth < this.MIN_STROKE) {
+      this.strokeWidth = this.MIN_STROKE;
     }
     this.line.strokeWidth = this.strokeWidth;
   }
@@ -103,19 +106,19 @@ export class LinePropertiesComponent implements OnInit, OnDestroy {
   }
 
   onChangeCircleRadius(): void {
-    if (this.circleRadius > MAX_STROKE_WIDTH) {
-      this.circleRadius = MAX_STROKE_WIDTH;
-    } else if (this.circleRadius < MIN_STROKE_WIDTH) {
-      this.circleRadius = MIN_STROKE_WIDTH;
+    if (this.circleRadius > this.MAX_STROKE) {
+      this.circleRadius = this.MAX_STROKE;
+    } else if (this.circleRadius < this.MIN_STROKE) {
+      this.circleRadius = this.MIN_STROKE;
     }
     this.line.circleRadius = this.circleRadius;
   }
 
   onChangeRounding(): void {
-    if (this.lineRounding > MAX_LINE_ROUNDING) {
-      this.lineRounding = MAX_LINE_ROUNDING;
-    } else if (this.lineRounding < DEFAULT_LINE_ROUNDING) {
-      this.lineRounding = DEFAULT_LINE_ROUNDING;
+    if (this.lineRounding > this.MAX_ROUNDING) {
+      this.lineRounding = this.MAX_ROUNDING;
+    } else if (this.lineRounding < this.DEFAULT_ROUNDING) {
+      this.lineRounding = this.DEFAULT_ROUNDING;
     }
     this.line.lineRounding = this.lineRounding;
   }

@@ -5,6 +5,7 @@ import { StampTool } from './stampTool';
 
 describe('StampTool', () => {
     let tool: StampTool = new StampTool();
+    const commandAttributeName = 'command';
 
     it('is properly constructed', () => {
         tool = new StampTool();
@@ -16,11 +17,11 @@ describe('StampTool', () => {
         expect(tool.rotationRate).toBe(15);
 
         tool.selected = 1;
-        tool.keyboardEvent(KeyboardEventType.KeyDown, 'Alt');
+        tool.keyboardEvent(KeyboardEventType.AltDown);
         expect(tool.rotationRate).toBe(1);
 
         tool.selected = 1;
-        tool.keyboardEvent(KeyboardEventType.KeyUp, 'Alt');
+        tool.keyboardEvent(KeyboardEventType.AltUp);
         expect(tool.rotationRate).toBe(15);
     });
 
@@ -31,47 +32,38 @@ describe('StampTool', () => {
         tool.selected = 1;
         tool.mouseWheelEvent(-1);
         expect(tool.angle).toBe((15));
-        expect((tool.getCommand() as StampToolCommand).stamp.angle).toBe(15);
+        expect(tool[commandAttributeName].stamp.angle).toBe(15);
 
         tool.angle = 0;
         tool.selected = 1;
         tool.mouseWheelEvent(1);
         expect(tool.angle).toBe((-15));
-        expect((tool.getCommand() as StampToolCommand).stamp.angle).toBe(-15);
+        expect(tool[commandAttributeName].stamp.angle).toBe(-15);
 
         tool.angle = 359;
         tool.selected = 1;
         tool.mouseWheelEvent(-1);
         expect(tool.angle).toBe((0));
-        expect((tool.getCommand() as StampToolCommand).stamp.angle).toBe(374);
+        expect(tool[commandAttributeName].stamp.angle).toBe(374);
 
         tool.angle = -359;
         tool.selected = 1;
         tool.mouseWheelEvent(1);
         expect(tool.angle).toBe((0));
-        expect((tool.getCommand() as StampToolCommand).stamp.angle).toBe(-374);
+        expect(tool[commandAttributeName].stamp.angle).toBe(-374);
 
         tool.selected = 0;
-        expect(tool.mouseWheelEvent(1)).toEqual([]);
-    });
-
-    it('Properly detects if command is ready', () => {
-        tool.selected = 1;
-
-        tool.mouseEvent(MouseEventType.MouseMove, new Point(50, 50));
-        expect(tool.isCommandReady()).toBe(false);
-
-        tool.mouseEvent(MouseEventType.MouseDownLeft, new Point(51, 51));
-        expect(tool.isCommandReady()).toBe(true);
+        tool.mouseWheelEvent(1);
+        expect(tool.getTemporaryPrimitives()).toEqual([]);
     });
 
     it('Command is properly handled', () => {
         tool.selected = 1;
         tool.mouseEvent(MouseEventType.MouseMove, new Point(50, 50));
-        const command: StampToolCommand = (tool.getCommand() as StampToolCommand);
+        const command: StampToolCommand = tool[commandAttributeName];
         expect(command.stamp.angle).toBe(0);
-        expect(command.stamp.info.name).toBe('Anchor');
+        expect(command.stamp.info.name).toBe('Ancre');
         expect(command.stamp.position).toEqual(new Point(50, 50));
-        expect(command.stamp.scale).toBe(0.2);
+        expect(command.stamp.stampScale).toBe(0.2);
     });
 });

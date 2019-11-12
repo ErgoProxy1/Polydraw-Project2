@@ -96,4 +96,18 @@ describe('Rectangle', () => {
     expect(newRectangle).toEqual(rectangle);
   });
 
+  it('Should correctly set the new center', () => {
+    const newRectangle = Rectangle.createCopy(rectangle);
+    newRectangle.setNewDimension(4, 4);
+    newRectangle.setCenter(new Point(4, 4));
+    expect(newRectangle.position).toEqual(new Point(2, 2));
+  });
+
+  it('Should correctly set the position', () => {
+    const newRectangle = Rectangle.createCopy(rectangle);
+    newRectangle.setNewDimension(4, 4);
+    newRectangle.setPosition(new Point(4, 4));
+    expect(newRectangle.position).toEqual(new Point(4, 4));
+  });
+
 });

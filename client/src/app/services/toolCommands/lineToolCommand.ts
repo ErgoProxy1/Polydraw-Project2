@@ -2,8 +2,8 @@ import { Line } from '../svgPrimitives/line/line';
 import { SVGPrimitive } from '../svgPrimitives/svgPrimitive';
 import { Color } from '../utils/color';
 import { LineCap, LineJoin, Pattern } from '../utils/constantsAndEnums';
-import { DrawingToolCommand } from './drawingToolCommand';
-export class LineToolCommand extends DrawingToolCommand {
+export class LineToolCommand {
+  line: Line;
 
   constructor(strokeColor: Color, strokeWidth: number,
               pattern: Pattern,
@@ -11,14 +11,17 @@ export class LineToolCommand extends DrawingToolCommand {
               lineCap: LineCap,
               circleRadius: number,
               lineRounding: number) {
-    super(strokeColor, strokeWidth);
     this.line = new Line(strokeColor, strokeWidth, pattern, lineJoin, lineCap, circleRadius, lineRounding);
   }
 
-  apply(): SVGPrimitive | null {
-    return this.line;
+  apply(primitives: SVGPrimitive[]): void {
+    primitives.push(this.line);
   }
-  cancel(): void {
-    return;
+
+  cancel(primitives: SVGPrimitive[]): void {
+    const index = primitives.indexOf(this.line, 0);
+    if (index > -1) {
+      primitives.splice(index, 1);
+    }
   }
 }

@@ -59,10 +59,11 @@ describe('Grid', () => {
     });
 
     it('Unused functions behave as expected', () => {
-        expect(grid.mouseEvent(MouseEventType.MouseMove, new Point(50, 50))).toEqual([]);
-        expect(grid.keyboardEvent(KeyboardEventType.KeyUp, 'a')).toEqual([]);
-        expect(grid.mouseWheelEvent(1)).toEqual([]);
-        expect(grid.isCommandReady()).toBe(false);
-        expect(grid.getCommand()).toBeNull();
+        grid.mouseEvent(MouseEventType.MouseMove, new Point(50, 50));
+        expect(grid.getTemporaryPrimitives()).toEqual([]);
+        grid.keyboardEvent(KeyboardEventType.InvalidEvent);
+        expect(grid.getTemporaryPrimitives()).toEqual([]);
+        grid.mouseWheelEvent(1);
+        expect(grid.getTemporaryPrimitives()).toEqual([]);
     });
 });

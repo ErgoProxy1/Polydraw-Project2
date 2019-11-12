@@ -18,13 +18,18 @@ describe('LineToolCommand', () => {
     expect(LineToolCmd).toBeTruthy();
     expect(LineToolCmd.line).toEqual(new Line(Color.BLACK, MIN_STROKE_WIDTH, Pattern.FullLine, LineJoin.Round,
         LineCap.Round, CIRCLE_RADIUS_FACTOR * MIN_STROKE_WIDTH, DEFAULT_LINE_ROUNDING));
-    expect(LineToolCmd.path).toBeUndefined();
   });
 
-  it('#apply should return the current line', () => {
-      const line: SVGPrimitive | null = LineToolCmd.apply();
-      expect(line).not.toBeNull();
-      expect(line).toEqual(LineToolCmd.line);
-    });
+  it('#apply should add the current line to the list of primitives', () => {
+    const primitives: SVGPrimitive[] = [];
+    LineToolCmd.apply(primitives);
+    expect(primitives).toContain(LineToolCmd.line);
+  });
+
+  it('#cancel should remove the current line from the list of primitives', () => {
+    const primitives: SVGPrimitive[] = [LineToolCmd.line];
+    LineToolCmd.cancel(primitives);
+    expect(primitives).not.toContain(LineToolCmd.line);
+  });
 
 });

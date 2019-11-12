@@ -27,6 +27,9 @@ describe('Line', () => {
     expect(line.circleRadius).toBe(CIRCLE_RADIUS_FACTOR * MIN_STROKE_WIDTH);
     expect(line.linePoints).toEqual('');
     expect(line.circlePoints).toEqual([]);
+    expect(line.lineRounding).toBe(DEFAULT_LINE_ROUNDING);
+    expect(line.closePath).toEqual(false);
+
   });
 
   it('#addPoint should add a new point to the array attribute points', () => {
@@ -69,4 +72,44 @@ describe('Line', () => {
     expect(newLine).toEqual(line);
   });
 
+  it('#roundingButt should correctly the bounding path ', () => {
+    let startCtrlPoint: Point = new Point(100, 100);
+    const slopeCtrlPoint: Point = new Point(200, 200);
+    const endCtrlPoint: Point = new Point(300, 300);
+    let roundingFactor = 20;
+
+    expect(line.roundingButt(startCtrlPoint, slopeCtrlPoint, endCtrlPoint, roundingFactor)).
+    toEqual(` C185.85786437626905 185.85786437626905, 200 200,
+    214.14213562373095 214.14213562373095`);
+
+    roundingFactor = 10;
+    startCtrlPoint = new Point(0, 0);
+    expect(line.roundingButt(startCtrlPoint, slopeCtrlPoint, endCtrlPoint, roundingFactor)).
+    toEqual(` C192.92893218813452 192.92893218813452, 200 200,
+    207.07106781186548 207.07106781186548`);
+  });
+
+  it('#setRoundingPath should correctly copies the line.Points', () => {
+    line.tempPoint = new Point(100, 350);
+    line.points.push(new Point(0, 0));
+    line.points.push(new Point(10, 10));
+    line.points.push(new Point(20, 20));
+    line.points.push(new Point(30, 30));
+    line.setRoundingPath();
+    expect(line.linePoints).toEqual(`M0 0 C-4.142135623730951 -4.142135623730951, 10 10,
+    24.14213562373095 24.14213562373095 C5.857864376269049 5.857864376269049, 20 20,
+    34.14213562373095 34.14213562373095 C15.857864376269049 15.857864376269049, 30 30,
+    34.273937576108644 49.538000347925234 L100 350`);
+  });
+
+  it('#createCopy should correctly create a line copy', () => {
+    line.tempPoint = new Point(100, 350);
+    const newLine = Line.createCopy(line);
+    expect(newLine).toEqual(line);
+  });
+
+  it('#copy should correctly copies the line', () => {
+    line.tempPoint = new Point(120, 150);
+    expect(line.copy()).toEqual(line);
+    });
 });

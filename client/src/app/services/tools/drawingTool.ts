@@ -1,25 +1,27 @@
+import { Observable, Subject } from 'rxjs';
 import { SVGPrimitive } from '../svgPrimitives/svgPrimitive';
 import { DrawingToolCommand } from '../toolCommands/drawingToolCommand';
 import { ToolCommand } from '../toolCommands/toolCommand';
 import { Color } from '../utils/color';
-import { DEFAULT_STROKE_WIDTH, KeyboardEventType, MouseEventType, Texture, ToolType } from '../utils/constantsAndEnums';
+import { DEFAULT_STROKE_WIDTH, MouseEventType, Texture, ToolType } from '../utils/constantsAndEnums';
 import { Point } from '../utils/point';
 import { Tool } from './tool';
 
-export abstract class DrawingTool implements Tool {
+export abstract class DrawingTool extends Tool {
   type = ToolType.None;
   strokeWidth: number = DEFAULT_STROKE_WIDTH;
- texture: Texture = Texture.Basic;
+  texture: Texture = Texture.Basic;
   protected strokeColor: Color;
   protected command: DrawingToolCommand;
+  private commandSubject: Subject<DrawingToolCommand> = new Subject<DrawingToolCommand>();
   protected isCreatingPath = false;
-  protected commandReady = false;
 
   constructor(strokeColor: Color) {
+    super();
     this.strokeColor = strokeColor;
   }
 
-  mouseEvent(eventType: MouseEventType, position: Point, primitive?: SVGPrimitive | undefined): SVGPrimitive[] {
+  mouseEvent(eventType: MouseEventType, position: Point, primitive?: SVGPrimitive | undefined): void {
     switch (eventType) {
       case MouseEventType.MouseDownLeft:
         this.begin(position);
@@ -31,32 +33,25 @@ export abstract class DrawingTool implements Tool {
         this.update(position);
         this.finish();
         break;
+      case MouseEventType.MouseLeave:
+        this.finish();
+        break;
     }
-    return this.isCreatingPath ?  [this.command.path] : [];
+    this.temporaryPrimitivesAvailable.next();
   }
 
-  keyboardEvent(eventType: KeyboardEventType, key: string): SVGPrimitive[] {
-    return this.isCreatingPath ?  [this.command.path] : [];
+  subscribeToCommand(): Observable<ToolCommand> {
+    return this.commandSubject.asObservable();
   }
 
-  mouseWheelEvent(delta: number): SVGPrimitive[] {
-    return this.isCreatingPath ?  [this.command.path] : [];
-  }
-
-  isCommandReady(): boolean {
-    return this.commandReady;
-  }
-
-  getCommand(): ToolCommand {
-    this.commandReady = false;
-    return this.command;
+  getTemporaryPrimitives(): SVGPrimitive[] {
+    return this.isCreatingPath ? [this.command.path] : [];
   }
 
   protected begin(position: Point): void {
     if (this.command) {
       this.command.path.addPoint(position);
       this.isCreatingPath = true;
-      this.commandReady = false;
     }
   }
 
@@ -69,7 +64,7 @@ export abstract class DrawingTool implements Tool {
   protected finish(): void {
     if (this.isCreatingPath) {
       this.isCreatingPath = false;
-      this.commandReady = true;
+      this.commandSubject.next(this.command);
     }
   }
 }

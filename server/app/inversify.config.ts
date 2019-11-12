@@ -1,11 +1,11 @@
 import { Container } from 'inversify';
 import { Application } from './app';
-import { Server } from './server';
-import Types from './types';
 import { DrawingController } from './controllers/drawing.controller';
-import { DrawingService } from './services/drawing.service';
 import { TagsController } from './controllers/tags.controller';
+import { Server } from './server';
+import { DrawingService } from './services/drawing.service';
 import { TagsService } from './services/tags.service';
+import Types from './types';
 
 const container: Container = new Container();
 

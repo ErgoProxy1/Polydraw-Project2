@@ -2,6 +2,7 @@ import { Line } from '../svgPrimitives/line/line';
 import { Path } from '../svgPrimitives/path/path';
 import { Shape } from '../svgPrimitives/shape/shape';
 import { SVGPrimitive } from '../svgPrimitives/svgPrimitive';
+import { TextPrimitive } from '../svgPrimitives/text/textPrimitive';
 import { Color } from '../utils/color';
 import { PrimitiveType, StrokeType } from '../utils/constantsAndEnums';
 import { ToolCommand } from './toolCommand';
@@ -42,11 +43,18 @@ export class ColorApplicatorToolCommand implements ToolCommand {
                     polygon.strokeColor = color;
                 }
                 break;
-            case PrimitiveType.Path:
+            case PrimitiveType.Paint:
                 const path: Path = (this.primitive as Path);
                 if (this.isPrimary) {
                     this.lastColor = Color.copyColor(path.strokeColor);
                     path.strokeColor = Color.copyColor(color);
+                }
+                break;
+            case PrimitiveType.Pencil:
+                const pencil: Path = (this.primitive as Path);
+                if (this.isPrimary) {
+                    this.lastColor = Color.copyColor(pencil.strokeColor);
+                    pencil.strokeColor = Color.copyColor(color);
                 }
                 break;
             case PrimitiveType.Line:
@@ -56,16 +64,30 @@ export class ColorApplicatorToolCommand implements ToolCommand {
                     line.strokeColor = Color.copyColor(color);
                 }
                 break;
+            case PrimitiveType.Pen:
+                const pen: Path = (this.primitive as Path);
+                if (this.isPrimary) {
+                    this.lastColor = Color.copyColor(pen.strokeColor);
+                    pen.strokeColor = Color.copyColor(color);
+                }
+                break;
+            case PrimitiveType.Text:
+                const text: TextPrimitive = this.primitive as TextPrimitive;
+                if (this.isPrimary) {
+                    this.lastColor = Color.copyColor(text.textColor);
+                    text.textColor = Color.copyColor(color);
+                }
+                break;
             default:
                 break;
         }
     }
 
-    apply(): null {
+    apply(primitives: SVGPrimitive[]): void {
         this.changeColor(this.newColor);
-        return null;
     }
-    cancel(): void {
-        return;
+
+    cancel(primitives: SVGPrimitive[]): void {
+        this.changeColor(this.lastColor);
     }
 }

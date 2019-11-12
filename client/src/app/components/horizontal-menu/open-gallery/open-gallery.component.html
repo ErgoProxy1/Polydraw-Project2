@@ -1,28 +1,32 @@
 <div class="text-center p-0" (click)="openModal()">
   <i class="far fa-folder-open clickable fa-2x align-middle"></i>
 </div>
+<ngb-alert *ngIf="isSuccess" class="successMessage" type="success" (close)="isSuccess = false">{{successMessage}}</ngb-alert>
+<ngb-alert *ngIf="isError" class="successMessage" type="danger" (close)="isError = false">{{errorMessage}}</ngb-alert>
+
 
 <ng-template #galleryModal let-modal>
   <div class="modal-header">
-    <h5 class="modal-title">Choose Drawing</h5>
-    <button type="button" class="close" (click)="closeModal()">
-      <span aria-hidden="true">&times;</span>
-    </button>
+    <h5 class="modal-title">Ouvrir un dessin</h5>
+    <label class="btn btn-success">
+      <input type="file" id="file" accept=".json" (change)="readLocalFile($event.target.files[0])"/>Choisir un fichier
+      sur l'ordinateur...</label>
   </div>
   <div class="modal-body text-center">
     <div class="row form-inline justify-content-between">
       <div class="col-md-6">
         <div class="row mt-2">
-          <label class="col-md-5 my-auto">Tags: </label>
+          <label class="col-md-5 my-auto">Étiquettes: </label>
           <div class="col-md-7">
             <div class="input-group">
               <input class="form-control" name="tags" type="text" id="tags" [(ngModel)]="currentTagInput"
-                (focusin)="setActiveFocus()" (focusout)="addNewTag(); setInactiveFocus()" [ngbTypeahead]="searchTagName"
-                (focus)="focus$.next($event.target.value)" (click)="click$.next($event.target.value)"
-                (keyup)="onKeyPressedTags($event)">
+                (focusin)="keyboardService.inputFocusedActive = true; tagEntryActive = true;"
+                (focusout)="addNewTag(); filterDrawings(); keyboardService.inputFocusedActive = false; tagEntryActive = false;"
+                [ngbTypeahead]="searchTagName" (focus)="focus$.next($event.target.value)" (click)="click$.next($event.target.value)">
               <div class="input-group-append ">
                 <div class="input-group-text clickable">
-                  <i class="fas fa-plus " (click)="addNewTag();" placement="bottom" ngbTooltip="Add"></i>
+                  <i class="fas fa-plus " (click)="addNewTag(); filterDrawings();"
+                  placement="bottom" ngbTooltip="Ajouter"></i>
                 </div>
               </div>
             </div>
@@ -34,7 +38,7 @@
           <div class="custom-control custom-switch">
             <input type="checkbox" class="clickable custom-control-input " id="limitToEight" name="show"
               [(ngModel)]="limitToEight" (change)="showMoreOrLess()">
-            <label class="custom-control-label" for="limitToEight">Limit results</label>
+            <label class="custom-control-label" for="limitToEight">Limiter les résultats</label>
           </div>
         </form>
       </div>
@@ -42,16 +46,17 @@
     <div class="row mt-1 form-inline">
       <label *ngFor="let tag of tagsSelected" class="bg-secondary m-1 form-inline form-control-sm text-light">
         {{tag.tagName}}
-        <i class="fas fa-times clickable ml-1" placement="bottom" ngbTooltip="Remove" (click)="removeTag(tag)"></i>
+        <i class="fas fa-times clickable ml-1" placement="bottom" ngbTooltip="Retirer"
+        (click)="removeTag(tag); filterDrawings();"></i>
       </label>
     </div>
     <hr />
-    <div class="row" >
+    <div class="row">
 
       <div *ngFor="let drawing of drawingsToShow | slice:0:limitToShow " class="col-md-4 mb-1">
         <div class="card h-100">
-          <div class="card-img-top" >
-              <img [src]="drawing.thumbnail | trustHTML" class="img-fluid" [alt]="drawing.name">
+          <div class="card-img-top">
+            <img [src]="drawing.thumbnail | trustHTML" class="img-fluid" [alt]="drawing.name">
           </div>
           <div class="card-body">
             <h5 class="card-title">{{drawing.name}}</h5>
@@ -59,18 +64,18 @@
             </p>
           </div>
           <div class="card-footer">
-            <button class="btn btn-outline-success mt-auto" (click)="selectDrawing(drawing)">Select</button>
+            <button class="btn btn-outline-success mt-auto" (click)="selectDrawing(drawing)">Sélectionner</button>
           </div>
         </div>
       </div>
     </div>
-    <label *ngIf="drawingsToShow.length==0 && !loading" class="text-danger">No Drawings Found!</label>
+    <label *ngIf="drawingsToShow.length==0 && !loading" class="text-danger">Aucun dessin trouvé!</label>
 
     <div *ngIf="loading" class="spinner-border text-dark" role="status">
       <span class="sr-only">Loading...</span>
     </div>
   </div>
   <div class="modal-footer">
-    <button id="dismiss" type="button" class="btn btn-outline-dark" (click)="closeModal()">Cancel</button>
+    <button id="dismiss" type="button" class="btn btn-outline-dark" (click)="closeModal()">Annuler</button>
   </div>
 </ng-template>

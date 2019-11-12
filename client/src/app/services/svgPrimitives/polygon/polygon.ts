@@ -5,6 +5,7 @@ import { Shape } from '../shape/shape';
 import { SVGPrimitive } from '../svgPrimitive';
 
 export class Polygon extends Shape {
+
   radius: number; // rayon du cercle dans lequel le polygone sera tracé
   sidesNumber: number; // nombre de côtés
   points: Point[] = []; // array de points
@@ -12,7 +13,7 @@ export class Polygon extends Shape {
   type = PrimitiveType.Polygon;
 
   constructor(fillColor: Color, strokeColor: Color, strokeWidth: number, strokeType: StrokeType,
-              center: Point, radius: number = 0, sidesNumber: number = 3) {
+              center: Point, sidesNumber: number = 3 , radius: number = 0) {
     super(fillColor, strokeColor, strokeWidth, strokeType, center, radius * 2, radius * 2);
     this.radius = radius;
     this.sidesNumber = sidesNumber;
@@ -23,7 +24,7 @@ export class Polygon extends Shape {
     const polygon: Polygon = primitive as Polygon;
     const newCenter: Point = new Point(polygon.center.x, polygon.center.y);
     const newPolygon: Polygon = new Polygon(Color.copyColor(polygon.fillColor), Color.copyColor(polygon.strokeColor),
-      polygon.strokeWidth, polygon.strokeType, newCenter, polygon.radius, polygon.sidesNumber);
+      polygon.strokeWidth, polygon.strokeType, newCenter, polygon.sidesNumber, polygon.radius);
 
     newPolygon.points = polygon.points;
     newPolygon.listPoints = polygon.listPoints;
@@ -33,6 +34,7 @@ export class Polygon extends Shape {
     newPolygon.absoluteWidth = polygon.absoluteWidth;
     newPolygon.corner1 = polygon.corner1;
     newPolygon.corner2 = polygon.corner2;
+
     return newPolygon;
   }
 
@@ -45,8 +47,8 @@ export class Polygon extends Shape {
 
   pointsToString(): void {
     this.listPoints = '';
-    for (let i = 0; i <= this.sidesNumber; i++) {
-      const buffer: string = this.points[i].x + ' ' + this.points[i].y + ',';
+    for (const point of this.points) {
+      const buffer: string = point.x + ' ' + point.y + ',';
       this.listPoints += buffer;
     }
     this.listPoints = this.listPoints.substring(0, this.listPoints.length - 1);
@@ -59,13 +61,11 @@ export class Polygon extends Shape {
     let maxY: number = Number.MIN_SAFE_INTEGER;
     const angle: number = ((2 * Math.PI) / this.sidesNumber);
     const polygonAngle: number = ((this.sidesNumber - 2) * Math.PI) / this.sidesNumber;
-    const adjustRadius: number = this.strokeType === StrokeType.Outline || this.strokeType === StrokeType.FullWithOutline ?
-                                  (this.strokeWidth * 0.5) / Math.sin(polygonAngle * 0.5) : 0;
-    if (this.radius >= this.strokeWidth / 0.5 && (this.strokeType === StrokeType.Outline
-                                              || this.strokeType === StrokeType.FullWithOutline)) {
+    const hasOutline: boolean = this.strokeType === StrokeType.Outline || this.strokeType === StrokeType.FullWithOutline;
+    const adjustRadius: number = hasOutline ? (this.strokeWidth * 0.5) / Math.sin(polygonAngle * 0.5) : 0;
+    if (this.radius >= this.strokeWidth / 0.5 && hasOutline) {
       this.radius = this.radius - adjustRadius;
-    } else if (this.radius <= this.strokeWidth / 0.5 && (this.strokeType === StrokeType.Outline
-                                              || this.strokeType === StrokeType.FullWithOutline)) {
+    } else if (this.radius <= this.strokeWidth / 0.5 && hasOutline) {
       this.radius = 0;
     }
     for (let i = 0; i <= this.sidesNumber ; i++) {
@@ -77,10 +77,14 @@ export class Polygon extends Shape {
       minY = Math.min(minY, this.points[i].y);
       maxY = Math.max(maxY, this.points[i].y);
     }
+    this.updateCorners();
     this.pointsToString();
   }
 
   getCenter(): Point {
     return this.center;
+  }
+  copy(): SVGPrimitive {
+    return Polygon.createCopy(this);
   }
 }

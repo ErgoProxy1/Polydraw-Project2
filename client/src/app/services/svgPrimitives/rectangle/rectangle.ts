@@ -31,4 +31,25 @@ export class Rectangle extends Shape {
     this.position = this.center.addXY(-this.getAbsoluteWidth() / 2.0, -this.getAbsoluteHeight() / 2.0);
     this.updateCorners();
   }
+
+  setNewDimension(width: number, height: number): void {
+    this.setWidth(width);
+    this.setHeight(height);
+  }
+
+  copy(): SVGPrimitive {
+    return Rectangle.createCopy(this);
+  }
+
+  setCenter(position: Point): void {
+    this.position = new Point(position.x - this.width / 2.0, position.y - this.height / 2.0);
+    this.corner1 = this.position;
+    this.updateCorners();
+  }
+
+  setPosition(position: Point): void {
+    this.position = Point.copyPoint(position);
+    this.corner1 = this.position;
+    this.updateCorners();
+  }
 }

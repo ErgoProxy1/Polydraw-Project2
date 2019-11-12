@@ -1,10 +1,10 @@
-<div class="text-center p-0" (click)="openModal()">
+<div class="text-center p-0 button" (click)="openModal()">
   <i class="far fa-plus-square clickable fa-2x align-middle"></i>
 </div>
 
 <ng-template #newDrawModal let-modal>
   <div class="modal-header">
-    <h5 class="modal-title">New Drawing</h5>
+    <h5 class="modal-title">Nouveau Dessin</h5>
   </div>
   <form [formGroup]="drawingForm" (ngSubmit)="newDrawing(drawingForm); closeModal();">
     <div class="modal-body">
@@ -12,26 +12,26 @@
       <div class="row mt-2">
         <div class="form-group col-md-6">
           <div class="form-group row">
-            <label for="inputEmail3" class="col-md-5 col-form-label">Width: </label>
+            <label for="inputEmail3" class="col-md-5 col-form-label">Largeur: </label>
             <div class="col-md-7">
               <input name="width" type="number" min="0" formControlName="width" (click)="checkDimensionValues()"
-                class="form-control m-0" (focusin)="setActiveFocus()"
-                (focusout)="checkDimensionValues(); setInactiveFocus()">
+                class="form-control m-0" (focusin)="keyboardService.inputFocusedActive = true;"
+                (focusout)="checkDimensionValues(); keyboardService.inputFocusedActive = false;">
             </div>
           </div>
         </div>
         <div class="form-group col-md-6">
           <div class="form-group row">
-            <label for="inputEmail3" class="col-md-5 col-form-label">Height: </label>
+            <label for="inputEmail3" class="col-md-5 col-form-label">Hauteur: </label>
             <div class="col-md-7">
               <input name="height" type="number" min="0" formControlName="height" (click)="checkDimensionValues()"
-                class="form-control m-0" (focusin)="setActiveFocus()"
-                (focusout)="checkDimensionValues(); setInactiveFocus()">
+                class="form-control m-0" (focusin)="keyboardService.inputFocusedActive = true;"
+                (focusout)="checkDimensionValues(); keyboardService.inputFocusedActive = false;">
             </div>
           </div>
         </div>
       </div>
-      <h6>Background Color</h6>
+      <h6>Couleur de Fond</h6>
       <div class="row">
         <div class="col-md-12">
           <label>Aperçu: </label>
@@ -61,17 +61,17 @@
             </div>
             <div class="form-inline">
               <input class="form-control center-form-group" name="red" formControlName="red" type="number" min="0"
-                max="255" (click)="confirmRGBColor()" (input)="confirmRGBColor()" (focusin)="setActiveFocus()"
-                (focusout)="confirmRGBColor(); setInactiveFocus()">
+                max="255" (click)="confirmRGBColor()" (input)="confirmRGBColor()" (focusin)="keyboardService.inputFocusedActive = true;"
+                (focusout)="confirmRGBColor(); keyboardService.inputFocusedActive = false;">
               <input class="form-control center-form-group " name="green" formControlName="green" type="number" min="0"
-                max="255" (click)="confirmRGBColor()" (input)="confirmRGBColor()" (focusin)="setActiveFocus()"
-                (focusout)="confirmRGBColor(); setInactiveFocus()">
+                max="255" (click)="confirmRGBColor()" (input)="confirmRGBColor()" (focusin)="keyboardService.inputFocusedActive = true;"
+                (focusout)="confirmRGBColor(); keyboardService.inputFocusedActive = false;">
               <input class="form-control center-form-group" name="blue" formControlName="blue" type="number" min="0"
-                max="255" (click)="confirmRGBColor()" (input)="confirmRGBColor()" (focusin)="setActiveFocus()"
-                (focusout)="confirmRGBColor(); setInactiveFocus()">
+                max="255" (click)="confirmRGBColor()" (input)="confirmRGBColor()" (focusin)="keyboardService.inputFocusedActive = true;"
+                (focusout)="confirmRGBColor(); keyboardService.inputFocusedActive = false;">
               <input class="form-control right-form-group" name="alpha" formControlName="alpha" type="number"
                 step="0.01" min="0" max="1" (click)="confirmAlpha()" (input)="confirmAlpha()"
-                (focusin)="setActiveFocus()" (focusout)="confirmAlpha(); setInactiveFocus()">
+                (focusin)="keyboardService.inputFocusedActive = true;" (focusout)="confirmAlpha(); keyboardService.inputFocusedActive = false;">
             </div>
           </div>
         </div>
@@ -82,19 +82,22 @@
           <span class="input-group-text left-form-group">HEX</span>
         </div>
         <input name="hex" formControlName="hex" class="form-control" type="text" (keyup)="correctHexInput()"
-          (focusin)="setActiveFocus()" (keydown)="correctHexInput()" (focusout)="confirmHexColor(); setInactiveFocus()"
+          (focusin)="keyboardService.inputFocusedActive = true;" (keydown)="correctHexInput()"
+          (focusout)="confirmHexColor(); keyboardService.inputFocusedActive = false;"
           maxlength="6">
         <div class="input-group-append">
           <button type="button" class="btn btn-outline-secondary" (click)="confirmHexColor()">Apply</button>
         </div>
       </div>
       <div *ngIf="errorInColors || errorsInDimensions" class="alert alert-danger mb-0" role="alert">
-        Error in form! Please review data.
+        Erreur dans vos données! Veuillez réviser vos valeurs.
       </div>
     </div>
     <div class="modal-footer">
-      <button type="button" class="btn btn-outline-dark" (click)="closeModal()">Cancel</button>
-      <button type="submit" class="btn btn-outline-success" [disabled]="errorInColors || errorsInDimensions">Create new drawing</button>
+      <button type="button" class="btn btn-outline-dark" (click)="closeModal()">Annuler</button>
+      <button type="submit" class="btn btn-outline-success" [disabled]="errorInColors || errorsInDimensions">Créer un
+        nouveau
+        dessin</button>
     </div>
 
   </form>

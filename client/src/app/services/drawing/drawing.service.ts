@@ -10,19 +10,19 @@ import { NewDrawingInfo } from '../utils/newDrawingInfo';
 export class DrawingService {
 
   drawingObservable: Observable<NewDrawingInfo>;
-  drawingSubject  = new Subject<NewDrawingInfo>();
+  private drawingSubject  = new Subject<NewDrawingInfo>();
 
   initWorkspaceObservable: Observable<number[]>;
-  initWorkspaceSubject = new BehaviorSubject<number[]>([0, 0]);
+  private initWorkspaceSubject = new BehaviorSubject<number[]>([0, 0]);
 
   workspaceObservable: Observable<number[]>;
-  workspaceSubject = new BehaviorSubject<number[]>([0, 0]);
+  private workspaceSubject = new BehaviorSubject<number[]>([0, 0]);
 
   primtivesObservable: Observable<SVGPrimitive[]>;
-  primitivesSubject = new Subject<SVGPrimitive[]>();
+  private primitivesSubject = new Subject<SVGPrimitive[]>();
 
   backgroundColorObservable: Observable<Color>;
-  backgroundColorSubject = new Subject<Color>();
+  private backgroundColorSubject = new Subject<Color>();
 
   constructor() {
     this.drawingObservable = this.drawingSubject.asObservable();

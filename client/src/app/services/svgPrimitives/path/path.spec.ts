@@ -10,37 +10,37 @@ describe('Path', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    path = new Path(Color.BLACK, MIN_STROKE_WIDTH, Texture.Degraded);
+    path = new Path(Color.BLACK, MIN_STROKE_WIDTH, PrimitiveType.Paint, Texture.Degraded);
 
   });
 
   it('should be properly created', () => {
     expect(path).toBeTruthy();
-    expect(path.points.length).toBe(0);
+    expect(path.commandSvg.length).toBe(0);
     expect(path.strokeColor).toEqual(Color.BLACK);
     expect(path.strokeWidth).toBe(MIN_STROKE_WIDTH);
     expect(path.texture).toBe(Texture.Degraded);
-    expect(path.type).toBe(PrimitiveType.Path);
+    expect(path.type).toBe(PrimitiveType.Paint);
   });
 
   it('should have default texture if not specified', () => {
-    path = new Path(Color.BLACK, MIN_STROKE_WIDTH);
+    path = new Path(Color.BLACK, PrimitiveType.Paint, MIN_STROKE_WIDTH);
     expect(path.texture).toBe(Texture.Basic);
   });
 
   it('should correctly add the first point', () => {
-    expect(path.points.length).toBe(0);
+    expect(path.commandSvg.length).toBe(0);
     path.addPoint(new Point(10, 20));
-    expect(path.points).toBe('M10 20 L10 20');
+    expect(path.commandSvg).toBe('M10 20 L10 20');
   });
 
   it('should correctly add points after the first one', () => {
-    expect(path.points.length).toBe(0);
+    expect(path.commandSvg.length).toBe(0);
     path.addPoint(new Point(10, 20));
     path.addPoint(new Point(30, 40));
-    expect(path.points).toBe('M10 20 L10 20 L30 40');
+    expect(path.commandSvg).toBe('M10 20 L10 20 L30 40');
     path.addPoint(new Point(50, 60));
-    expect(path.points).toBe('M10 20 L10 20 L30 40 L50 60');
+    expect(path.commandSvg).toBe('M10 20 L10 20 L30 40 L50 60');
   });
 
   it('#createCopy correctly copies the path', () => {

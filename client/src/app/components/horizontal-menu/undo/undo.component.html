@@ -1,0 +1,7 @@
+<div class="clickable button menu-option" *ngIf="controller.canUndo()" (click)="onClick()"
+  ngbTooltip="Annuler (Ctrl+Z)">
+  <i class="icon-color fas fa-undo fa-2x align-middle"></i>
+</div>
+<div class="button" *ngIf="!controller.canUndo()">
+  <i class="icon-color-disabled fas fa-undo fa-2x align-middle"></i>
+</div>

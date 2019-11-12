@@ -19,35 +19,38 @@ export class ShapePropertiesComponent implements OnInit, OnDestroy {
   private toolType: ToolType = ToolType.RectangleTool;
   readonly SHAPE_TYPE_NAMES_MAP: Map<string, ToolType> = new Map([
     ['Rectangle', ToolType.RectangleTool],
-    ['Ellipses', ToolType.EllipseTool],
-    ['Polygon', ToolType.PolygonTool],
+    ['Ellipse', ToolType.EllipseTool],
+    ['Polygone', ToolType.PolygonTool],
   ]);
   readonly STROKE_TYPE_NAMES_MAP: Map<string, StrokeType> = new Map([
-    ['Stroke and Fill', StrokeType.FullWithOutline],
-    ['Fill Only', StrokeType.Full],
-    ['Stroke Only', StrokeType.Outline],
+    ['Contour et remplissage', StrokeType.FullWithOutline],
+    ['Remplissage seulement', StrokeType.Full],
+    ['Contour seulement', StrokeType.Outline],
   ]);
-  readonly polygonNames: Map<number, string> = POLYGON_NAMES;
+  readonly POLYGONS: Map<number, string> = POLYGON_NAMES;
+  readonly POLYGON_TYPE = ToolType.PolygonTool;
+  readonly MAX_STROKE = MAX_STROKE_WIDTH;
+  readonly MIN_STROKE = MIN_STROKE_WIDTH;
+
   private strokeWidth: number;
   private numberSidesPolygon = 3;
   private strokeType: StrokeType;
 
-  readonly MAX_STROKE_WIDTH = MAX_STROKE_WIDTH;
-  readonly MIN_STROKE_WIDTH = MIN_STROKE_WIDTH;
-
   constructor(private toolsService: ToolsService, private router: Router, private route: ActivatedRoute) {
     this.ngOnInit();
-    if (this.tool.type === ToolType.PolygonTool) {
+    if (this.tool && this.tool.type === ToolType.PolygonTool) {
      this.numberSidesPolygon = (this.tool as PolygonTool).numberOfSides;
     }
    }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.selectedToolSubscription = this.toolsService.subscribeToToolChanged().subscribe((toolSelected) => {
       this.tool = toolSelected as ShapeTool;
-      this.toolType = this.tool.type;
-      this.strokeWidth = this.tool.strokeWidth;
-      this.strokeType = this.tool.strokeType;
+      if (this.tool) {
+        this.toolType = this.tool.type;
+        this.strokeWidth = this.tool.strokeWidth;
+        this.strokeType = this.tool.strokeType;
+      }
     });
 
     this.routeParametersSubscription = this.route.params.subscribe((params) => {
@@ -70,7 +73,7 @@ export class ShapePropertiesComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.selectedToolSubscription.unsubscribe();
     this.routeParametersSubscription.unsubscribe();
   }
@@ -90,12 +93,14 @@ export class ShapePropertiesComponent implements OnInit, OnDestroy {
   }
 
   onChangeStrokeWidth(): void {
-    if (this.strokeWidth > MAX_STROKE_WIDTH) {
-      this.strokeWidth = MAX_STROKE_WIDTH;
-    } else if (this.strokeWidth < MIN_STROKE_WIDTH) {
-      this.strokeWidth = MIN_STROKE_WIDTH;
+    if (this.strokeWidth > this.MAX_STROKE) {
+      this.strokeWidth = this.MAX_STROKE;
+    } else if (this.strokeWidth < this.MIN_STROKE) {
+      this.strokeWidth = this.MIN_STROKE;
     }
-    this.tool.strokeWidth = this.strokeWidth;
+    if (this.tool) {
+      this.tool.strokeWidth = this.strokeWidth;
+    }
   }
 
   setNumberOfSide(value: number) {
@@ -107,14 +112,16 @@ export class ShapePropertiesComponent implements OnInit, OnDestroy {
   }
 
   onChangeStrokeType(): void {
-    if (this.strokeType in StrokeType) {
-      this.tool.strokeType = this.strokeType;
-    } else {
-      this.strokeType = this.tool.strokeType;
+    if (this.tool) {
+      if (this.strokeType in StrokeType) {
+        this.tool.strokeType = this.strokeType;
+      } else {
+        this.strokeType = this.tool.strokeType;
+      }
     }
   }
   onChangeSidesNumber(): void {
-    if (this.toolType === ToolType.PolygonTool) {
+    if (this.tool && this.toolType === ToolType.PolygonTool) {
       (this.tool as PolygonTool).numberOfSides = this.numberSidesPolygon;
     }
   }

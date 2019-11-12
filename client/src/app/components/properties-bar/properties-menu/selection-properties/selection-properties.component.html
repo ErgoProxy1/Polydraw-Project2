@@ -1,4 +1,35 @@
-<div class="row">
-    <div class="col-md-12">
-    </div>
+<div class="menu p-0">
+  <div *ngIf="isPrimitiveSelected" class="clickable options menu-option" (click)="copy()">
+    <i class="far fa-copy fa-2x align-middle" placement="bottom" ngbTooltip="Copier (Ctrl+C)" ng-disabled="!isPrimitiveSelected"></i>
   </div>
+  <div *ngIf="!isPrimitiveSelected" class="options">
+    <i class="icon-color-disabled far fa-copy fa-2x align-middle" placement="bottom" ngbTooltip="Copier (Ctrl+C)" ng-disabled="!isPrimitiveSelected"></i>
+  </div>
+  <div *ngIf="!isClipboardEmpty()" class="clickable options menu-option" (click)="paste()">
+    <i class="fas fa-paste fa-2x align-middle" placement="bottom" ngbTooltip="Coller (Ctrl+V)" ng-disabled="isClipboardEmpty()"></i>
+  </div>
+  <div *ngIf="isClipboardEmpty()" class="options">
+    <i class="icon-color-disabled fas fa-paste fa-2x align-middle" placement="bottom" ngbTooltip="Coller (Ctrl+V)" ng-disabled="isClipboardEmpty()"></i>
+  </div>
+  <div *ngIf="isPrimitiveSelected" class="clickable options menu-option" (click)="cut()">
+    <i class="fas fa-cut fa-2x align-middle" placement="bottom" ngbTooltip="Couper (Ctrl+X)" ng-disabled="!isPrimitiveSelected"></i>
+  </div>
+  <div *ngIf="!isPrimitiveSelected" class="options">
+    <i class="icon-color-disabled fas fa-cut fa-2x align-middle" placement="bottom" ngbTooltip="Couper (Ctrl+X)" ng-disabled="!isPrimitiveSelected"></i>
+  </div>
+  <div *ngIf="isPrimitiveSelected" class="clickable options menu-option" (click)="duplicate()">
+    <i class="fa fa-clone fa-2x align-middle" placement="bottom" ngbTooltip="Dupliquer (Ctrl+D)" ng-disabled="!isPrimitiveSelected"></i>
+  </div>
+  <div *ngIf="!isPrimitiveSelected" class="options">
+    <i class="icon-color-disabled fa fa-clone fa-2x align-middle" placement="bottom" ngbTooltip="Dupliquer (Ctrl+D)" ng-disabled="!isPrimitiveSelected"></i>
+  </div>
+  <div *ngIf="isPrimitiveSelected" class="clickable options menu-option" (click)="delete()">
+    <i class="fa fa-trash fa-2x align-middle" placement="bottom" ngbTooltip="Supprimer (suppr)" ng-disabled="!isPrimitiveSelected"></i>
+  </div>
+  <div *ngIf="!isPrimitiveSelected" class="options">
+    <i class="icon-color-disabled fa fa-trash fa-2x align-middle" placement="bottom" ngbTooltip="Supprimer (suppr)" ng-disabled="!isPrimitiveSelected"></i>
+  </div>
+  <div class="clickable options menu-option" (click)="takeAll()">
+    <i class="far fa-object-group fa-2x align-middle" placement="bottom" ngbTooltip="Tout selectionner (Ctrl+A)"></i>
+  </div>
+</div>

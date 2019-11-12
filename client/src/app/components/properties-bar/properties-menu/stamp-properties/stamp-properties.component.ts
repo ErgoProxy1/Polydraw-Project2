@@ -27,7 +27,7 @@ export class StampPropertiesComponent implements OnInit, OnDestroy {
 
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.selectedToolSubscription = this.toolsService.subscribeToToolChanged().subscribe((toolSelected) => {
       this.stamp = toolSelected as StampTool;
     });
@@ -41,11 +41,11 @@ export class StampPropertiesComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.selectedToolSubscription.unsubscribe();
   }
 
-  onChangeRotation() {
+  onChangeRotation(): void {
     if (this.rotationAngle > this.MAX_ANGLE) {
       this.rotationAngle = this.MAX_ANGLE;
     } else if (this.rotationAngle < this.MIN_ANGLE) {
@@ -54,7 +54,7 @@ export class StampPropertiesComponent implements OnInit, OnDestroy {
     this.stamp.angle = this.rotationAngle;
   }
 
-  onChangeScale() {
+  onChangeScale(): void {
     if (this.scale > this.MAX_SCALE) {
       this.scale = this.MAX_SCALE;
     } else if (this.scale < this.MIN_SCALE) {

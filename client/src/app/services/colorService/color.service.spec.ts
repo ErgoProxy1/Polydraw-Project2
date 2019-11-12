@@ -38,9 +38,9 @@ describe('ColorSelectionService', () => {
   });
   it('RGB value errors are properly detected', () => {
     const incorrectColor: Color = new Color(-7, 155, 300);
-    expect(service.confirmRGBColor(incorrectColor)).toBe(true);
+    expect(service.isColorValid(incorrectColor)).toBe(false);
     const correctColor: Color = new Color(144, 38, 255);
-    expect(service.confirmRGBColor(correctColor)).toBe(false);
+    expect(service.isColorValid(correctColor)).toBe(true);
   });
   it('strings are properly converted into an hex form', () => {
     const hexValue = '457AB9';

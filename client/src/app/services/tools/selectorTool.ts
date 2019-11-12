@@ -1,12 +1,18 @@
+import { Observable, Subject } from 'rxjs';
+import { ClipboardService } from '../clipboard/clipboard.service';
 import { Handle } from '../svgPrimitives/ellipse/handle/handle';
 import { Perimeter } from '../svgPrimitives/rectangle/perimeter/perimeter';
 import { Rectangle } from '../svgPrimitives/rectangle/rectangle';
 import { SVGPrimitive } from '../svgPrimitives/svgPrimitive';
+import { DeleteCutCommand } from '../toolCommands/deleteCutCommand';
+import { DuplicateCommand } from '../toolCommands/duplicateCommand';
+import { PasteCommand } from '../toolCommands/pasteCommand';
+import { ToolCommand } from '../toolCommands/toolCommand';
+import { Tool } from '../tools/tool';
 import { Color } from '../utils/color';
-import { KeyboardEventType, MouseEventType, StrokeType, ToolType } from '../utils/constantsAndEnums';
+import { MouseEventType, POINTER_CURSOR, StrokeType, ToolType } from '../utils/constantsAndEnums';
 import { GeometryHelper } from '../utils/geometryHelper';
 import { Point } from '../utils/point';
-import { Tool } from './tool';
 
 enum SelectionState {
   Selecting,
@@ -14,21 +20,25 @@ enum SelectionState {
   Idle,
   Moving,
 }
-export class SelectorTool implements Tool {
+
+export class SelectorTool extends Tool {
   type = ToolType.SelectorTool;
   private boundingBox: Rectangle;
   private selectionRectangle: Perimeter;
   private initialPosition: Point;
-  private primitivesInSelectionBox: Set<SVGPrimitive>;
+  private primitivesInSelectionBox: Set<SVGPrimitive> = new Set<SVGPrimitive>();
   private primitives: SVGPrimitive[] = [];
   private selectionState: SelectionState = SelectionState.Idle;
   private selectionBoxInUse = false;
+  private commandSubject: Subject<ToolCommand> = new Subject<ToolCommand>();
+  private selectionSubject: Subject<boolean> = new Subject<boolean>();
 
-  constructor() {
+  constructor(private clipboardService: ClipboardService) {
+    super();
     this.boundingBox = new Rectangle(Color.WHITE, Color.BLACK, 2, StrokeType.Outline, new Point(0, 0));
   }
 
-  mouseEvent(eventType: MouseEventType, position: Point, primitive?: SVGPrimitive | undefined): SVGPrimitive[] {
+  mouseEvent(eventType: MouseEventType, position: Point, primitive?: SVGPrimitive | undefined): void {
     switch (eventType) {
       case MouseEventType.MouseDownLeft:
         if (primitive && !primitive.selectable) { // point de controle
@@ -42,9 +52,9 @@ export class SelectorTool implements Tool {
         }
         break;
       case MouseEventType.MouseDownRight:
-          this.beginSelectionBox(position);
-          this.selectionState = SelectionState.Reversing;
-          break;
+        this.beginSelectionBox(position);
+        this.selectionState = SelectionState.Reversing;
+        break;
       case MouseEventType.MouseClickLeft:
       case MouseEventType.MouseClickRight:
         if (!this.selectionBoxInUse) {
@@ -58,28 +68,34 @@ export class SelectorTool implements Tool {
         }
         this.selectionState = SelectionState.Idle;
         this.selectionBoxInUse = false;
+        this.clipboardService.resetDuplicateOffset();
         break;
       case MouseEventType.MouseMove:
         this.updateSelectionBox(position);
         break;
     }
-    return this.getPrimitivesToDraw();
+    this.temporaryPrimitivesAvailable.next();
   }
 
-  keyboardEvent(eventType: KeyboardEventType, key: string): SVGPrimitive[] {
-    return this.getPrimitivesToDraw();
+  subscribeToCommand(): Observable<ToolCommand> {
+    return this.commandSubject.asObservable();
   }
 
-  mouseWheelEvent(delta: number): SVGPrimitive[] {
-    return this.getPrimitivesToDraw();
+  subscribeToSelection(): Observable<boolean> {
+    return this.selectionSubject.asObservable();
   }
 
-  isCommandReady(): boolean {
-    return false;
+  getCursor(): string {
+    return POINTER_CURSOR;
   }
 
-  getCommand(): null {
-    return null;
+  standby(): void {
+    this.resetSelection();
+  }
+
+  setActive(primitives: SVGPrimitive[]): void {
+    this.updatePrimitivesList(primitives);
+    this.resetSelection();
   }
 
   resetSelection(): void {
@@ -90,12 +106,25 @@ export class SelectorTool implements Tool {
   }
 
   updatePrimitivesList(primitives: SVGPrimitive[]): void {
-    this.resetSelection();
     this.primitives = primitives;
+    this.updateBoundingBox();
   }
 
   getPrimitivesList(): SVGPrimitive[] {
     return this.primitives;
+  }
+
+  getTemporaryPrimitives(): SVGPrimitive[] {
+    let temp: SVGPrimitive[] = [];
+    if (this.primitives.filter((primitive) => primitive.selected).length > 0) {
+      this.updateBoundingBox();
+      temp.push(this.boundingBox);
+      temp = temp.concat(this.getHandles());
+    }
+    if (this.selectionState !== SelectionState.Idle) {
+      temp.push(this.selectionRectangle);
+    }
+    return temp;
   }
 
   private selectPrimitive(primitive: SVGPrimitive): void {
@@ -184,6 +213,7 @@ export class SelectorTool implements Tool {
     } else {
       this.boundingBox.resize(new Point(0, 0), new Point(0, 0), false);
     }
+    this.selectionSubject.next(this.primitives.filter((primitive) => primitive.selected).length > 0);
   }
 
   private getHandles(): SVGPrimitive[] {
@@ -207,9 +237,10 @@ export class SelectorTool implements Tool {
     return handles;
   }
 
-  private getPrimitivesToDraw(): SVGPrimitive[] {
+  getPrimitivesToDraw(): SVGPrimitive[] {
     let temp: SVGPrimitive[] = [];
     if (this.primitives.filter((primitive) => primitive.selected).length > 0) {
+      this.updateBoundingBox();
       temp.push(this.boundingBox);
       temp = temp.concat(this.getHandles());
     }
@@ -217,5 +248,64 @@ export class SelectorTool implements Tool {
       temp.push(this.selectionRectangle);
     }
     return temp;
+  }
+
+  private getPrimitivesSelected(): SVGPrimitive[] {
+    const buffer: SVGPrimitive[] = [];
+    this.primitives.forEach((primitive) => {
+      if (primitive.selected) {
+        buffer.push(primitive);
+      }
+    });
+    return buffer;
+  }
+
+  private resetClipboard(): void {
+    this.clipboardService.primitives.length = 0;
+    this.clipboardService.resetPasteOffest();
+  }
+
+  copy(): void {
+    this.resetClipboard();
+    this.clipboardService.primitives = this.getPrimitivesSelected();
+  }
+
+  cut(): void {
+    this.resetClipboard();
+    this.clipboardService.primitives = this.getPrimitivesSelected();
+    const command: ToolCommand = new DeleteCutCommand(this.clipboardService.primitives, this.primitives);
+    this.commandSubject.next(command);
+  }
+
+  paste(): void {
+    if (this.clipboardService.primitives.length > 0) {
+      const command: ToolCommand = new PasteCommand(this.clipboardService);
+      this.commandSubject.next(command);
+    }
+  }
+
+  duplicate(): void {
+    const command: ToolCommand = new DuplicateCommand(this.getPrimitivesSelected(), this.clipboardService);
+    this.commandSubject.next(command);
+  }
+
+  delete(): void {
+    const svgToDelete: SVGPrimitive[] = this.getPrimitivesSelected();
+    const command: ToolCommand = new DeleteCutCommand(svgToDelete, this.primitives);
+    this.commandSubject.next(command);
+  }
+
+  takeAll(): void {
+    if (this.primitives.length > 0) {
+      this.primitives.forEach((primitive) => {
+        this.addPrimitiveToSelected(primitive);
+      });
+    }
+    this.updateBoundingBox();
+    this.temporaryPrimitivesAvailable.next();
+  }
+
+  isClipboardEmpty(): boolean {
+    return this.clipboardService.primitives.length === 0;
   }
 }

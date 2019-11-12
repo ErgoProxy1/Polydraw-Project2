@@ -18,7 +18,7 @@ export class UserInfoService {
     if (!this.cookieService.check('noShow')) {
       return false;
     } else {
-      return this.cookieService.get('noShow') === 'true' ? true : false;
+      return this.cookieService.get('noShow') === 'true';
     }
   }
 

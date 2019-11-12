@@ -1,31 +1,35 @@
 <div class="text-center p-0" (click)="openModal()">
   <i class="far fa-save clickable fa-2x align-middle"></i>
 </div>
-<ngb-alert *ngIf="saveSuccessful" class="successMessage" type="success">Save Successful!</ngb-alert>
-
+<ngb-alert *ngIf="isSuccess" class="successMessage" type="success" (close)="show = false">{{successMessage}}</ngb-alert>
+<ngb-alert *ngIf="isError" class="successMessage" type="danger" (close)="show = false">{{errorMessage}}</ngb-alert>
 <ng-template #saveDrawingModal let-modal>
   <div class="modal-header">
-    <h5 class="modal-title">Save Drawing</h5>
+    <h5 class="modal-title">Sauvegarder un dessin</h5>
+    <button type="button" class="close" (click)="closeModal()">
+      <span aria-hidden="true">&times;</span>
+    </button>
   </div>
-  
+
+
   <div *ngIf="loading" class="modal-body text-center">
-  <div class="spinner-border text-dark" role="status">
+    <div class="spinner-border text-dark" role="status">
       <span class="sr-only">Loading...</span>
     </div>
   </div>
   <form *ngIf="!loading" (keydown.enter)="$event.preventDefault()" (ngSubmit)="saveDrawing()">
-  <div class="modal-body">
+    <div class="modal-body">
       <div class="modal-body">
         <div class="row align-middle mt-3">
-          <label class="col-md-5">Name: </label>
+          <label class="col-md-5">Nom: </label>
           <div class="col-md-7">
             <input class="form-control" id="drawingName" name="drawingName" type="text" id="drawingName"
-              [(ngModel)]="drawingInfo.name" (focusin)="setActiveFocus()"
-              (focusout)="checkErrorsInForm(); setInactiveFocus()">
+              [(ngModel)]="drawingInfo.name" (focusin)="keyboardService.inputFocusedActive = true;"
+              (focusout)="checkErrorsInForm(); keyboardService.inputFocusedActive = false;">
           </div>
         </div>
         <div class="row mt-3">
-          <label class="col-md-5 my-auto">Save type:</label>
+          <label class="col-md-5 my-auto">Type de sauvegarde:</label>
           <div class="col-md-7 ">
             <select class="custom-select" name="typeSave" [(ngModel)]="drawingInfo.typeOfSave"
               (focusout)="checkErrorsInForm()">
@@ -36,16 +40,17 @@
 
 
         <div class="row mt-3">
-          <label class="col-md-5 my-auto">Tags: </label>
+          <label class="col-md-5 my-auto">Étiquettes: </label>
           <div class="col-md-7">
             <div class="input-group">
               <input class="form-control" id="tags" name="tags" type="text" id="tags" [(ngModel)]="currentTagInput"
-                (focusin)="setActiveFocus()" (focusout)="checkErrorsInForm(); addNewTag(); setInactiveFocus()"
+                (focusin)="keyboardService.inputFocusedActive = true; tagEntryActive = true;"
+                (focusout)="checkErrorsInForm(); addNewTag(); keyboardService.inputFocusedActive = false; tagEntryActive = false;"
                 [ngbTypeahead]="searchTagName" (focus)="focus$.next($event.target.value)"
-                (click)="click$.next($event.target.value)" (keyup)="onKeyPressedTags($event)">
+                (click)="click$.next($event.target.value)">
               <div class="input-group-append ">
                 <div class="input-group-text clickable">
-                  <i class="fas fa-plus " (click)="addNewTag();" placement="bottom" ngbTooltip="Add"></i>
+                  <i class="fas fa-plus " (click)="addNewTag();" placement="bottom" ngbTooltip="Ajouter"></i>
                 </div>
               </div>
             </div>
@@ -54,30 +59,30 @@
         <div class="row mt-1 form-inline">
           <label *ngFor="let tag of drawingInfo.tags" class="bg-secondary m-1 form-inline form-control-sm text-light">
             {{tag.tagName}}
-            <i class="fas fa-times clickable ml-1" placement="bottom" ngbTooltip="Remove" (click)="removeTag(tag)"></i>
+            <i class="fas fa-times clickable ml-1" placement="bottom" ngbTooltip="Retirer" (click)="removeTag(tag)"></i>
           </label>
         </div>
         <div class="row mt-4">
           <div *ngIf="this.controllerService.isEmptyPrimitives()" id="dataAlert" class="alert alert-danger"
             role="alert">
-            Drawing is empty, but you can still save.
+            Le dessin est vide, mais vous pouvez quand même le sauvegarder.
           </div>
         </div>
         <div *ngIf="tagsAllreadyExist" id="dataAlert" class="alert alert-danger" role="alert">
-          Tag already exists
+          Étiquette déjà présente. Veuillez choisir un nouveau tag.
         </div>
         <div *ngIf="errorInForm" id="dataAlert" class="alert alert-danger" role="alert">
-          Error in form! Please review data.
+          Erreur dans le formulaire. Le nom doit être de 50 caractères ou moins, et non vide. Veuillez réviser.
         </div>
       </div>
-      <div *ngIf="errorDuringSave" id="dataAlert" class="alert alert-danger" role="alert">
-        Error while saving. Please try again or cancel.
+      <div *ngIf="isError" id="dataAlert" class="alert alert-danger" role="alert">
+        {{errorMessage}}
       </div>
       <div class="modal-footer mt-4">
-        <button id="dismiss" type="button" class="btn btn-outline-dark" (click)="closeModal()">Cancel</button>
-        <button type="submit" class="btn btn-outline-success" [disabled]="errorInForm || saveInProgress">
+        <button id="dismiss" type="button" class="btn btn-outline-dark" (click)="closeModal()">Annuler</button>
+        <button type="submit" class="btn btn-outline-success" [disabled]="errorInForm || loading">
           {{textSaveButton}}</button>
       </div>
-  </div>
+    </div>
   </form>
 </ng-template>

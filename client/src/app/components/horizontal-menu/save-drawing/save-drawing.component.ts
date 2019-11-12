@@ -3,11 +3,13 @@ import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 import { merge, Observable, Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 import { ControllerService } from 'src/app/services/controller/controller.service';
-import { KeyboardShortcutService } from 'src/app/services/keyboardShortcut/keyboard-shortcut.service';
-import { DrawingCommunicationService } from 'src/app/services/serverCommunication/drawing-communication.service';
-import { TagCommunicationService } from 'src/app/services/serverCommunication/tag-communication.service';
-// tslint:disable-next-line
-import { ENTER_KEY_CODE, KeyboardShortcutType, SavingTypeChoice, SavingTypeInterface, SPACE_KEY_CODE } from 'src/app/services/utils/constantsAndEnums';
+import { DrawingHandlerService } from 'src/app/services/drawingHandler/drawing-handler.service';
+import { KeyboardService } from 'src/app/services/keyboard/keyboard.service';
+import { TagHandlerService } from 'src/app/services/tagHandler/tag-handler.service';
+import {
+  KeyboardEventType, KeyboardShortcutType, SAVING_TYPE_CHOICES, SavingType,
+  SavingTypeInterface
+} from 'src/app/services/utils/constantsAndEnums';
 import { DrawingInfo } from '../../../../../../common/communication/drawingInfo';
 import { TagsInfo } from '../../../../../../common/communication/tags';
 
@@ -18,9 +20,9 @@ import { TagsInfo } from '../../../../../../common/communication/tags';
 })
 
 export class SaveDrawingComponent implements OnDestroy {
-  saveSuccessful = false;
-  errorDuringSave = false;
-  saveInProgress = false;
+  tagEntryActive = false;
+  keyAdded = '';
+  keyboardEventSubscription: Subscription;
   keyboardSubscription: Subscription;
   htmlPrimitivesSubscription: Subscription;
   errorInForm = false;
@@ -29,16 +31,18 @@ export class SaveDrawingComponent implements OnDestroy {
   textSaveButton = 'Sauvegarder un dessin';
   loading = false;
 
-  // variables utiles pour le typeahead
+  // Variables utiles pour le typeahead
   currentTagInput = '';
   tags: TagsInfo[];
-  tagsName: string[] = [];
   focus$ = new Subject<string>();
   click$ = new Subject<string>();
 
-  typeOfSave: SavingTypeInterface[] = SavingTypeChoice;
+  typeOfSave: SavingTypeInterface[] = SAVING_TYPE_CHOICES;
 
-  // primitives: SVGPrimitive[] = this.canvasComponent.primitives;
+  successMessage = '';
+  errorMessage = '';
+  isSuccess = false;
+  isError = false;
 
   @ViewChild('saveDrawingModal', { static: true }) saveDrawingModal: ElementRef;
 
@@ -48,115 +52,130 @@ export class SaveDrawingComponent implements OnDestroy {
     keyboard: false,
   };
 
-  constructor(private keyboardShortcutService: KeyboardShortcutService, private modalService: NgbModal,
-              private controllerService: ControllerService, private tagCommunicationService: TagCommunicationService,
-              private drawingCommunicationService: DrawingCommunicationService) {
+  constructor(private keyboardService: KeyboardService, private modalService: NgbModal,
+              private controllerService: ControllerService, private tagHandlerService: TagHandlerService,
+              private drawingHandlerService: DrawingHandlerService) {
     this.textSaveButton = 'Sauvegarder un dessin';
-    this.saveInProgress = false;
-    this.errorDuringSave = false;
-    this.htmlPrimitivesSubscription = this.controllerService.getHTMLPrimitivesStringObservable().subscribe( (primitives: string) => {
+    this.htmlPrimitivesSubscription = this.controllerService.getHTMLPrimitivesStringObservable().subscribe((primitives: string) => {
       this.drawingInfo.thumbnail = primitives;
     });
-    this.keyboardSubscription = this.keyboardShortcutService.getKeyboardShortcutType().subscribe((
+    this.keyboardSubscription = this.keyboardService.getKeyboardShortcutType().subscribe((
       keyboardShortcut: KeyboardShortcutType) => {
       if (keyboardShortcut === KeyboardShortcutType.SaveDrawing) {
         this.openModal();
       }
     });
+
+    this.keyboardEventSubscription = this.keyboardService.getKeyboardEventType().subscribe(
+      (keyboardEventType: KeyboardEventType) => {
+        this.keyAdded = this.keyboardService.getKeyOut();
+        this.keyboardEvent(keyboardEventType);
+      });
   }
 
   ngOnDestroy(): void {
     this.keyboardSubscription.unsubscribe();
+    this.htmlPrimitivesSubscription.unsubscribe();
   }
 
-  checkErrorsInForm() {
+  keyboardEvent(keyboardEventType: KeyboardEventType) {
+    if (this.tagEntryActive && (this.keyAdded === 'Enter' || this.keyAdded === ' ')) {
+      this.addNewTag();
+    }
+  }
+
+  checkErrorsInForm(): void {
     let tempError = false;
+    if (this.drawingInfo.name.length === 0 || this.drawingInfo.name.length > 50) {
+      tempError = true;
+    }
+    if (this.drawingInfo.typeOfSave < 0 || this.drawingInfo.typeOfSave > 1) {
+      tempError = true;
+    }
     for (const tag of this.drawingInfo.tags) {
-      if (tag.id < -1 || tag.tagName.length === 0) {
+      if (tag.id < -1 || tag.tagName.length === 0 || tag.tagName.length > 30) {
         tempError = true;
       }
-    }
-    // TODO: à modifier pour les prochains sprints où la sauvegarde locale sera permise
-    if (this.drawingInfo.name.length === 0 || this.drawingInfo.typeOfSave !== 0) {
-      tempError = true;
     }
     this.errorInForm = tempError;
   }
 
+  exportToServer(): void {
+    this.drawingHandlerService.exportToServer(this.drawingInfo).then((msg) => {
+      // Save successful
+      if (msg === true) {
+        this.textSaveButton = 'Sauvegarde réussie!';
+        this.successMessage = 'Sauvegarde réussie!';
+        this.showMessage(false);
+        this.closeModal();
+      } else {
+        // Erreur dans la sauvegarde
+        this.errorMessage = 'La sauvegarde a échoué.';
+        this.showMessage(true);
+      }
+      this.loading = false;
+    }, (error) => {
+      this.errorMessage = `La communication avec le serveur a échoué ERREUR: ${error}`;
+      this.showMessage(true);
+      this.loading = false;
+    });
+  }
+
   saveDrawing(): void {
-    if (!this.saveInProgress) {
-      this.saveInProgress = true;
-      this.textSaveButton = 'Sauvegarde en cours...';
-      this.drawingCommunicationService.saveDrawing(this.drawingInfo).subscribe((msg) => {
-        // Save successful
-        if (msg === true) {
-          this.textSaveButton = 'Sauvegarde réussie';
-          this.saveSuccessful = true;
-          setTimeout(() => this.saveSuccessful = false, 5000);
-          this.closeModal();
-        } else {
-          // Erreur dans la sauvegarde
-          this.errorDuringSave = true;
-          this.saveInProgress = false;
-          this.loading = false;
-        }
-        this.saveInProgress = false;
+    if (!this.loading) {
+      if (this.drawingInfo.typeOfSave === SavingType.SaveOnServer) {
+        this.loading = true;
+        this.textSaveButton = 'Sauvegarde en cours...';
+        this.exportToServer();
+      } else if (this.drawingInfo.typeOfSave === SavingType.SaveLocally) {
+        this.loading = true;
+        this.textSaveButton = 'Sauvegarde en cours...';
+        this.drawingHandlerService.exportDrawingLocally(this.drawingInfo);
         this.loading = false;
-      });
+        this.successMessage = 'Sauvegarde réussie!';
+        this.showMessage(false);
+        this.closeModal();
+      }
     }
   }
 
-  // Ouvre la fenêtre modal quand le bouton ou CTRL+s est appuyé
   openModal(): boolean {
-    this.saveInProgress = false;
-    this.loading = false;
-    this.errorDuringSave = false;
-    // si drawing allready save prendre info
+    this.loading = true;
     this.drawingInfo = {
-      name: 'My Drawing',
+      name: 'Nouveau Dessin',
       typeOfSave: 0,
-      primitives: JSON.stringify(this.controllerService.getPrimitives()),
+      primitives: JSON.stringify(this.controllerService.svgPrimitives),
       tags: [],
       canvasInfo: JSON.stringify(this.controllerService.canvasInfo),
       thumbnail: '',
     };
     this.controllerService.getHTMLOfPrimitives();
-
-    this.keyboardShortcutService.modalWindowActive = true;
+    this.keyboardService.modalWindowActive = true;
     this.modalService.open(this.saveDrawingModal, this.saveDrawingModalConfig);
     this.loadTags();
     return this.modalService.hasOpenModals();
   }
 
-  // Ferme la fenêtre modal
   closeModal(): boolean {
     // On remet les valeurs par défaut
-    this.keyboardShortcutService.modalWindowActive = false;
-    this.modalService.dismissAll();
-    this.saveInProgress = false;
+    this.keyboardService.modalWindowActive = false;
     this.loading = false;
     this.textSaveButton = 'Sauvegarder un dessin';
+    this.modalService.dismissAll();
     return this.modalService.hasOpenModals();
   }
 
-  // Méthodes pour configurer les input boxes et les shortcuts
-  setInactiveFocus() {
-    this.keyboardShortcutService.inputFocusedActive = false;
-  }
-
-  setActiveFocus() {
-    this.keyboardShortcutService.inputFocusedActive = true;
-  }
-
-  loadTags() {
-    this.loading = true;
-    this.tagCommunicationService.getAllTags().subscribe((tags: TagsInfo[]) => {
-      this.tags = (tags && tags.length !== 0) ? tags : [];
-      this.tagsName = [];
-      this.tags.forEach((tag) => {
-        this.tagsName.push(tag.tagName);
-      });
+  loadTags(): void {
+    this.tagHandlerService.loadTags().then((success) => {
+      if (!success) {
+        this.errorMessage = 'Erreur dans la tentative de récupération des tags.';
+        this.showMessage(true);
+      }
       this.loading = false;
+    }).catch((error) => {
+      this.loading = false;
+      this.errorMessage = `Erreur communication avec le serveur ERROR : ${error}`;
+      this.showMessage(true);
     });
   }
 
@@ -164,38 +183,24 @@ export class SaveDrawingComponent implements OnDestroy {
   searchTagName = (text$: Observable<string>) => {
     const debouncedText$ = text$.pipe(debounceTime(10), distinctUntilChanged());
     const inputFocus$ = this.focus$;
-
     return merge(debouncedText$, inputFocus$).pipe(
-      map((inputValue) => (inputValue === '' ? this.tagsName
-        : this.tagsName.filter((tagName) => tagName.toLowerCase().indexOf(inputValue.toLowerCase()) > -1)).slice(0, 10)),
+      map((inputValue) =>
+        (this.tagHandlerService.filterTagsName(inputValue).slice(0, 10)),
+      ),
     );
   }
 
-  onKeyPressedTags(keyboard: KeyboardEvent) {
-    if (keyboard.code === ENTER_KEY_CODE || keyboard.code === SPACE_KEY_CODE) {
-      this.addNewTag();
-    }
-  }
-
-  addNewTag() {
+  addNewTag(): void {
+    // On enlève tous les espaces
     this.currentTagInput = this.currentTagInput.replace(/\s/g, ''); // enlève tous les espaces possibles
-    if (this.currentTagInput.length !== 0) {
-      let tagTemp = this.tags.find((tag) => {
-        return tag.tagName === this.currentTagInput;
-      });
-      if (!tagTemp) {
-        tagTemp = {
-          id: -1,
-          tagName: this.currentTagInput,
-        };
+    if (this.currentTagInput.length !== 0 && this.currentTagInput.length < 30) {
+      if (!this.tagHandlerService.isTagPresent(this.currentTagInput, this.drawingInfo.tags)) {
+        this.drawingInfo.tags.push(this.tagHandlerService.getTag(this.currentTagInput));
       }
-      this.tagsAllreadyExist = (this.drawingInfo.tags.find((tag) => {
-        return tag.tagName === this.currentTagInput;
-      })) ? true : false;
-      if (!this.tagsAllreadyExist) {
-        this.drawingInfo.tags.push(tagTemp);
-        this.currentTagInput = '';
-      }
+      this.currentTagInput = '';
+    } else {
+      this.errorMessage = 'Étiquette trop longue (maximum 30 caractères), veuillez réviser.';
+      this.showMessage(true);
     }
   }
 
@@ -204,4 +209,13 @@ export class SaveDrawingComponent implements OnDestroy {
     this.drawingInfo.tags.splice(index, 1);
   }
 
+  showMessage(error: boolean) {
+    if (error) {
+      this.isError = true;
+      setTimeout(() => this.isError = false, 5000);
+    } else {
+      this.isSuccess = true;
+      setTimeout(() => this.isSuccess = false, 5000);
+    }
+  }
 }

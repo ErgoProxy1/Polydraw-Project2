@@ -1,37 +1,39 @@
-import { SVGPrimitive } from '../svgPrimitives/svgPrimitive';
-import { EllipseCommand } from '../toolCommands/ellipseCommand';
+import { Ellipse } from '../svgPrimitives/ellipse/ellispe';
+import { ShapeToolCommand } from '../toolCommands/shapeToolCommand';
 import { Color } from '../utils/color';
-import { KeyboardEventType, SHIFT_KEY_CODE, ToolType } from '../utils/constantsAndEnums';
+import { KeyboardEventType, ToolType } from '../utils/constantsAndEnums';
 import { Point } from '../utils/point';
 import { ShapeTool } from './shapeTool';
-import { Tool } from './tool';
 
-export class EllipseTool extends ShapeTool implements Tool {
+export class EllipseTool extends ShapeTool {
   type = ToolType.EllipseTool;
-  private isShiftDown = false;
 
   constructor(fillColor: Color, strokeColor: Color) {
     super(fillColor, strokeColor);
   }
 
-  keyboardEvent(eventType: KeyboardEventType, key: string): SVGPrimitive[] {
-    if (key === SHIFT_KEY_CODE && (eventType === KeyboardEventType.KeyDown || eventType === KeyboardEventType.KeyUp)) {
-      this.isShiftDown = eventType === KeyboardEventType.KeyDown;
-      if (this.isCreatingShape) {
-        this.command.resize(this.perimeter.corner1, this.perimeter.corner2, this.isShiftDown);
+  keyboardEvent(eventType: KeyboardEventType): void {
+    if (eventType === KeyboardEventType.ShiftDown || eventType === KeyboardEventType.ShiftUp) {
+      if (eventType === KeyboardEventType.ShiftDown) {
+        this.isRegular = true;
+      } else if (eventType === KeyboardEventType.ShiftUp) {
+        this.isRegular = false;
       }
+      if (this.isCreatingShape) {
+        this.command.resize(this.perimeter.corner1, this.perimeter.corner2, this.isRegular);
+      }
+      this.temporaryPrimitivesAvailable.next();
     }
-    return super.keyboardEvent(eventType, key);
   }
 
   protected begin(position: Point): void {
-    this.command = new EllipseCommand(this.fillColor, this.strokeColor, this.strokeWidth, this.strokeType, position);
+    this.command = new ShapeToolCommand(new Ellipse(this.fillColor, this.strokeColor, this.strokeWidth, this.strokeType, position));
     super.begin(position);
   }
 
   protected update(position: Point): void {
     if (this.isCreatingShape) {
-      super.update(position, this.isShiftDown);
+      super.update(position);
     }
   }
 }

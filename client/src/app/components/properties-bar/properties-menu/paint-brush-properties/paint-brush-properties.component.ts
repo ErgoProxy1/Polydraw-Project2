@@ -10,26 +10,26 @@ import { MAX_STROKE_WIDTH, MIN_STROKE_WIDTH, Texture, ToolType } from 'src/app/s
   styleUrls: ['./paint-brush-properties.component.scss'],
 })
 export class PaintBrushPropertiesComponent implements OnInit, OnDestroy {
-  private selectedToolSubscription: Subscription;
-  paintBrush: PaintBrushTool;
-  TEXTURE_NAMES_MAP: Map<string, Texture> = new Map([
-    ['Base', Texture.Basic],
-    ['Neon', Texture.Degraded],
-    ['Reflect', Texture.Grayed],
-    ['Mossy', Texture.Light],
-    ['Frothy', Texture.Frothy],
+  readonly MAX_STROKE = MAX_STROKE_WIDTH;
+  readonly MIN_STROKE = MIN_STROKE_WIDTH;
+  readonly TEXTURE_NAMES_MAP: Map<string, Texture> = new Map([
+    ['Basique', Texture.Basic],
+    ['Grisée', Texture.Degraded],
+    ['Lumineuse', Texture.Grayed],
+    ['Mousseuse', Texture.Light],
+    ['Dégradée', Texture.Frothy],
   ]);
+
   private strokeWidth: number;
   private texture: Texture;
-
-  readonly MAX_STROKE_WIDTH = MAX_STROKE_WIDTH;
-  readonly MIN_STROKE_WIDTH = MIN_STROKE_WIDTH;
+  private selectedToolSubscription: Subscription;
+  paintBrush: PaintBrushTool;
 
   constructor(private toolsService: ToolsService) {
 
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.selectedToolSubscription = this.toolsService.subscribeToToolChanged().subscribe((toolSelected) => {
       this.paintBrush = toolSelected as PaintBrushTool;
     });
@@ -40,15 +40,15 @@ export class PaintBrushPropertiesComponent implements OnInit, OnDestroy {
     this.texture = this.paintBrush.texture;
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     this.selectedToolSubscription.unsubscribe();
   }
 
   onChangeStrokeWidth(): void {
-    if (this.strokeWidth > MAX_STROKE_WIDTH) {
-      this.strokeWidth = MAX_STROKE_WIDTH;
-    } else if (this.strokeWidth < MIN_STROKE_WIDTH) {
-      this.strokeWidth = MIN_STROKE_WIDTH;
+    if (this.strokeWidth > this.MAX_STROKE) {
+      this.strokeWidth = this.MAX_STROKE;
+    } else if (this.strokeWidth < this.MIN_STROKE) {
+      this.strokeWidth = this.MIN_STROKE;
     }
     this.paintBrush.strokeWidth = this.strokeWidth;
   }

@@ -1,0 +1,7 @@
+<div class="clickable button menu-option" *ngIf="controller.canRedo()" (click)="onClick()"
+    ngbTooltip="Refaire (Ctrl+Shift+Z)">
+    <i class="icon-color fas fa-redo fa-2x align-middle"></i>
+</div>
+<div class="button" *ngIf="!controller.canRedo()">
+    <i class="icon-color-disabled fas fa-redo fa-2x align-middle"></i>
+</div>

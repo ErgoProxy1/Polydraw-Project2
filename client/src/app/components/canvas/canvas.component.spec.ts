@@ -1,7 +1,10 @@
+// tslint:disable: no-string-literal
+import { HttpClientModule } from '@angular/common/http';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { NTimesPipe } from 'src/app/pipes/n-times.pipe';
 import { Color } from 'src/app/services/utils/color';
 import { CanvasComponent } from './canvas.component';
+import { SvgComponent } from './svg/svg.component';
 
 describe('CanvasComponent', () => {
   let component: CanvasComponent;
@@ -9,7 +12,8 @@ describe('CanvasComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [CanvasComponent, NTimesPipe],
+      declarations: [CanvasComponent, NTimesPipe, SvgComponent],
+      imports: [HttpClientModule],
     })
       .compileComponents();
   }));
@@ -24,10 +28,6 @@ describe('CanvasComponent', () => {
     expect(component).toBeTruthy();
 
     expect(component.canvasWidth).toBe(0);
-    expect(component.FILTER_IDS.length).toBe(5);
-    expect(component.FILTER_IDS[0]).toBe('basic');
-    expect(component.FILTER_IDS[4]).toBe('frothy');
-    expect(component.FILTER_IDS[5]).toBeUndefined();
     expect(component.canvasHeight).toBe(0);
 
     expect(component.canvasBackground).toBe('rgba(255,255,255,1)');
@@ -65,49 +65,35 @@ describe('CanvasComponent', () => {
 
   it('#clearCanvas should clear the canvas', () => {
     component.clearCanvas();
-    expect(component.getPrimitives().length).toEqual(0);
+    expect(component['controller'].primitivesToDraw.length).toEqual(0);
   });
 
   it('#mouseMoveOnCanvas should update the primitives attribute', () => {
-    const initialPrimitives = component.getPrimitives();
+    const initialPrimitives = component['controller'].primitivesToDraw;
     spyOn(component, 'mouseMoveOnCanvas');
-    const primSize = component.getPrimitives().length;
+    const primSize = component['controller'].primitivesToDraw.length;
     component.mouseMoveOnCanvas(new PointerEvent('MouseMove'));
-    expect(component.getPrimitives().length).toBeGreaterThanOrEqual(initialPrimitives.length);
-    expect(component.getPrimitives()[primSize - 1]).toEqual(initialPrimitives[primSize - 1]);
-    expect(component.getPrimitives()[primSize]).toBeUndefined();
-  });
-
-  it('#onKeyDown should update the primitives attribute', () => {
-    const initialPrimitives = component.getPrimitives();
-    spyOn(component, 'onKeyDown');
-    component.onKeyDown(new KeyboardEvent('onKeyDown'));
-    expect(component.getPrimitives().length).toBeGreaterThanOrEqual(initialPrimitives.length);
-  });
-
-  it('#onKeyUp should update the primitives attribute', () => {
-    const initialPrimitives = component.getPrimitives();
-    spyOn(component, 'onKeyUp');
-    component.onKeyUp(new KeyboardEvent('onKeyUp'));
-    expect(component.getPrimitives().length).toBeGreaterThanOrEqual(initialPrimitives.length);
+    expect(component['controller'].primitivesToDraw.length).toBeGreaterThanOrEqual(initialPrimitives.length);
+    expect(component['controller'].primitivesToDraw[primSize - 1]).toEqual(initialPrimitives[primSize - 1]);
+    expect(component['controller'].primitivesToDraw[primSize]).toBeUndefined();
   });
 
   it('#clickOnCanvas should select the primitives with a leftClick', () => {
-    const initialPrimitives = component.getPrimitives();
+    const initialPrimitives = component['controller'].primitivesToDraw;
     spyOn(component, 'clickOnCanvas');
-    const primitive = component.getPrimitives()[0];
+    const primitive = component['controller'].primitivesToDraw[0];
     component.clickOnCanvas(new MouseEvent('leftClick'), primitive);
-    expect(component.getPrimitives()[0]).toEqual(primitive);
-    expect(component.getPrimitives()).toEqual(initialPrimitives);
+    expect(component['controller'].primitivesToDraw[0]).toEqual(primitive);
+    expect(component['controller'].primitivesToDraw).toEqual(initialPrimitives);
   });
 
   it('#clickOnCanvas should unselect the current primitive with a rightClick', () => {
-    const initialPrimitives = component.getPrimitives();
+    const initialPrimitives = component['controller'].primitivesToDraw;
     spyOn(component, 'clickOnCanvas');
-    const primitive = component.getPrimitives()[0];
+    const primitive = component['controller'].primitivesToDraw[0];
     component.clickOnCanvas(new MouseEvent('rightClick'), primitive);
-    expect(component.getPrimitives()[0]).toEqual(primitive);
-    expect(component.getPrimitives().length).toEqual(initialPrimitives.length);
+    expect(component['controller'].primitivesToDraw[0]).toEqual(primitive);
+    expect(component['controller'].primitivesToDraw.length).toEqual(initialPrimitives.length);
   });
 
 });

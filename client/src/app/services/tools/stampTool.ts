@@ -2,12 +2,12 @@ import { Observable, Subject } from 'rxjs';
 import { SVGPrimitive } from '../svgPrimitives/svgPrimitive';
 import { StampToolCommand } from '../toolCommands/stampToolCommand';
 import { ToolCommand } from '../toolCommands/toolCommand';
-import { ALT_KEY_CODE, KeyboardEventType, MouseEventType, ToolType } from '../utils/constantsAndEnums';
+import { DEFAULT_CURSOR, KeyboardEventType, MouseEventType, NO_CURSOR, ToolType } from '../utils/constantsAndEnums';
 import { Point } from '../utils/point';
 import { DefaultStamps, StampInfo } from '../utils/stampData';
 import { Tool } from './tool';
 
-export class StampTool implements Tool {
+export class StampTool extends Tool {
   readonly INIT_ANGLE: number = 0;
   readonly INIT_SCALE: number = 100;
   readonly STAMPS: StampInfo[] = DefaultStamps;
@@ -15,11 +15,11 @@ export class StampTool implements Tool {
   type = ToolType.StampTool;
 
   angleObservable: Observable<number>;
-  angleSubject = new Subject<number>();
+  private angleSubject = new Subject<number>();
 
   private command: StampToolCommand;
+  private commandSubject: Subject<StampToolCommand> = new Subject<StampToolCommand>();
   private stampSelected = false;
-  private commandReady = false;
   initialPosition: Point;
   rotationRate = 15;
   scale: number;
@@ -28,12 +28,13 @@ export class StampTool implements Tool {
   position: Point;
 
   constructor() {
+    super();
     this.angle = this.INIT_ANGLE;
     this.scale = this.INIT_SCALE;
     this.angleObservable = this.angleSubject.asObservable();
   }
 
-  mouseEvent(eventType: MouseEventType, position: Point, primitive?: SVGPrimitive | undefined): SVGPrimitive[] {
+  mouseEvent(eventType: MouseEventType, position: Point, primitive?: SVGPrimitive | undefined): void {
     this.position = position;
     if (this.selected !== 0) {
       switch (eventType) {
@@ -45,26 +46,25 @@ export class StampTool implements Tool {
           this.update();
           this.finish();
           break;
+        case MouseEventType.MouseLeave:
+          this.stampSelected = false;
       }
-      return this.stampSelected ? [this.command.stamp] : [];
-    } else {
-      return [];
+      this.temporaryPrimitivesAvailable.next();
     }
   }
 
-  keyboardEvent(eventType: KeyboardEventType, key: string): SVGPrimitive[] {
+  keyboardEvent(eventType: KeyboardEventType): void {
     if (this.selected !== 0) {
-      if (eventType === KeyboardEventType.KeyDown && key === ALT_KEY_CODE) {
+      if (eventType === KeyboardEventType.AltDown) {
         this.rotationRate = 1;
       } else {
         this.rotationRate = 15;
       }
-      return this.stampSelected ? [this.command.stamp] : [];
+      this.temporaryPrimitivesAvailable.next();
     }
-    return [];
   }
 
-  mouseWheelEvent(delta: number): SVGPrimitive[] {
+  mouseWheelEvent(delta: number): void {
     if (this.selected !== 0) {
       this.begin();
       if (delta === -1) {
@@ -78,18 +78,20 @@ export class StampTool implements Tool {
       }
       if (this.angle > 359 || this.angle < -359) { this.angle = 0; }
       this.update();
-      return [this.command.stamp];
+      this.temporaryPrimitivesAvailable.next();
     }
-    return [];
   }
 
-  isCommandReady(): boolean {
-    return this.commandReady;
+  subscribeToCommand(): Observable<ToolCommand> {
+    return this.commandSubject.asObservable();
   }
 
-  getCommand(): ToolCommand {
-    this.commandReady = false;
-    return this.command;
+  getTemporaryPrimitives(): SVGPrimitive[] {
+    return this.selected !== 0 && this.stampSelected ? [this.command.stamp] : [];
+  }
+
+  getCursor(): string {
+    return this.selected ? NO_CURSOR : DEFAULT_CURSOR;
   }
 
   private begin(): void {
@@ -98,7 +100,6 @@ export class StampTool implements Tool {
       this.scale, this.angle + this.STAMPS[this.selected].initRotation, this.initialPosition, this.STAMPS[this.selected],
     );
     this.stampSelected = true;
-    this.commandReady = false;
   }
 
   private update(): void {
@@ -110,11 +111,11 @@ export class StampTool implements Tool {
   private finish(): void {
     if (this.stampSelected) {
       this.stampSelected = false;
-      this.commandReady = true;
+      this.commandSubject.next(this.command);
     }
   }
 
-  sendAngleToStampProperties(angle: number): void {
+  private sendAngleToStampProperties(angle: number): void {
     this.angleSubject.next(angle);
   }
 }

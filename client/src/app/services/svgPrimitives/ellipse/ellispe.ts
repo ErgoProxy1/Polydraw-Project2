@@ -5,6 +5,7 @@ import { Shape } from '../shape/shape';
 import { SVGPrimitive } from '../svgPrimitive';
 
 export class Ellipse extends Shape {
+
   radiusX: number;
   radiusY: number;
   type = PrimitiveType.Ellipse;
@@ -29,6 +30,7 @@ export class Ellipse extends Shape {
     newEllipse.absoluteWidth = ellipse.absoluteWidth;
     newEllipse.corner1 = ellipse.corner1;
     newEllipse.corner2 = ellipse.corner2;
+
     return newEllipse;
   }
 
@@ -41,5 +43,9 @@ export class Ellipse extends Shape {
 
   getCenter(): Point {
     return this.center;
+  }
+
+  copy(): SVGPrimitive {
+    return Ellipse.createCopy(this);
   }
 }

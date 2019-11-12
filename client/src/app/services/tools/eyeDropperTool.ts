@@ -7,76 +7,60 @@ import { Rectangle } from '../svgPrimitives/rectangle/rectangle';
 import { Shape } from '../svgPrimitives/shape/shape';
 import { Stamp } from '../svgPrimitives/stamp/stamp';
 import { SVGPrimitive } from '../svgPrimitives/svgPrimitive';
-import { EyeDropperToolCommand } from '../toolCommands/eyeDropperCommand';
+import { TextPrimitive } from '../svgPrimitives/text/textPrimitive';
 import { ToolCommand } from '../toolCommands/toolCommand';
 import { Color } from '../utils/color';
-import { KeyboardEventType, MouseEventType, PrimitiveType, ToolType } from '../utils/constantsAndEnums';
+import { MouseEventType, PrimitiveType, ToolType } from '../utils/constantsAndEnums';
 import { Point } from '../utils/point';
 import { Tool } from './tool';
 
-export class EyeDropperTool implements Tool {
+export class EyeDropperTool extends Tool {
   type = ToolType.EyeDropper;
-  private command: EyeDropperToolCommand;
-  private commandReady = false;
 
   eyeDropperPrimaryObservable: Observable<Color>;
-  eyeDropperPrimarySubject = new Subject<Color>();
+  private eyeDropperPrimarySubject = new Subject<Color>();
 
   eyeDropperSecondaryObservable: Observable<Color>;
-  eyeDropperSecondarySubject = new Subject<Color>();
+  private eyeDropperSecondarySubject = new Subject<Color>();
 
   constructor() {
+    super();
     this.eyeDropperPrimaryObservable = this.eyeDropperPrimarySubject.asObservable();
     this.eyeDropperSecondaryObservable = this.eyeDropperSecondarySubject.asObservable();
   }
 
-  mouseEvent(eventType: MouseEventType, position: Point, primitive?: SVGPrimitive | undefined): SVGPrimitive[] {
+  mouseEvent(eventType: MouseEventType, position: Point, primitive?: SVGPrimitive | undefined): void {
     if (primitive && (eventType === MouseEventType.MouseDownLeft || eventType === MouseEventType.MouseDownRight)) {
       this.createCommand(eventType === MouseEventType.MouseDownLeft, position, primitive);
     }
-    return [];
   }
 
-  keyboardEvent(eventType: KeyboardEventType, key: string): SVGPrimitive[] {
-    return [];
-  }
-
-  mouseWheelEvent(delta: number): SVGPrimitive[] {
-    return [];
-  }
-
-  isCommandReady(): boolean {
-    return this.commandReady;
-  }
-
-  getCommand(): ToolCommand {
-    this.commandReady = false;
-    return this.command;
+  subscribeToCommand(): Observable<ToolCommand> {
+    return new Observable();
   }
 
   private createCommand(isPrimary: boolean, position: Point, primitive: SVGPrimitive): void {
-    const color: Color = this.determineFillOrStroke(position, primitive);
-    this.command = new EyeDropperToolCommand(primitive, isPrimary, color);
-    isPrimary ? this.sendPrimaryToProperties() : this.sendSecondaryToProperties();
-    this.commandReady = true;
+    const color: Color = Color.copyColor(this.determineFillOrStroke(position, primitive));
+    isPrimary ? this.sendPrimaryToProperties(color) : this.sendSecondaryToProperties(color);
   }
 
   determineFillOrStroke(position: Point, primitive: SVGPrimitive): Color {
-    if (primitive.type !== PrimitiveType.Path) {
-      if (primitive.type === PrimitiveType.Rectangle) {
-        return this.getColorRectangle(position, primitive);
-      } else if (primitive.type === PrimitiveType.Ellipse) {
-        return this.getColorEllipse(position, primitive);
-      } else if (primitive.type === PrimitiveType.Polygon) {
-        return this.getColorPolygon(position, primitive);
-      } else if (primitive.type === PrimitiveType.Stamp) {
-        return (primitive as Stamp).info.color;
-      } else if (primitive.type === PrimitiveType.Line) {
-        return (primitive as Line).strokeColor;
-      }
-      return (primitive as Shape).fillColor;
-    } else {
+    if (primitive.type === PrimitiveType.Rectangle) {
+      return this.getColorRectangle(position, primitive);
+    } else if (primitive.type === PrimitiveType.Ellipse) {
+      return this.getColorEllipse(position, primitive);
+    } else if (primitive.type === PrimitiveType.Polygon) {
+      return this.getColorPolygon(position, primitive);
+    } else if (primitive.type === PrimitiveType.Stamp) {
+      return (primitive as Stamp).info.color;
+    } else if (primitive.type === PrimitiveType.Line) {
+      return (primitive as Line).strokeColor;
+    } else if (primitive.type === PrimitiveType.Text) {
+      return (primitive as TextPrimitive).textColor;
+    } else if (primitive.type === PrimitiveType.Pencil || primitive.type === PrimitiveType.Paint || primitive.type === PrimitiveType.Pen) {
       return (primitive as Path).strokeColor;
+    } else {
+      return (primitive as Shape).fillColor;
     }
   }
 
@@ -114,11 +98,11 @@ export class EyeDropperTool implements Tool {
     return hasCrossed ? polygon.fillColor : polygon.strokeColor;
   }
 
-  sendPrimaryToProperties(): void {
-    this.eyeDropperPrimarySubject.next(this.command.newColor);
+  sendPrimaryToProperties(color: Color): void {
+    this.eyeDropperPrimarySubject.next(color);
   }
 
-  sendSecondaryToProperties(): void {
-    this.eyeDropperSecondarySubject.next(this.command.newColor);
+  sendSecondaryToProperties(color: Color): void {
+    this.eyeDropperSecondarySubject.next(color);
   }
 }

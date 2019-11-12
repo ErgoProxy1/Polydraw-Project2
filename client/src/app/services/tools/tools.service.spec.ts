@@ -23,6 +23,7 @@ describe('ToolsService', () => {
     const service: ToolsService = TestBed.get(ToolsService);
     const controller: ControllerService = TestBed.get(ControllerService);
     let toolType: ToolType = ToolType.RectangleTool;
+
     service.newToolSelected(toolType);
     expect(controller.tool).toEqual(jasmine.any(RectangleTool));
 
