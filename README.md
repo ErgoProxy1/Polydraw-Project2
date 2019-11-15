@@ -1,7 +1,31 @@
 # Polydraw-Project2
+CURRENTLY IN FRENCH, WILL UPDATE SOON
+
 Second university development project. Recquires installing [NodeJS](https://nodejs.org/en/) as there is currently no host. Run commands "npm install" then "npm start" under client folder to view website. Do the same but under server folder to start server.
 
-Currently undergoing third sprint. This will introduce local saving, clipboard maniuplations (copy, cut, paste, etc), image format exporting (PNG, Jpeg, BMP, SVG), a tool for adding text, an erase tool, a pen tool, and the ability to cancel/redo (ctrl-z/ctrl-y).
+Currently undergoing fourth sprint. This will introduce new tools (Airbrush, Quill, Paint Bucket), selection manipulation (Translation, Rotation, Scaling), a grid magnet, and a global database for storing and sharing data.
+
+Following features were implemented during third sprint:
+
+    - The ability to export a screenshot of the drawing into various image files (.bmp, .jpg, .png, .svg).
+    
+    - The ability to input text. Font, alignment, size, bold, and italics can be set. Arrow keys allow user to move arround currently inputed text. Note that all clicks outside of text zone apply the text.
+    
+    - An eraser tool. Can be applied using clicks or dragging.
+    
+    - Undo/Redo commands
+    
+    - A pen tool. The width changes with respect to mouse speed.
+    
+    - The ability to save and open savefiles locally.
+    
+    - A general clipboard for copying, cuttning, pasting, deletion, and duplication
+    
+    - Much better overall preformance
+    
+    - Better support for Linux and Mac
+    
+    - Support for most chromium browsers and Firefox
 
 Following features were implemented during second sprint:
 
@@ -49,8 +73,19 @@ Curent shortcuts:
     Ctrl+O: Create new drawing
     Ctrl+S: Save drawing
     Ctrl+G: Drawing gallery
+    Ctrl+E: Export to image
+    
+    Ctrl+Z: Undo
+    Ctrl+Shift+Z: Redo (School requirements, will be changed to Ctrl+Y later)
+    Ctrl+A: Select All
+    Ctrl+C: Copy
+    Ctrl+V: Paste
+    Ctrl+X: Cut
+    Ctrl+D: Duplicate
+    Delete: Delete
     
     C: Pencil
+    Y: Pen
     W: Paintbrush
     1: Rectangle
     2: Ellipses
@@ -59,7 +94,9 @@ Curent shortcuts:
     L: Line
     I: Eyedropper
     S: Selection
+    T: Text
     G: Show grid
+    E: Eraser
     +: Increase grid square size
     -: Decrease grid square size
     
