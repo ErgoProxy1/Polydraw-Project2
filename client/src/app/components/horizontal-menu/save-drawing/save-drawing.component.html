@@ -5,7 +5,7 @@
 <ngb-alert *ngIf="isError" class="successMessage" type="danger" (close)="show = false">{{errorMessage}}</ngb-alert>
 <ng-template #saveDrawingModal let-modal>
   <div class="modal-header">
-    <h5 class="modal-title">Sauvegarder un dessin</h5>
+    <h5 class="modal-title">Save Drawing</h5>
     <button type="button" class="close" (click)="closeModal()">
       <span aria-hidden="true">&times;</span>
     </button>
@@ -21,7 +21,7 @@
     <div class="modal-body">
       <div class="modal-body">
         <div class="row align-middle mt-3">
-          <label class="col-md-5">Nom: </label>
+          <label class="col-md-5">Name: </label>
           <div class="col-md-7">
             <input class="form-control" id="drawingName" name="drawingName" type="text" id="drawingName"
               [(ngModel)]="drawingInfo.name" (focusin)="keyboardService.inputFocusedActive = true;"
@@ -29,7 +29,7 @@
           </div>
         </div>
         <div class="row mt-3">
-          <label class="col-md-5 my-auto">Type de sauvegarde:</label>
+          <label class="col-md-5 my-auto">Type of Saving:</label>
           <div class="col-md-7 ">
             <select class="custom-select" name="typeSave" [(ngModel)]="drawingInfo.typeOfSave"
               (focusout)="checkErrorsInForm()">
@@ -40,7 +40,7 @@
 
 
         <div class="row mt-3">
-          <label class="col-md-5 my-auto">Étiquettes: </label>
+          <label class="col-md-5 my-auto">Tags: </label>
           <div class="col-md-7">
             <div class="input-group">
               <input class="form-control" id="tags" name="tags" type="text" id="tags" [(ngModel)]="currentTagInput"
@@ -65,21 +65,21 @@
         <div class="row mt-4">
           <div *ngIf="this.controllerService.isEmptyPrimitives()" id="dataAlert" class="alert alert-danger"
             role="alert">
-            Le dessin est vide, mais vous pouvez quand même le sauvegarder.
+            Drawing is empty (Can still save).
           </div>
         </div>
         <div *ngIf="tagsAllreadyExist" id="dataAlert" class="alert alert-danger" role="alert">
-          Étiquette déjà présente. Veuillez choisir un nouveau tag.
+          Tag is already present.
         </div>
         <div *ngIf="errorInForm" id="dataAlert" class="alert alert-danger" role="alert">
-          Erreur dans le formulaire. Le nom doit être de 50 caractères ou moins, et non vide. Veuillez réviser.
+          Name must be less than 50 characters and not empty.
         </div>
       </div>
       <div *ngIf="isError" id="dataAlert" class="alert alert-danger" role="alert">
         {{errorMessage}}
       </div>
       <div class="modal-footer mt-4">
-        <button id="dismiss" type="button" class="btn btn-outline-dark" (click)="closeModal()">Annuler</button>
+        <button id="dismiss" type="button" class="btn btn-outline-dark" (click)="closeModal()">Cancel</button>
         <button type="submit" class="btn btn-outline-success" [disabled]="errorInForm || loading">
           {{textSaveButton}}</button>
       </div>

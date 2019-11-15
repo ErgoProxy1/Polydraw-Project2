@@ -93,25 +93,25 @@ export class OpenGalleryComponent {
   loadDrawingsAndTags(): void {
     this.drawingHandler.loadDrawings().then((success) => {
       if (!success) {
-        this.errorMessage = 'Erreur dans la tentative de récupération des dessins.';
+        this.errorMessage = 'Error while fetching drawing list.';
         this.showMessage(true);
       }
       this.filterDrawings();
       this.loading = false;
     }).catch((error) => {
-      this.errorMessage = `Erreur de communication avec le server (loadDrawing) ERREUR: ${error}`;
+      this.errorMessage = `Server Communication Error: ${error}`;
       this.showMessage(true);
       this.loading = false;
     });
 
     this.tagHandlerService.loadTags().then((success) => {
       if (!success) {
-        this.errorMessage = 'Erreur dans la tentative de récupération des tags.';
+        this.errorMessage = 'Error while fetching tags list.';
         this.showMessage(true);
       }
       this.loading = false;
     }).catch((error) => {
-      this.errorMessage = `Erreur de communication avec le server (loadTags) ERREUR: ${error}`;
+      this.errorMessage = `Server Communication Error:: ${error}`;
       this.showMessage(true);
       this.loading = false;
     });
@@ -128,7 +128,7 @@ export class OpenGalleryComponent {
           const unparsedDrawing: DrawingInfo = JSON.parse(unparsedFile);
           this.selectDrawing(unparsedDrawing);
         } catch (e) {
-          if (!confirm('Fichier non valide. Veuillez réessayer.')) {
+          if (!confirm('Invalid file type, please select another file.')) {
             this.setErrorInvalidFile();
             return;
           }
@@ -136,14 +136,14 @@ export class OpenGalleryComponent {
         }
       };
       fileLoader.onerror = (error) => {
-        if (!confirm('Fichier non valide. Veuillez réessayer.')) {
+        if (!confirm('Invalid file type, please select another file.')) {
           this.setErrorInvalidFile();
           return;
         }
         this.loading = false;
       };
     } else {
-      if (!confirm('Fichier non valide. Veuillez réessayer.')) {
+      if (!confirm('Invalid file type, please select another file.')) {
         this.setErrorInvalidFile();
         return;
       }
@@ -151,7 +151,7 @@ export class OpenGalleryComponent {
   }
 
   private setErrorInvalidFile(): void {
-    this.errorMessage = 'Erreur de fichier non valide, veuillez réessayer';
+    this.errorMessage = 'Invalid file type, please select another file.';
     this.showMessage(true);
   }
 
@@ -166,7 +166,7 @@ export class OpenGalleryComponent {
   selectDrawing(drawing: DrawingInfo): void {
     if (drawing) {
       if (!this.controllerService.isEmptyPrimitives()) {
-        if (!confirm('Cette action supprimera votre dessin actuel!')) {
+        if (!confirm('This action will permenantly delete your drawing!')) {
           this.setErrorInvalidFile();
           return;
         }
@@ -177,11 +177,11 @@ export class OpenGalleryComponent {
       const primitives: SVGPrimitive[] = this.primitiveFactory.generatePrimitives(drawing.primitives);
       this.controllerService.setPrimitives(primitives);
       this.closeModal();
-      this.successMessage = 'Ouverture réussie';
+      this.successMessage = 'Loading Successful';
       this.showMessage(false);
     } else {
-      if (!confirm('L\'ouverture n\'a pas fonctionné. Veuillez réessayer.')) {
-        this.errorMessage = 'L\'ouverture n\'a pas fonctionné. Veuillez réessayer.';
+      if (!confirm('No reponse from loader. Please try again')) {
+        this.errorMessage = 'No reponse from loader. Please try again';
         this.showMessage(true);
         return;
       }
@@ -201,7 +201,7 @@ export class OpenGalleryComponent {
       }
       this.currentTagInput = '';
     } else {
-      this.errorMessage = 'Étiquette trop longue (maximum 30 caractères), veuillez réviser.';
+      this.errorMessage = 'Tag is too long (Max: 30 characters).';
       this.showMessage(true);
     }
   }

@@ -16,7 +16,7 @@ export class AppComponent implements AfterViewInit {
     this.drawingService.sendInitWorkspaceDimensions(this.workspaceDimensions);
     this.drawingService.sendWorkspaceDimensions(this.workspaceDimensions);
   }
-  readonly title: string = 'PolyDessin';
+  readonly title: string = 'PolyDraw';
 
   workspaceDimensions: number[] = [];
 

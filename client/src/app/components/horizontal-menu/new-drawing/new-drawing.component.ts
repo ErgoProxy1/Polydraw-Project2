@@ -104,7 +104,7 @@ export class NewDrawingComponent implements OnDestroy {
   newDrawing(drawingForm: FormGroup): void {
     if (this.checkDimensionValues()) {
       if (this.primitivesPresent) {
-        if (!confirm('Cette action supprimera votre dessin actuel!')) {
+        if (!confirm('This action will permenantly delete your drawing!')) {
           return;
         }
       }

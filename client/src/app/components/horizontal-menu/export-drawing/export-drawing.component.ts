@@ -106,7 +106,7 @@ export class ExportDrawingComponent implements OnDestroy {
   openModal(): boolean {
     this.exportError = false;
     this.exportInfo = {
-      name: 'dessin',
+      name: 'drawing',
       typeOfExport: this.EXPORT_TYPES[0],
       dimensions: [this.controller.canvasInfo.width, this.controller.canvasInfo.height],
       uri: '',

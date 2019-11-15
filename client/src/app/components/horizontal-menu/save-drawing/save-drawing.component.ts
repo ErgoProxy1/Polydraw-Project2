@@ -28,7 +28,7 @@ export class SaveDrawingComponent implements OnDestroy {
   errorInForm = false;
   drawingInfo: DrawingInfo;
   tagsAllreadyExist = false;
-  textSaveButton = 'Sauvegarder un dessin';
+  textSaveButton = 'Save Drawing';
   loading = false;
 
   // Variables utiles pour le typeahead
@@ -55,7 +55,7 @@ export class SaveDrawingComponent implements OnDestroy {
   constructor(private keyboardService: KeyboardService, private modalService: NgbModal,
               private controllerService: ControllerService, private tagHandlerService: TagHandlerService,
               private drawingHandlerService: DrawingHandlerService) {
-    this.textSaveButton = 'Sauvegarder un dessin';
+    this.textSaveButton = 'Save Drawing';
     this.htmlPrimitivesSubscription = this.controllerService.getHTMLPrimitivesStringObservable().subscribe((primitives: string) => {
       this.drawingInfo.thumbnail = primitives;
     });
@@ -104,18 +104,18 @@ export class SaveDrawingComponent implements OnDestroy {
     this.drawingHandlerService.exportToServer(this.drawingInfo).then((msg) => {
       // Save successful
       if (msg === true) {
-        this.textSaveButton = 'Sauvegarde réussie!';
-        this.successMessage = 'Sauvegarde réussie!';
+        this.textSaveButton = 'Save Successful!';
+        this.successMessage = 'Save Successful!';
         this.showMessage(false);
         this.closeModal();
       } else {
         // Erreur dans la sauvegarde
-        this.errorMessage = 'La sauvegarde a échoué.';
+        this.errorMessage = 'Saving has failed.';
         this.showMessage(true);
       }
       this.loading = false;
     }, (error) => {
-      this.errorMessage = `La communication avec le serveur a échoué ERREUR: ${error}`;
+      this.errorMessage = `Server Communication Failed ERROR: ${error}`;
       this.showMessage(true);
       this.loading = false;
     });
@@ -125,14 +125,14 @@ export class SaveDrawingComponent implements OnDestroy {
     if (!this.loading) {
       if (this.drawingInfo.typeOfSave === SavingType.SaveOnServer) {
         this.loading = true;
-        this.textSaveButton = 'Sauvegarde en cours...';
+        this.textSaveButton = 'Saving...';
         this.exportToServer();
       } else if (this.drawingInfo.typeOfSave === SavingType.SaveLocally) {
         this.loading = true;
-        this.textSaveButton = 'Sauvegarde en cours...';
+        this.textSaveButton = 'Saving...';
         this.drawingHandlerService.exportDrawingLocally(this.drawingInfo);
         this.loading = false;
-        this.successMessage = 'Sauvegarde réussie!';
+        this.successMessage = 'Save Successful!';
         this.showMessage(false);
         this.closeModal();
       }
@@ -142,7 +142,7 @@ export class SaveDrawingComponent implements OnDestroy {
   openModal(): boolean {
     this.loading = true;
     this.drawingInfo = {
-      name: 'Nouveau Dessin',
+      name: 'New Drawing',
       typeOfSave: 0,
       primitives: JSON.stringify(this.controllerService.svgPrimitives),
       tags: [],
@@ -160,7 +160,7 @@ export class SaveDrawingComponent implements OnDestroy {
     // On remet les valeurs par défaut
     this.keyboardService.modalWindowActive = false;
     this.loading = false;
-    this.textSaveButton = 'Sauvegarder un dessin';
+    this.textSaveButton = 'Save Successful!';
     this.modalService.dismissAll();
     return this.modalService.hasOpenModals();
   }
@@ -168,13 +168,13 @@ export class SaveDrawingComponent implements OnDestroy {
   loadTags(): void {
     this.tagHandlerService.loadTags().then((success) => {
       if (!success) {
-        this.errorMessage = 'Erreur dans la tentative de récupération des tags.';
+        this.errorMessage = 'Error while retrieving tags';
         this.showMessage(true);
       }
       this.loading = false;
     }).catch((error) => {
       this.loading = false;
-      this.errorMessage = `Erreur communication avec le serveur ERROR : ${error}`;
+      this.errorMessage = `Server Communication Failed ERROR: ${error}`;
       this.showMessage(true);
     });
   }
@@ -199,7 +199,7 @@ export class SaveDrawingComponent implements OnDestroy {
       }
       this.currentTagInput = '';
     } else {
-      this.errorMessage = 'Étiquette trop longue (maximum 30 caractères), veuillez réviser.';
+      this.errorMessage = 'Tag too long (Max 30 characters)';
       this.showMessage(true);
     }
   }

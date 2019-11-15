@@ -20,28 +20,28 @@ export class LinePropertiesComponent implements OnInit, OnDestroy {
   line: LineTool;
 
   readonly PATTERN_NAMES_MAP: Map<string, Pattern> = new Map([
-    ['Pointillé', Pattern.DottedLine],
-    ['Trait espacé #1', Pattern.SpacedLine1],
-    ['Trait espacé #2', Pattern.SpacedLine2],
-    ['Trait espacé #3', Pattern.SpacedLine3],
-    ['Trait espacé #4', Pattern.SpacedLine4],
-    ['Trait plein', Pattern.FullLine],
+    ['Pointed', Pattern.DottedLine],
+    ['Spaced #1', Pattern.SpacedLine1],
+    ['Spaced #2', Pattern.SpacedLine2],
+    ['Spaced #3', Pattern.SpacedLine3],
+    ['Spaced #4', Pattern.SpacedLine4],
+    ['Full', Pattern.FullLine],
   ]);
 
   readonly LINE_JOIN_NAMES_MAP: Map<string, LineJoin> = new Map([
-    ['Arcs', LineJoin.Arcs],
-    ['Biseau', LineJoin.Bevel],
-    ['Clip d\'onglet', LineJoin.MiterClip],
-    ['Onglet', LineJoin.Miter],
+    ['Arch', LineJoin.Arcs],
+    ['Bevel', LineJoin.Bevel],
+    ['Miter Clip', LineJoin.MiterClip],
+    ['Clip', LineJoin.Miter],
     ['Point', LineJoin.Point],
-    ['Rond par defaut', LineJoin.Round],
-    ['Rond de Bezier', LineJoin.BezierRound],
+    ['Round', LineJoin.Round],
+    ['Complexe Round', LineJoin.BezierRound],
   ]);
 
   readonly LINE_CAP_NAMES_MAP: Map<string, LineCap> = new Map([
-    ['Aucun', LineCap.Butt],
-    ['Carré', LineCap.Square],
-    ['Rond', LineCap.Round],
+    ['None', LineCap.Butt],
+    ['Square', LineCap.Square],
+    ['Round', LineCap.Round],
   ]);
 
   readonly MAX_ROUNDING = MAX_LINE_ROUNDING;

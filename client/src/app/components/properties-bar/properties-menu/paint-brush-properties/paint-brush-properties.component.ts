@@ -13,11 +13,11 @@ export class PaintBrushPropertiesComponent implements OnInit, OnDestroy {
   readonly MAX_STROKE = MAX_STROKE_WIDTH;
   readonly MIN_STROKE = MIN_STROKE_WIDTH;
   readonly TEXTURE_NAMES_MAP: Map<string, Texture> = new Map([
-    ['Basique', Texture.Basic],
-    ['Grisée', Texture.Degraded],
-    ['Lumineuse', Texture.Grayed],
-    ['Mousseuse', Texture.Light],
-    ['Dégradée', Texture.Frothy],
+    ['Basic', Texture.Basic],
+    ['Light', Texture.Degraded],
+    ['Shiny', Texture.Grayed],
+    ['Mossy', Texture.Light],
+    ['Frothy', Texture.Frothy],
   ]);
 
   private strokeWidth: number;

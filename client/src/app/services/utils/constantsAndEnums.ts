@@ -234,15 +234,15 @@ export const PALETTE_CHOICES_RGB: Color[] = [
 // ----- Constantes Polygone ----- //
 export const POLYGON_NAMES: Map<number, string> = new Map([
   [3, '3(triangle)'],
-  [4, '4(diamant)'],
-  [5, '5(pentagone)'],
-  [6, '6(hexagone)'],
-  [7, '7(heptagone)'],
-  [8, '8(octagone)'],
-  [9, '9(nonagone)'],
-  [10, '10(decagone)'],
-  [11, '11(hendecagone)'],
-  [12, '12(dodecagone)'],
+  [4, '4(diamond)'],
+  [5, '5(pentagon)'],
+  [6, '6(hexagon)'],
+  [7, '7(heptagon)'],
+  [8, '8(octagon)'],
+  [9, '9(nonagon)'],
+  [10, '10(decagon)'],
+  [11, '11(hendecagon)'],
+  [12, '12(dodecagon)'],
 ]);
 
 export const SERVER_BASE_URL = 'http://localhost:3000/api';
@@ -257,8 +257,8 @@ export interface SavingTypeInterface  {
 }
 
 export const SAVING_TYPE_CHOICES: SavingTypeInterface[] = [
-  {id: SavingType.SaveOnServer, text: 'Sauvegarder sur le serveur'},
-  {id: SavingType.SaveLocally, text: 'Sauvegarder localement'},
+  {id: SavingType.SaveOnServer, text: 'Save on Server'},
+  {id: SavingType.SaveLocally, text: 'Save Locally'},
 ];
 
 // ----- Constantes Grille ----- //
@@ -301,9 +301,9 @@ export interface AlignInfo {
   value: string;
 }
 export const ALIGNS: AlignInfo[] = [
-  {name: 'Gauche', value: 'start'},
-  {name: 'Centre', value: 'middle'},
-  {name: 'Droite', value: 'end'},
+  {name: 'Left', value: 'start'},
+  {name: 'Center', value: 'middle'},
+  {name: 'Right', value: 'end'},
 ];
 
 // ----- Constantes pour exporter le dessin -----//

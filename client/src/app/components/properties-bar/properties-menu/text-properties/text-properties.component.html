@@ -1,6 +1,6 @@
 <div id="textPropertiesWrapper" (click)="applyText()">
   <div class="col-md-12">
-    <small>Police</small>
+    <small>Font</small>
     <select #fontSelection class="form-control form-control-sm" (change)="onChangeFont(fontSelection.value)"
       [style.font-family]="currentFontFamily">
       <option *ngFor="let font of FONTS" [ngValue]="font.name" [style.font-family]="font.family">
@@ -10,7 +10,7 @@
   </div>
 
   <div class="col-md-12">
-    <small for="rangescale">Taille : {{textTool.size}} </small>
+    <small for="rangescale">Size : {{textTool.size}} </small>
     <input id="textSizeInput" type="range" class="custom-range" [(ngModel)]="textTool.size" [min]="10" [max]="100"
       step="1">
   </div>
@@ -29,7 +29,7 @@
       <form>
         <div>
           <input type="checkbox" id="switchBold" name="bold" [(ngModel)]="textTool.bold">
-          <label for="bold"><strong>Gras</strong></label>
+          <label for="bold"><strong>Bold</strong></label>
         </div>
       </form>
     </div>
@@ -37,7 +37,7 @@
       <form>
         <div>
           <input type="checkbox" id="switchItalics" name="ital" [(ngModel)]="textTool.italics">
-          <label for="ital"><i>Italique</i></label>
+          <label for="ital"><i>Italics</i></label>
         </div>
       </form>
     </div>

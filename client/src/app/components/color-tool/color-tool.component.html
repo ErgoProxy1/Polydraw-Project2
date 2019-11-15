@@ -1,12 +1,12 @@
 <div class="row form-inline">
-  <small class="col-md-7 ">Primaire</small>
+  <small class="col-md-7 ">Primary</small>
   <div class="col-md-4 form-control form-control-sm clickable p-0 bg-white" (click)="colorPrimarySelected();openModal()"
     placement="top" ngbTooltip="Changer">
     <div class="form-control form-control-sm full-size" [style.background-color]="rgbaPrimaryColor.asString()"></div>
   </div>
 </div>
 <div class="row form-inline mt-2">
-  <small class="col-md-7 ">Transparence</small>
+  <small class="col-md-7 ">Opacity</small>
   <input class="col-md-4 form-control form-control-sm text-small" type="number" step="0.01" min="0" max="1"
     [(ngModel)]="primaryAlpha" (click)="validateAlpha()" (focusout)="validateAlpha()" (input)="validateAlpha()">
   <input type="range" class="custom-range col-md-10 offset-1" [(ngModel)]="primaryAlpha" (input)="validateAlpha()"
@@ -14,20 +14,20 @@
 </div>
 <div class="row mt-1">
   <button (click)="setBackgroundColor()" class="btn btn-secondary btn-sm col-md-5 offset-md-1 p-0 text-small"
-    placement="top" ngbTooltip="Changer la couleur de fond">Couleur de fond</button>
+    placement="top" ngbTooltip="Changer la couleur de fond">Background Color</button>
   <button (click)="switchColor()" class="btn btn-secondary btn-sm col-md-4 offset-md-1 p-0 text-small" placement="top"
     ngbTooltip="Inverser les couleurs">↑↓</button>
 </div>
 
 <div class="row form-inline mt-3">
-  <small class="col-md-7 ">Secondaire</small>
+  <small class="col-md-7 ">Secondary</small>
   <div class="col-md-4 form-control form-control-sm clickable p-0 bg-white"
     (click)="colorSecondarySelected();openModal()" placement="top" ngbTooltip="Changer">
     <div class="form-control form-control-sm full-size" [style.background-color]="rgbaSecondaryColor.asString()"></div>
   </div>
 </div>
 <div class="row form-inline mt-2">
-  <small class="col-md-7 ">Transparence</small>
+  <small class="col-md-7 ">Opacity</small>
   <input class="col-md-4 form-control form-control-sm text-small" type="number" step="0.01" min="0" max="1"
     [(ngModel)]="secondaryAlpha" (click)="validateAlpha()" (focusout)="validateAlpha()" (input)="validateAlpha()">
   <input type="range" class="custom-range col-md-10 offset-1" [(ngModel)]="secondaryAlpha" (input)="validateAlpha()"
@@ -35,7 +35,7 @@
 </div>
 
 <div class="row form-inline mt-3">
-  <small class="col-md-12 ">Précédentes couleurs</small>
+  <small class="col-md-12 ">Previous Colors</small>
 
 </div>
 
@@ -51,13 +51,13 @@
 
 <ng-template #paletteModal let-modal>
   <div class="modal-header">
-    <h5 class="modal-title">Choix de couleur</h5>
+    <h5 class="modal-title">Color Choice</h5>
   </div>
   <form [formGroup]="paletteForm" (ngSubmit)="applyClickedColor();closeModal();">
     <div class="modal-body">
       <div class="row">
         <div class="col-md-12">
-          <label>Aperçu: </label>
+          <label>Preview: </label>
           <svg width="30" height="30">
             <circle class="preview-color" cx="15" cy="15" r="10" [attr.fill]="currentHexSelectedColor"
               [attr.fill-opacity]="currentAlpha" />
@@ -108,11 +108,11 @@
           aria-describedby="applyHex">
       </div>
 
-      <div class="alert alert-danger" *ngIf="hexError || rgbaError">Valeurs erronées</div>
+      <div class="alert alert-danger" *ngIf="hexError || rgbaError">Invalid Data</div>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-outline-dark" (click)="closeModal()">Annuler</button>
-      <button class="btn btn-outline-success" [disabled]="hexError || rgbaError">Appliquer</button>
+      <button class="btn btn-outline-dark" (click)="closeModal()">Cancel</button>
+      <button class="btn btn-outline-success" [disabled]="hexError || rgbaError">Apply</button>
     </div>
   </form>
 </ng-template>

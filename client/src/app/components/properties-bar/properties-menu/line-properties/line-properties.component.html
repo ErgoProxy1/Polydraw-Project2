@@ -1,6 +1,6 @@
 <div class="row">
   <div class="col-md-12">
-    <small for="rangeEpaisseur">Taille : {{strokeWidth}} px</small>
+    <small for="rangeEpaisseur">Size : {{strokeWidth}} px</small>
     <input id="LineStrokewidthinput" type="range" class="custom-range" [(ngModel)]="strokeWidth" (change)="onChangeStrokeWidth()"
       [min]="MIN_STROKE" [max]="MAX_STROKE" step="1">
   </div>
@@ -8,7 +8,7 @@
 <div class="row">
 
     <div class="col-md-12">
-        <small>Motif</small>
+        <small>Pattern</small>
     </div>
     <div class="form-check col-md-12">
         <select class="form-control form-control-sm" [(ngModel)]="pattern" (change)="onChangePattern()">
@@ -17,7 +17,7 @@
     </div>
 
     <div class="col-md-12">
-        <small>Jonction</small>
+        <small>Junction</small>
     </div>
     <div class="form-check col-md-12">
         <select class="form-control form-control-sm" [(ngModel)]="lineJoin" (change)="onChangeJoin()">
@@ -37,7 +37,7 @@
     </div>
 
     <div class="col-md-12">
-        <small>Forme du bout</small> 
+        <small>Vertex Shape</small> 
     </div>
     <div class="form-check col-md-12">
         <select class="form-control form-control-sm" [(ngModel)]="lineCap" (change)="onChangeCap()">
