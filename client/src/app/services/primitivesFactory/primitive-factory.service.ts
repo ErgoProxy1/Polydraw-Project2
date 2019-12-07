@@ -11,6 +11,7 @@ import { Stamp } from '../svgPrimitives/stamp/stamp';
 import { SVGPrimitive } from '../svgPrimitives/svgPrimitive';
 import { TextPrimitive } from '../svgPrimitives/text/textPrimitive';
 import { PrimitiveType } from '../utils/constantsAndEnums';
+import { Quill } from '../svgPrimitives/quill/quill';
 @Injectable({
   providedIn: 'root',
 })
@@ -48,6 +49,10 @@ export class PrimitiveFactoryService {
         }
         case PrimitiveType.Spraypaint: {
           primitive = Spraypaint.createCopy(prim);
+          break;
+        }
+        case PrimitiveType.Quill: {
+          primitive = Quill.createCopy(prim);
           break;
         }
         case PrimitiveType.Rectangle: {
