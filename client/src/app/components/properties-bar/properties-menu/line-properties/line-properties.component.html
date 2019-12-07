@@ -1,46 +1,46 @@
 <div class="row">
   <div class="col-md-12">
-    <small for="rangeEpaisseur">Size : {{strokeWidth}} px</small>
-    <input id="LineStrokewidthinput" type="range" class="custom-range" [(ngModel)]="strokeWidth" (change)="onChangeStrokeWidth()"
+    <small for="rangeEpaisseur">Taille : {{strokeWidth}} px</small>
+    <input id="LineStrokewidthinput" type="range" class="custom-range custom-slider" [(ngModel)]="strokeWidth" (change)="onChangeStrokeWidth()"
       [min]="MIN_STROKE" [max]="MAX_STROKE" step="1">
   </div>
 </div>
 <div class="row">
 
     <div class="col-md-12">
-        <small>Pattern</small>
+        <small>Motif</small>
     </div>
     <div class="form-check col-md-12">
-        <select class="form-control form-control-sm" [(ngModel)]="pattern" (change)="onChangePattern()">
+        <select class="form-control form-control-sm clickable" [(ngModel)]="pattern" (change)="onChangePattern()">
             <option *ngFor="let pattern of PATTERN_NAMES_MAP | keyvalue" [ngValue]="pattern.value">{{pattern.key}}</option>
         </select>
     </div>
 
     <div class="col-md-12">
-        <small>Junction</small>
+        <small>Jonction</small>
     </div>
     <div class="form-check col-md-12">
-        <select class="form-control form-control-sm" [(ngModel)]="lineJoin" (change)="onChangeJoin()">
+        <select class="form-control form-control-sm clickable" [(ngModel)]="lineJoin" (change)="onChangeJoin()">
             <option *ngFor="let lineJoin of LINE_JOIN_NAMES_MAP | keyvalue" [ngValue]="lineJoin.value">{{lineJoin.key}}</option>
         </select>
     </div>
     <div class="col-md-12" *ngIf="lineJoin === 4 "> <!-- lineJoin.Point === 4 -->
         <small for="rangeEpaisseur">Diamètre : {{circleRadius}} px</small>
-        <input id="LineCercleRadius" type="range" class="custom-range" [(ngModel)]="circleRadius" (change)="onChangeCircleRadius()"
+        <input id="LineCercleRadius" type="range" class="custom-range custom-slider" [(ngModel)]="circleRadius" (change)="onChangeCircleRadius()"
           [min]="MIN_STROKE" [max]="MAX_STROKE" step="1">
     </div>
 
     <div class="col-md-12" *ngIf="lineJoin === 6 "> <!-- lineJoin.Special === 6 -->
         <small for="rangeEpaisseur">Coefficient de courbure : {{lineRounding}}</small>
-        <input id="LineCercleRadius" type="range" class="custom-range" [(ngModel)]="lineRounding" (change)="onChangeRounding()"
+        <input id="LineCercleRadius" type="range" class="custom-range custom-slider" [(ngModel)]="lineRounding" (change)="onChangeRounding()"
           [min]="DEFAULT_ROUNDING" [max]="MAX_ROUNDING" step="1">
     </div>
 
     <div class="col-md-12">
-        <small>Vertex Shape</small> 
+        <small>Forme du bout</small> 
     </div>
     <div class="form-check col-md-12">
-        <select class="form-control form-control-sm" [(ngModel)]="lineCap" (change)="onChangeCap()">
+        <select class="form-control form-control-sm clickable" [(ngModel)]="lineCap" (change)="onChangeCap()">
             <option *ngFor="let lineCap of LINE_CAP_NAMES_MAP | keyvalue" [ngValue]="lineCap.value">{{lineCap.key}}</option>
         </select>
      </div>

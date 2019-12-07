@@ -1,5 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
+import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { GridPropertiesComponent } from './grid-properties.component';
 
@@ -10,7 +11,7 @@ describe('GridPropertiesComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [GridPropertiesComponent],
-      imports: [FormsModule],
+      imports: [FormsModule, HttpClientModule],
     })
       .compileComponents();
   }));

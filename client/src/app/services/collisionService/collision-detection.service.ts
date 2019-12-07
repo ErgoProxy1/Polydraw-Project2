@@ -1,9 +1,12 @@
 import { Injectable } from '@angular/core';
-import { Ellipse } from '../svgPrimitives/ellipse/ellispe';
+import { Ellipse } from '../svgPrimitives/ellipse/ellipse';
 import { Line } from '../svgPrimitives/line/line';
+import { FillingPath } from '../svgPrimitives/path/fillPath/fillPath';
 import { Path } from '../svgPrimitives/path/path';
 import { Polygon } from '../svgPrimitives/polygon/polygon';
+import { Quill } from '../svgPrimitives/quill/quill';
 import { Rectangle } from '../svgPrimitives/rectangle/rectangle';
+import { Spraypaint } from '../svgPrimitives/spraypaint/spraypaint';
 import { Stamp } from '../svgPrimitives/stamp/stamp';
 import { SVGPrimitive } from '../svgPrimitives/svgPrimitive';
 import { TextPrimitive } from '../svgPrimitives/text/textPrimitive';
@@ -16,16 +19,16 @@ export class CollisionDetectionService {
   checkCollision(eraser: Rectangle, shape: SVGPrimitive): boolean {
     let collisionDetected = false;
     const eraserCopy = Rectangle.createCopy(eraser);
-    if (shape.type === PrimitiveType.Text || shape.type === PrimitiveType.Stamp || shape.type === PrimitiveType.Rectangle) {
-      eraserCopy.setPosition(eraserCopy.position);
-    } else {
-      eraserCopy.setPosition(eraserCopy.position.substractPoint(shape.getTranslation()));
-    }
+    eraserCopy.setPosition(eraserCopy.position);
     switch (shape.type) {
       case PrimitiveType.Pencil:
       case PrimitiveType.Paint:
       case PrimitiveType.Pen:
         collisionDetected = this.checkCollisionWithPath(eraserCopy, (shape as Path));
+        break;
+
+      case PrimitiveType.Fill:
+        collisionDetected = this.checkCollisionWithFill(eraserCopy, (shape as FillingPath));
         break;
       case PrimitiveType.Line:
         collisionDetected = this.checkCollisionWithLine(eraserCopy, (shape as Line));
@@ -46,6 +49,12 @@ export class CollisionDetectionService {
         break;
       case PrimitiveType.Text:
         collisionDetected = this.checkCollisionWithText(eraserCopy, (shape as TextPrimitive));
+        break;
+      case PrimitiveType.Quill:
+        collisionDetected = this.checkCollisionWithQuill(eraserCopy, (shape as Quill));
+        break;
+      case PrimitiveType.Spraypaint:
+        collisionDetected = this.checkCollisionWithSpraypaint(eraserCopy, (shape as Spraypaint));
         break;
     }
     return collisionDetected;
@@ -73,6 +82,51 @@ export class CollisionDetectionService {
     }
     // vérification avec les ligne entre les points
     return this.checkCollisionBetweenRectangleLines(eraser, path.points, false);
+  }
+
+  private checkCollisionWithFill(eraser: Rectangle, fillingPath: FillingPath): boolean {
+    // vérification avec les points d'abords
+    let hasPointInsideEraser = false;
+    fillingPath.fillingPoints.some((point) => {
+      const cornerLeft: Point = new Point(point.x - fillingPath.strokeWidth / 2, point.y - fillingPath.strokeWidth / 2);
+      const cornerRight: Point = new Point(point.x + fillingPath.strokeWidth / 2, point.y + fillingPath.strokeWidth / 2);
+      hasPointInsideEraser = this.checkCollisionBetweenRectangles(eraser.getTopLeftCorner(), eraser.getBottomRightCorner(),
+        cornerLeft, cornerRight);
+      return hasPointInsideEraser;
+    });
+    if (hasPointInsideEraser) {
+      return hasPointInsideEraser;
+    }
+    // vérification avec les ligne entre les points
+    for (let i = 0; i < fillingPath.fillingPoints.length - 2; i += 2) {
+      const currentPoint: Point = fillingPath.fillingPoints[i];
+      const nextPoint: Point = fillingPath.fillingPoints[(i + 1) === fillingPath.fillingPoints.length ? 0 : i + 1];
+      // arrête gauche
+      let point1: Point = new Point(eraser.getTopLeftCorner().x, eraser.getTopLeftCorner().y);
+      let point2: Point = new Point(eraser.getTopLeftCorner().x, eraser.getBottomRightCorner().y);
+      if (this.checkCollisionBetweenLines(point1, point2, currentPoint, nextPoint)) {
+        return true;
+      }
+      // arrête droit
+      point1 = new Point(eraser.getBottomRightCorner().x, eraser.getTopLeftCorner().y);
+      point2 = new Point(eraser.getBottomRightCorner().x, eraser.getBottomRightCorner().y);
+      if (this.checkCollisionBetweenLines(point1, point2, currentPoint, nextPoint)) {
+        return true;
+      }
+      // arrête du haut
+      point1 = new Point(eraser.getTopLeftCorner().x, eraser.getTopLeftCorner().y);
+      point2 = new Point(eraser.getBottomRightCorner().x, eraser.getTopLeftCorner().y);
+      if (this.checkCollisionBetweenLines(point1, point2, currentPoint, nextPoint)) {
+        return true;
+      }
+      // arrête du bas
+      point1 = new Point(eraser.getTopLeftCorner().x, eraser.getBottomRightCorner().y);
+      point2 = new Point(eraser.getBottomRightCorner().x, eraser.getBottomRightCorner().y);
+      if (this.checkCollisionBetweenLines(point1, point2, currentPoint, nextPoint)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   private checkCollisionWithLine(eraser: Rectangle, line: Line): boolean {
@@ -171,6 +225,40 @@ export class CollisionDetectionService {
   private checkCollisionWithText(eraser: Rectangle, text: TextPrimitive): boolean {
     return this.checkCollisionBetweenRectangles(eraser.getTopLeftCorner(),
       eraser.getBottomRightCorner(), text.getTopLeftCorner(), text.getBottomRightCorner());
+  }
+
+  private checkCollisionWithQuill(eraser: Rectangle, quill: Quill): boolean {
+    const polygonA: Point[] = [];
+    polygonA.push(Point.copyPoint(eraser.getTopLeftCorner()));
+    polygonA.push(new Point(eraser.getBottomRightCorner().x, eraser.getTopLeftCorner().y));
+    polygonA.push(Point.copyPoint(eraser.getBottomRightCorner()));
+    polygonA.push(new Point(eraser.getTopLeftCorner().x, eraser.getBottomRightCorner().y));
+    let quillpoints: Point[];
+    for (const quillPoint of quill.points) {
+      quillpoints = [];
+      quillPoint.points.forEach((point: Point) => {
+        quillpoints.push(point);
+      });
+      if (this.checkPolygonInPolygon(polygonA, quillpoints) || this.checkCollisionBetweenRectangleLines(eraser, quillpoints, false)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private checkCollisionWithSpraypaint(eraser: Rectangle, spray: Spraypaint): boolean {
+    const eraserPoint: Point[] = [];
+
+    eraserPoint.push(Point.copyPoint(eraser.getTopLeftCorner()));
+    eraserPoint.push(new Point(eraser.getBottomRightCorner().x, eraser.getTopLeftCorner().y));
+    eraserPoint.push(Point.copyPoint(eraser.getBottomRightCorner()));
+    eraserPoint.push(new Point(eraser.getTopLeftCorner().x, eraser.getBottomRightCorner().y));
+    for (const point of spray.centerPoints) {
+      if (this.pointInPolygon(eraserPoint, point)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   private checkCollisionBetweenRectangles(rec1TopLeft: Point, rec1BottomRight: Point, rec2TopLeft: Point, rec2BottomRight: Point): boolean {

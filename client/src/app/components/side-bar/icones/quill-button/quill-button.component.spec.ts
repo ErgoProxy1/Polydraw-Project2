@@ -1,22 +1,22 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { SprayButtonComponent } from './spray-button.component';
+import { QuillButtonComponent } from './quill-button.component';
 
-describe('SprayButtonComponent', () => {
-  let component: SprayButtonComponent;
-  let fixture: ComponentFixture<SprayButtonComponent>;
+describe('QuillButtonComponent', () => {
+  let component: QuillButtonComponent;
+  let fixture: ComponentFixture<QuillButtonComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [SprayButtonComponent],
+      declarations: [QuillButtonComponent],
       imports: [FontAwesomeModule],
     })
       .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(SprayButtonComponent);
+    fixture = TestBed.createComponent(QuillButtonComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

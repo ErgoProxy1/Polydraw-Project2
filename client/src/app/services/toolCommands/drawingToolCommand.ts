@@ -7,11 +7,13 @@ import { ToolCommand } from './toolCommand';
 
 export class DrawingToolCommand implements ToolCommand {
   path: Path;
-  readonly constantStrokeWidth: number;
+  readonly STROKE_WIDTH: number;
   constructor(strokeColor: Color, strokeWidth: number, type: PrimitiveType, texture: Texture = Texture.Basic) {
-    this.path = type === PrimitiveType.Pen ? new Pen(strokeColor, strokeWidth, type, texture) :
-    new Path(strokeColor, strokeWidth, type, texture);
-    this.constantStrokeWidth = this.path.strokeWidth;
+
+    this.path = (type === PrimitiveType.Pen) ?
+      new Pen(strokeColor, strokeWidth, type, texture) : new Path(strokeColor, strokeWidth, type, texture);
+
+    this.STROKE_WIDTH = this.path.strokeWidth;
   }
 
   apply(primitives: SVGPrimitive[]): void {

@@ -4,15 +4,15 @@ import { StampToolCommand } from '../toolCommands/stampToolCommand';
 import { ToolCommand } from '../toolCommands/toolCommand';
 import { DEFAULT_CURSOR, KeyboardEventType, MouseEventType, NO_CURSOR, ToolType } from '../utils/constantsAndEnums';
 import { Point } from '../utils/point';
-import { DefaultStamps, StampInfo } from '../utils/stampData';
+import { DEFAULT_STAMPS, StampInfo } from '../utils/stampData';
 import { Tool } from './tool';
 
 export class StampTool extends Tool {
   readonly INIT_ANGLE: number = 0;
   readonly INIT_SCALE: number = 100;
-  readonly STAMPS: StampInfo[] = DefaultStamps;
+  readonly STAMPS: StampInfo[] = DEFAULT_STAMPS;
 
-  type = ToolType.StampTool;
+  TYPE = ToolType.StampTool;
 
   angleObservable: Observable<number>;
   private angleSubject = new Subject<number>();
@@ -117,5 +117,9 @@ export class StampTool extends Tool {
 
   private sendAngleToStampProperties(angle: number): void {
     this.angleSubject.next(angle);
+  }
+
+  standby(): void {
+    this.stampSelected = false;
   }
 }

@@ -182,9 +182,8 @@ describe('DrawingCommunicationService', () => {
 
   it('should correctly send the subject sendSvgHtmlRequest', () => {
     service.exportButtonObservable.subscribe((svgData) => {
-      expect(svgData).toBeUndefined();
+      expect(svgData).toBeTruthy();
     });
-
-    service.sendSvgHtmlRequest();
+    service.sendSvgHtmlRequest(true);
   });
 });

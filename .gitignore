@@ -2,17 +2,14 @@
 /.vscode/chrome
 /.vs/
 
-# Keep the package-lock.json !
-!package-lock.json
+# Remove package-lock
+*.json
 
 # Ignoring dependencies
 /node_modules
 
 # Ignoring system file
-.DS_Store
-
-
+*.DS_Store
 
 coverage/
-stats.html
-*.xlsx
+/stats.html

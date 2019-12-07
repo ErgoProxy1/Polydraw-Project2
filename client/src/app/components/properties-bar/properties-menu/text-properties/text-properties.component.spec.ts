@@ -1,5 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
+import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { TextPropertiesComponent } from './text-properties.component';
 
@@ -10,7 +11,7 @@ describe('TextPropertiesComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [TextPropertiesComponent],
-      imports: [FormsModule],
+      imports: [FormsModule, HttpClientModule],
     })
       .compileComponents();
   }));
@@ -27,39 +28,39 @@ describe('TextPropertiesComponent', () => {
 
   it('font is properly changed', () => {
     expect(component.currentFontFamily).toBe(component.FONTS[0].family);
-    expect(component.textTool.selectedFont).toBe(0);
+    expect(component.textTool.selectedFont).toBe(component.FONTS[0]);
 
     component.onChangeFont('Arial');
     expect(component.currentFontFamily).toBe(component.FONTS[0].family);
-    expect(component.textTool.selectedFont).toBe(0);
+    expect(component.textTool.selectedFont).toBe(component.FONTS[0]);
 
     component.onChangeFont('Bookman');
     expect(component.currentFontFamily).toBe(component.FONTS[1].family);
-    expect(component.textTool.selectedFont).toBe(1);
+    expect(component.textTool.selectedFont).toBe(component.FONTS[1]);
 
     component.onChangeFont('Comic Sans');
     expect(component.currentFontFamily).toBe(component.FONTS[2].family);
-    expect(component.textTool.selectedFont).toBe(2);
+    expect(component.textTool.selectedFont).toBe(component.FONTS[2]);
 
     component.onChangeFont('Courier');
     expect(component.currentFontFamily).toBe(component.FONTS[3].family);
-    expect(component.textTool.selectedFont).toBe(3);
+    expect(component.textTool.selectedFont).toBe(component.FONTS[3]);
 
     component.onChangeFont('Helvetica');
     expect(component.currentFontFamily).toBe(component.FONTS[4].family);
-    expect(component.textTool.selectedFont).toBe(4);
+    expect(component.textTool.selectedFont).toBe(component.FONTS[4]);
 
     component.onChangeFont('Times New Roman');
     expect(component.currentFontFamily).toBe(component.FONTS[5].family);
-    expect(component.textTool.selectedFont).toBe(5);
+    expect(component.textTool.selectedFont).toBe(component.FONTS[5]);
 
     component.onChangeFont('Verdana');
     expect(component.currentFontFamily).toBe(component.FONTS[6].family);
-    expect(component.textTool.selectedFont).toBe(6);
+    expect(component.textTool.selectedFont).toBe(component.FONTS[6]);
 
     component.onChangeFont('Test_Nonsense');
     expect(component.currentFontFamily).toBe(component.FONTS[6].family);
-    expect(component.textTool.selectedFont).toBe(6);
+    expect(component.textTool.selectedFont).toBe(component.FONTS[6]);
   });
 
   it('alignment is properly changed', () => {

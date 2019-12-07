@@ -1,14 +1,15 @@
 <ng-template #welcomeModal let-modal>
   <div class="modal-header">
-    <h5 class="modal-title">Welcome to PolyDraw! First Time Here?</h5>
+    <h5 class="modal-title">Bienvenue dans Polydessin! Première utilisation?</h5>
   </div>
 
   <div class="modal-body">
     <div class="row ">
       <div class="col text-justify p-3">
-        <p>An application developed by student of the Ecole Polytechnique de Montreal. Note that this site uses cookies.
-          You can view this message again by closing your browser completely. We hope you enjoy our app. Now,
-          be creative!</p>
+        <p>Une application développée par des étudiants de l'École Polytechnique. Notez que ce site
+          utilise des cookies. Vous pouvez retrouver ce menu de première visite en fermant
+          complètement votre navigateur et en ouvrant de nouveau cette page. Nous espérons que ce logiciel
+          vous plaira. Maintenant, soyez créatif!</p>
       </div>
     </div>
     <div class="row p-0">
@@ -21,12 +22,12 @@
               <input type="checkbox" (click)="tickCheckBox()">
             </div>
           </div>
-          <p class="form-control w-auto">Don't show me this</p>
+          <p class="form-control w-auto">Ne plus afficher ce message</p>
         </div>
       </div>
       <div class="col-md-4">
         <button type="button" class="btn btn-outline-dark float-right align-middle"
-          (click)="closeModal()">Close</button>
+          (click)="closeModal()">Fermer</button>
       </div>
     </div>
   </div>

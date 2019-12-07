@@ -1,7 +1,7 @@
 <div id="textPropertiesWrapper" (click)="applyText()">
   <div class="col-md-12">
-    <small>Font</small>
-    <select #fontSelection class="form-control form-control-sm" (change)="onChangeFont(fontSelection.value)"
+    <small>Police</small>
+    <select #fontSelection class="form-control form-control-sm clickable" (change)="onChangeFont(fontSelection.value)"
       [style.font-family]="currentFontFamily">
       <option *ngFor="let font of FONTS" [ngValue]="font.name" [style.font-family]="font.family">
         {{font.name}}
@@ -10,36 +10,37 @@
   </div>
 
   <div class="col-md-12">
-    <small for="rangescale">Size : {{textTool.size}} </small>
-    <input id="textSizeInput" type="range" class="custom-range" [(ngModel)]="textTool.size" [min]="10" [max]="100"
-      step="1">
+    <small for="rangescale">Taille : {{textTool.size}} </small>
+    <input id="textSizeInput" type="range" class="custom-range custom-slider" [(ngModel)]="textTool.size" [min]="10"
+      [max]="100" step="1">
   </div>
 
   <div class="col-md-12">
     <small>Alignement</small>
-    <select #alignSelection class="form-control form-control-sm" (change)="onChangeAlign(alignSelection.value)">
+    <select #alignSelection class="form-control form-control-sm clickable"
+      (change)="onChangeAlign(alignSelection.value)">
       <option *ngFor="let align of ALIGNS" [ngValue]="align.name">
         {{align.name}}
       </option>
     </select>
   </div>
-
-  <div class="row mt-4">
-    <div class="col-12">
-      <form>
-        <div>
-          <input type="checkbox" id="switchBold" name="bold" [(ngModel)]="textTool.bold">
-          <label for="bold"><strong>Bold</strong></label>
-        </div>
-      </form>
-    </div>
-    <div class="col-12">
-      <form>
-        <div>
-          <input type="checkbox" id="switchItalics" name="ital" [(ngModel)]="textTool.italics">
-          <label for="ital"><i>Italics</i></label>
-        </div>
-      </form>
-    </div>
+  <br>
+  <div class="col-12">
+    <form>
+      <div class="custom-control custom-switch">
+        <input type="checkbox" class="custom-control-input clickable" id="switchBold" name="bold"
+          [(ngModel)]="textTool.bold">
+        <label class="custom-control-label clickable" for="switchBold"><strong>Gras</strong></label>
+      </div>
+    </form>
+  </div>
+  <div class="col-12">
+    <form>
+      <div class="custom-control custom-switch">
+        <input type="checkbox" class="custom-control-input clickable" id="switchItalics" name="ital"
+          [(ngModel)]="textTool.italics">
+        <label for="switchItalics" class="custom-control-label clickable"><i>Italique</i></label>
+      </div>
+    </form>
   </div>
 </div>

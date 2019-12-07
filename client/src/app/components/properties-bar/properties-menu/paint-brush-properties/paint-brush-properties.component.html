@@ -1,17 +1,17 @@
 <div class="row">
   <div class="col-md-12">
-    <small for="rangeEpaisseur">Size : {{strokeWidth}} px</small>
-    <input id="strokewidthinput" type="range" class="custom-range" [(ngModel)]="strokeWidth"
+    <small for="rangeEpaisseur">Épaisseur : {{strokeWidth}} px</small>
+    <input id="strokewidthinput" type="range" class="custom-range custom-slider" [(ngModel)]="strokeWidth"
       (change)="onChangeStrokeWidth()" [min]="MIN_STROKE" [max]="MAX_STROKE" step="1">
   </div>
 </div>
 <div class="row">
   <div class="col-md-12">
-    <small>Style</small>
+    <small>Choix du style</small>
   </div>
   <div class="form-check col-md-12">
-    <select class="form-control form-control-sm" [(ngModel)]="texture" (change)="onChangeTexture()">
-      <option *ngFor="let texture of TEXTURE_NAMES_MAP | keyvalue" [ngValue]="texture.value">{{texture.key}}</option>
+    <select class="form-control form-control-sm clickable" [(ngModel)]="texture" (change)="onChangeTexture()">
+      <option *ngFor="let texture of TEXTURE_NAMES_MAP | keyvalue" [ngValue]="texture.value"> {{texture.key}}</option>
     </select>
   </div>
 </div>

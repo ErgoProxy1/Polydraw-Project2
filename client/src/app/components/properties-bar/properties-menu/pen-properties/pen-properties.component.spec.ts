@@ -1,7 +1,10 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
+import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
-import { MAX_STROKE_WIDTH, MIN_STROKE_WIDTH } from 'src/app/services/utils/constantsAndEnums';
+// tslint:disable-next-line: max-line-length
+import { DEFAULT_PEN_MIN_SLIDER_STROKE_WIDTH, DEFAULT_PEN_STROKE_WIDTH, MAX_OF_MAX_PEN_STROKE_WIDTH, MAX_OF_MIN_PEN_STROKE_WIDTH, MAX_STROKE_WIDTH,
+  MIN_OF_MAX_PEN_STROKE_WIDTH, MIN_OF_MIN_PEN_STROKE_WIDTH, MIN_STROKE_WIDTH } from 'src/app/services/utils/constantsAndEnums';
 import { PenPropertiesComponent } from './pen-properties.component';
 
 describe('PencilPropertiesComponent', () => {
@@ -11,7 +14,7 @@ describe('PencilPropertiesComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ PenPropertiesComponent ],
-      imports: [FormsModule],
+      imports: [FormsModule, HttpClientModule],
     })
     .compileComponents();
   }));
@@ -24,6 +27,12 @@ describe('PencilPropertiesComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+    expect(component.strokeWidth).toBe(DEFAULT_PEN_STROKE_WIDTH);
+    expect(component.minStrokeWidth).toBe(DEFAULT_PEN_MIN_SLIDER_STROKE_WIDTH);
+    expect(component.MAX_SLIDER_MAX_STROKEWITH).toBe(MAX_OF_MAX_PEN_STROKE_WIDTH);
+    expect(component.MAX_SLIDER_MIN_STROKEWITH).toBe(MIN_OF_MAX_PEN_STROKE_WIDTH);
+    expect(component.MIN_SLIDER_MAX_STROKEWITH).toBe(MAX_OF_MIN_PEN_STROKE_WIDTH);
+    expect(component.MIN_SLIDER_MIN_STROKEWITH).toBe(MIN_OF_MIN_PEN_STROKE_WIDTH);
   });
 
   const setInputValue = (selector: string, value: string) => {

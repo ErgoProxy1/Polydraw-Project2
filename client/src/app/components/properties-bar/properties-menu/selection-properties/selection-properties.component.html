@@ -1,45 +1,103 @@
 <div class="menu p-0">
-  <div *ngIf="isPrimitiveSelected" class="clickable options menu-option" (click)="copy()">
-    <i class="far fa-copy fa-2x align-middle" placement="bottom" ngbTooltip="Copy (Ctrl+C)"
-      ng-disabled="!isPrimitiveSelected"></i>
+
+  <div class="clipboard-button-wrapper options">
+    <div *ngIf="isPrimitiveSelected" (click)="copy()" class="clickable menu-option" ngbTooltip="Copier (Ctrl+C)">
+      <i class="far fa-copy fa-lg align-middle" placement="bottom"
+        ng-disabled="!isPrimitiveSelected"></i>
+    </div>
+    <div *ngIf="!isPrimitiveSelected">
+      <i class="icon-color-disabled far fa-copy fa-lg align-middle" placement="bottom"
+        ng-disabled="!isPrimitiveSelected"></i>
+    </div>
   </div>
-  <div *ngIf="!isPrimitiveSelected" class="options">
-    <i class="icon-color-disabled far fa-copy fa-2x align-middle" placement="bottom" ngbTooltip="Copier (Ctrl+C)"
-      ng-disabled="!isPrimitiveSelected"></i>
+
+  <div class="clipboard-button-wrapper options">
+    <div *ngIf="!isClipboardEmpty()" (click)="paste()" class="clickable menu-option" ngbTooltip="Coller (Ctrl+V)">
+      <i class="fas fa-paste fa-lg align-middle" placement="bottom" 
+        ng-disabled="isClipboardEmpty()"></i>
+    </div>
+    <div *ngIf="isClipboardEmpty()">
+      <i class="icon-color-disabled fas fa-paste fa-lg align-middle" placement="bottom"
+        ng-disabled="isClipboardEmpty()"></i>
+    </div>
   </div>
-  <div *ngIf="!isClipboardEmpty()" class="clickable options menu-option" (click)="paste()">
-    <i class="fas fa-paste fa-2x align-middle" placement="bottom" ngbTooltip="Paste (Ctrl+V)"
-      ng-disabled="isClipboardEmpty()"></i>
+
+  <div class="clipboard-button-wrapper options">
+    <div *ngIf="isPrimitiveSelected" (click)="cut()" class="clickable menu-option" ngbTooltip="Couper (Ctrl+X)" >
+      <i class="fas fa-cut fa-lg align-middle" placement="bottom" 
+        ng-disabled="!isPrimitiveSelected"></i>
+    </div>
+    <div *ngIf="!isPrimitiveSelected">
+      <i class="icon-color-disabled fas fa-cut fa-lg align-middle" placement="bottom"
+        ng-disabled="!isPrimitiveSelected"></i>
+    </div>
   </div>
-  <div *ngIf="isClipboardEmpty()" class="options">
-    <i class="icon-color-disabled fas fa-paste fa-2x align-middle" placement="bottom" ngbTooltip="Coller (Ctrl+V)"
-      ng-disabled="isClipboardEmpty()"></i>
+
+  <div class="clipboard-button-wrapper options">
+    <div *ngIf="isPrimitiveSelected" (click)="duplicate()" class="clickable menu-option" ngbTooltip="Dupliquer (Ctrl+D)">
+      <i class="fa fa-clone fa-lg align-middle" placement="bottom"
+        ng-disabled="!isPrimitiveSelected"></i>
+    </div>
+    <div *ngIf="!isPrimitiveSelected">
+      <i class="icon-color-disabled fa fa-clone fa-lg align-middle" placement="bottom"
+        ng-disabled="!isPrimitiveSelected"></i>
+    </div>
   </div>
-  <div *ngIf="isPrimitiveSelected" class="clickable options menu-option" (click)="cut()">
-    <i class="fas fa-cut fa-2x align-middle" placement="bottom" ngbTooltip="Cut (Ctrl+X)"
-      ng-disabled="!isPrimitiveSelected"></i>
+
+  <div class="clipboard-button-wrapper options">
+    <div *ngIf="isPrimitiveSelected" (click)="delete()" class="clickable menu-option" ngbTooltip="Supprimer (suppr)">
+      <i class="fa fa-trash fa-lg align-middle" placement="bottom"
+        ng-disabled="!isPrimitiveSelected"></i>
+    </div>
+    <div *ngIf="!isPrimitiveSelected">
+      <i class="icon-color-disabled fa fa-trash fa-lg align-middle" placement="bottom"
+        ng-disabled="!isPrimitiveSelected"></i>
+    </div>
   </div>
-  <div *ngIf="!isPrimitiveSelected" class="options">
-    <i class="icon-color-disabled fas fa-cut fa-2x align-middle" placement="bottom" ngbTooltip="Couper (Ctrl+X)"
-      ng-disabled="!isPrimitiveSelected"></i>
+
+  <div class="clipboard-button-wrapper options">
+    <div class="clickable options menu-option" (click)="takeAll()" class="clickable menu-option" ngbTooltip="Tout selectionner (Ctrl+A)">
+      <i class="far fa-object-group fa-lg align-middle" placement="bottom"></i>
+    </div>
   </div>
-  <div *ngIf="isPrimitiveSelected" class="clickable options menu-option" (click)="duplicate()">
-    <i class="fa fa-clone fa-2x align-middle" placement="bottom" ngbTooltip="Duplicate (Ctrl+D)"
-      ng-disabled="!isPrimitiveSelected"></i>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
+    <small>Alignement sur la grille</small>
   </div>
-  <div *ngIf="!isPrimitiveSelected" class="options">
-    <i class="icon-color-disabled fa fa-clone fa-2x align-middle" placement="bottom" ngbTooltip="Dupliquer (Ctrl+D)"
-      ng-disabled="!isPrimitiveSelected"></i>
+  <div class="form-check col-md-12">
+    <select class="form-control form-control-sm" [(ngModel)]="gridAlignment" (change)="onChangeGridAlignment()">
+      <option *ngFor="let gridAlignment of GRID_ALIGNMENT_NAMES_MAP | keyvalue" [ngValue]="gridAlignment.value">
+        {{gridAlignment.key}}</option>
+    </select>
+    <svg class="visual-align-select" width="100%" height="110%">
+      <rect x="9%" y="7.5%" width="80%" height="50%" fill="none" stroke="black" stroke-width="1px"></rect>
+      <circle [attr.fill]="getAlignmentColor(1)" stroke="black" class="clickable" cx="9%" cy="7.5%" r="10px"
+        (click)="changeGridAlignmentFromDrawing(1)"></circle>
+      <circle [attr.fill]="getAlignmentColor(8)" stroke="black" class="clickable" cx="49%" cy="7.5%" r="10px"
+        (click)="changeGridAlignmentFromDrawing(8)"></circle>
+      <circle [attr.fill]="getAlignmentColor(7)" stroke="black" class="clickable" cx="89%" cy="7.5%" r="10px"
+        (click)="changeGridAlignmentFromDrawing(7)"></circle>
+      <circle [attr.fill]="getAlignmentColor(2)" stroke="black" class="clickable" cx="9%" cy="32.5%" r="10px"
+        (click)="changeGridAlignmentFromDrawing(2)"></circle>
+      <circle [attr.fill]="getAlignmentColor(9)" stroke="black" class="clickable" cx="49%" cy="32.5%" r="10px"
+        (click)="changeGridAlignmentFromDrawing(9)"></circle>
+      <circle [attr.fill]="getAlignmentColor(6)" stroke="black" class="clickable" cx="89%" cy="32.5%" r="10px"
+        (click)="changeGridAlignmentFromDrawing(6)"></circle>
+      <circle [attr.fill]="getAlignmentColor(3)" stroke="black" class="clickable" cx="9%" cy="57.5%" r="10px"
+        (click)="changeGridAlignmentFromDrawing(3)"></circle>
+      <circle [attr.fill]="getAlignmentColor(4)" stroke="black" class="clickable" cx="49%" cy="57.5%" r="10px"
+        (click)="changeGridAlignmentFromDrawing(4)"></circle>
+      <circle [attr.fill]="getAlignmentColor(5)" stroke="black" class="clickable" cx="89%" cy="57.5%" r="10px"
+        (click)="changeGridAlignmentFromDrawing(5)"></circle>
+    </svg>
   </div>
-  <div *ngIf="isPrimitiveSelected" class="clickable options menu-option" (click)="delete()">
-    <i class="fa fa-trash fa-2x align-middle" placement="bottom" ngbTooltip="Delete (suppr)"
-      ng-disabled="!isPrimitiveSelected"></i>
-  </div>
-  <div *ngIf="!isPrimitiveSelected" class="options">
-    <i class="icon-color-disabled fa fa-trash fa-2x align-middle" placement="bottom" ngbTooltip="Supprimer (suppr)"
-      ng-disabled="!isPrimitiveSelected"></i>
-  </div>
-  <div class="clickable options menu-option" (click)="takeAll()">
-    <i class="far fa-object-group fa-2x align-middle" placement="bottom" ngbTooltip="Select All (Ctrl+A)"></i>
+</div>
+<div class="row">
+  <div *ngIf="isPrimitiveSelected" class="col md-12 class no-pointer">
+    <small for="rangerotation">Rotation : {{rotationAngle}} °</small>
+    <input id="rotationAngleInput" type="range" class="custom-range custom-slider" [(ngModel)]="rotationAngle"
+    (input)="onChangeRotation()" [min]="MIN_ANGLE" [max]="MAX_ANGLE" step="1">
   </div>
 </div>

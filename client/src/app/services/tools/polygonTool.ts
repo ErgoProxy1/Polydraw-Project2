@@ -6,9 +6,10 @@ import { Point } from '../utils/point';
 import { ShapeTool } from './shapeTool';
 
 export class PolygonTool extends ShapeTool {
-
-  type = ToolType.PolygonTool;
+  TYPE = ToolType.PolygonTool;
   numberOfSides = 3;
+  isRegular = true;
+
   constructor(fillColor: Color, strokeColor: Color) {
     super(fillColor, strokeColor);
    }

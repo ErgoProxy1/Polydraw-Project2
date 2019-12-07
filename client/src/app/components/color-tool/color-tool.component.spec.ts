@@ -1,3 +1,4 @@
+import { HttpClientModule } from '@angular/common/http';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
@@ -15,7 +16,7 @@ describe('ColorToolComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ColorToolComponent, CanvasComponent, SvgComponent, NTimesPipe],
-      imports: [FormsModule, ReactiveFormsModule, NgbModule],
+      imports: [FormsModule, ReactiveFormsModule, NgbModule, HttpClientModule],
     })
       .compileComponents();
   }));
@@ -121,16 +122,8 @@ describe('ColorToolComponent', () => {
 
   it('RGB color errors are properly detected', () => {
     component.paletteForm.patchValue({
-      red: -1,
+      red: null,
       green: 64,
-      blue: 32,
-    });
-    component.confirmRGBColor();
-    expect(component.rgbaError).toBe(true);
-
-    component.paletteForm.patchValue({
-      red: 0,
-      green: 256,
       blue: 32,
     });
     component.confirmRGBColor();

@@ -15,7 +15,7 @@ describe('PenTool', () => {
 
     it('should be properly created', () => {
     expect(penTool).toBeTruthy();
-    expect(penTool.type).toEqual(ToolType.Pen);
+    expect(penTool.TYPE).toEqual(ToolType.Pen);
     expect(penTool.strokeWidth).toBe(DEFAULT_PEN_STROKE_WIDTH);
     expect(penTool.minStrokeWidth).toBe(DEFAULT_PEN_MIN_SLIDER_STROKE_WIDTH);
     });

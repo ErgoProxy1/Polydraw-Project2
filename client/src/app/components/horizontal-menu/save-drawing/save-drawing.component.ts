@@ -2,14 +2,14 @@ import { Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
 import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 import { merge, Observable, Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
-import { ControllerService } from 'src/app/services/controller/controller.service';
+import { CanvasControllerService } from 'src/app/services/canvasController/canvas-controller.service';
 import { DrawingHandlerService } from 'src/app/services/drawingHandler/drawing-handler.service';
 import { KeyboardService } from 'src/app/services/keyboard/keyboard.service';
+import { MessageHandlerService } from 'src/app/services/messageHandler/message-handler.service';
 import { TagHandlerService } from 'src/app/services/tagHandler/tag-handler.service';
 import {
-  KeyboardEventType, KeyboardShortcutType, SAVING_TYPE_CHOICES, SavingType,
-  SavingTypeInterface
-} from 'src/app/services/utils/constantsAndEnums';
+  KeyboardEventType, KeyboardShortcutType, MessageType, SAVING_TYPE_CHOICES,
+  SavingType, SavingTypeInterface} from 'src/app/services/utils/constantsAndEnums';
 import { DrawingInfo } from '../../../../../../common/communication/drawingInfo';
 import { TagsInfo } from '../../../../../../common/communication/tags';
 
@@ -28,7 +28,7 @@ export class SaveDrawingComponent implements OnDestroy {
   errorInForm = false;
   drawingInfo: DrawingInfo;
   tagsAllreadyExist = false;
-  textSaveButton = 'Save Drawing';
+  textSaveButton = 'Sauvegarder un dessin';
   loading = false;
 
   // Variables utiles pour le typeahead
@@ -39,11 +39,6 @@ export class SaveDrawingComponent implements OnDestroy {
 
   typeOfSave: SavingTypeInterface[] = SAVING_TYPE_CHOICES;
 
-  successMessage = '';
-  errorMessage = '';
-  isSuccess = false;
-  isError = false;
-
   @ViewChild('saveDrawingModal', { static: true }) saveDrawingModal: ElementRef;
 
   saveDrawingModalConfig: NgbModalOptions = {
@@ -53,9 +48,10 @@ export class SaveDrawingComponent implements OnDestroy {
   };
 
   constructor(private keyboardService: KeyboardService, private modalService: NgbModal,
-              private controllerService: ControllerService, private tagHandlerService: TagHandlerService,
-              private drawingHandlerService: DrawingHandlerService) {
-    this.textSaveButton = 'Save Drawing';
+              private controllerService: CanvasControllerService, private tagHandlerService: TagHandlerService,
+              private drawingHandlerService: DrawingHandlerService,
+              private messageHandlerService: MessageHandlerService) {
+    this.textSaveButton = 'Sauvegarder un dessin';
     this.htmlPrimitivesSubscription = this.controllerService.getHTMLPrimitivesStringObservable().subscribe((primitives: string) => {
       this.drawingInfo.thumbnail = primitives;
     });
@@ -104,19 +100,19 @@ export class SaveDrawingComponent implements OnDestroy {
     this.drawingHandlerService.exportToServer(this.drawingInfo).then((msg) => {
       // Save successful
       if (msg === true) {
-        this.textSaveButton = 'Save Successful!';
-        this.successMessage = 'Save Successful!';
-        this.showMessage(false);
+        this.textSaveButton = 'Sauvegarde réussie!';
+        this.messageHandlerService.showMessage('Sauvegarde réussie!',
+          MessageType.Success, 5000);
         this.closeModal();
       } else {
         // Erreur dans la sauvegarde
-        this.errorMessage = 'Saving has failed.';
-        this.showMessage(true);
+        this.messageHandlerService.showMessage('La sauvegarde a échoué!',
+          MessageType.Danger, 5000);
       }
       this.loading = false;
     }, (error) => {
-      this.errorMessage = `Server Communication Failed ERROR: ${error}`;
-      this.showMessage(true);
+      this.messageHandlerService.showMessage(`La communication avec le serveur a échoué ERREUR: ${error}`,
+        MessageType.Danger, 5000);
       this.loading = false;
     });
   }
@@ -125,15 +121,15 @@ export class SaveDrawingComponent implements OnDestroy {
     if (!this.loading) {
       if (this.drawingInfo.typeOfSave === SavingType.SaveOnServer) {
         this.loading = true;
-        this.textSaveButton = 'Saving...';
+        this.textSaveButton = 'Sauvegarde en cours...';
         this.exportToServer();
       } else if (this.drawingInfo.typeOfSave === SavingType.SaveLocally) {
         this.loading = true;
-        this.textSaveButton = 'Saving...';
+        this.textSaveButton = 'Sauvegarde en cours...';
         this.drawingHandlerService.exportDrawingLocally(this.drawingInfo);
         this.loading = false;
-        this.successMessage = 'Save Successful!';
-        this.showMessage(false);
+        this.messageHandlerService.showMessage('Sauvegarde réussie!',
+          MessageType.Success, 5000);
         this.closeModal();
       }
     }
@@ -142,7 +138,7 @@ export class SaveDrawingComponent implements OnDestroy {
   openModal(): boolean {
     this.loading = true;
     this.drawingInfo = {
-      name: 'New Drawing',
+      name: 'Nouveau Dessin',
       typeOfSave: 0,
       primitives: JSON.stringify(this.controllerService.svgPrimitives),
       tags: [],
@@ -160,7 +156,7 @@ export class SaveDrawingComponent implements OnDestroy {
     // On remet les valeurs par défaut
     this.keyboardService.modalWindowActive = false;
     this.loading = false;
-    this.textSaveButton = 'Save Successful!';
+    this.textSaveButton = 'Sauvegarder un dessin';
     this.modalService.dismissAll();
     return this.modalService.hasOpenModals();
   }
@@ -168,14 +164,14 @@ export class SaveDrawingComponent implements OnDestroy {
   loadTags(): void {
     this.tagHandlerService.loadTags().then((success) => {
       if (!success) {
-        this.errorMessage = 'Error while retrieving tags';
-        this.showMessage(true);
+        this.messageHandlerService.showMessage('Erreur dans la tentative de récupération des tags.',
+          MessageType.Danger, 5000);
       }
       this.loading = false;
     }).catch((error) => {
+      this.messageHandlerService.showMessage(`Erreur communication avec le serveur ERROR : ${error}`,
+        MessageType.Danger, 5000);
       this.loading = false;
-      this.errorMessage = `Server Communication Failed ERROR: ${error}`;
-      this.showMessage(true);
     });
   }
 
@@ -199,23 +195,13 @@ export class SaveDrawingComponent implements OnDestroy {
       }
       this.currentTagInput = '';
     } else {
-      this.errorMessage = 'Tag too long (Max 30 characters)';
-      this.showMessage(true);
+      this.messageHandlerService.showMessage('Étiquette trop longue (maximum 30 caractères), veuillez réviser.',
+        MessageType.Danger, 5000);
     }
   }
 
   removeTag(tag: TagsInfo) {
     const index: number = this.drawingInfo.tags.indexOf(tag, 0);
     this.drawingInfo.tags.splice(index, 1);
-  }
-
-  showMessage(error: boolean) {
-    if (error) {
-      this.isError = true;
-      setTimeout(() => this.isError = false, 5000);
-    } else {
-      this.isSuccess = true;
-      setTimeout(() => this.isSuccess = false, 5000);
-    }
   }
 }

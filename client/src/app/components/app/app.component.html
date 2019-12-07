@@ -1,3 +1,6 @@
+<ngb-alert *ngIf="isMessageToShow" class="popupMessage" [type]="typeOfMessage" (close)="isMessageToShow = false">{{popupMessage}}
+</ngb-alert>
+
 <div class="gridContainer" (window:resize)="resendDimensions()">
   <app-horizontal-menu class="head bg-horizontale-bar"></app-horizontal-menu>
   <app-side-bar class="toolbar bg-side-bar"></app-side-bar>

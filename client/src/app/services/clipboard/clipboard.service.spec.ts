@@ -14,7 +14,7 @@ describe('ClipboardService', () => {
 
   it('should be created', () => {
     expect(clipboardService).toBeTruthy();
-    expect(clipboardService.primitives).not.toBeUndefined();
+    expect(clipboardService.getPrimitives()).not.toBeUndefined();
   });
   it('canvasHeight and canvasWidth should be correctly updated after init', () => {
     const initDimension: number[] = [1920, 1080];
@@ -33,7 +33,7 @@ describe('ClipboardService', () => {
     drawingService.sendDrawingData(newDimensions);
     const primitive: SVGPrimitive[] = [new Rectangle(Color.BLACK, Color.WHITE, DEFAULT_STROKE_WIDTH, StrokeType.FullWithOutline,
       new Point(0, 0), 20, 20)];
-    clipboardService.primitives = primitive;
+    clipboardService.setPrimitives(primitive);
     clipboardService.incrementPasteOffset();
     expect(clipboardService['pasteOffset']).toEqual(new Point(50, 50));
     clipboardService.incrementPasteOffset();

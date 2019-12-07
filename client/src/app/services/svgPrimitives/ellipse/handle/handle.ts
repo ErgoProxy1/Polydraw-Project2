@@ -1,12 +1,14 @@
 import { Color } from 'src/app/services/utils/color';
-import { StrokeType } from 'src/app/services/utils/constantsAndEnums';
+import { HandleType, StrokeType } from 'src/app/services/utils/constantsAndEnums';
 import { Point } from 'src/app/services/utils/point';
-import { Ellipse } from '../ellispe';
+import { Ellipse } from '../ellipse';
 
 export class Handle extends Ellipse {
-    selectable = false;
+    SELECTABLE = false;
+    handleType: HandleType;
 
-    constructor(position: Point) {
+    constructor(position: Point, handleType: HandleType) {
         super(Color.WHITE, Color.BLACK, 1, StrokeType.FullWithOutline, position, 5, 5);
+        this.handleType = handleType;
     }
 }

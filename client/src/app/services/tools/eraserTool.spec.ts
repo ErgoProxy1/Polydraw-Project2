@@ -1,4 +1,4 @@
-import { Ellipse } from '../svgPrimitives/ellipse/ellispe';
+import { Ellipse } from '../svgPrimitives/ellipse/ellipse';
 import { Line } from '../svgPrimitives/line/line';
 import { Path } from '../svgPrimitives/path/path';
 import { Pen } from '../svgPrimitives/pen/pen';
@@ -12,11 +12,11 @@ import { Color } from '../utils/color';
 import { ALIGNS, FONTS, HIGHLIGH_BACKUP_COLOR, HIGHLIGH_COLOR, KeyboardEventType, LineCap, LineJoin,
    MAX_ERASER_SIZE, MIN_ERASER_SIZE, MouseEventType, Pattern, PrimitiveType, StrokeType } from '../utils/constantsAndEnums';
 import { Point } from '../utils/point';
-import { DefaultStamps } from '../utils/stampData';
+import { DEFAULT_STAMPS } from '../utils/stampData';
 import { EraserTool } from './eraserTool';
 
 // tslint:disable: no-string-literal
-describe('EllipseTool', () => {
+describe('EraserTool', () => {
   let tool: EraserTool;
   const typeOfPrimitives: PrimitiveType[] = [PrimitiveType.Ellipse, PrimitiveType.Line, PrimitiveType.Paint, PrimitiveType.Pen,
   PrimitiveType.Pencil, PrimitiveType.Polygon, PrimitiveType.Rectangle, PrimitiveType.Stamp, PrimitiveType.Text];
@@ -50,7 +50,7 @@ describe('EllipseTool', () => {
           randomSVGPrimitives.push(new Rectangle(new Color(0, 0, 0), new Color(0, 0, 0), 2, StrokeType.Full, new Point(10, 10)));
           break;
         case PrimitiveType.Stamp:
-          randomSVGPrimitives.push(new Stamp(100, 135, new Point(100, 100), DefaultStamps[1]));
+          randomSVGPrimitives.push(new Stamp(100, 135, new Point(100, 100), DEFAULT_STAMPS[1]));
           break;
         case PrimitiveType.Text:
           randomSVGPrimitives.push(new TextPrimitive(16, new Color(0, 0, 0, 1), FONTS[0], ALIGNS[0], new Point(50, 50), true, false));
@@ -235,18 +235,18 @@ describe('EllipseTool', () => {
     expect(tool['lastStokeColor']).toEqual(lastColor);
     expect(square.strokeColor).toEqual(Color.copyColor(HIGHLIGH_COLOR));
 
-    const square2: Rectangle = new Rectangle(new Color(0, 0, 0), new Color(255, 0, 0), 2, StrokeType.Full, new Point(100, 100), 100, 100);
+    const square2: Rectangle = new Rectangle(new Color(255, 0, 0), new Color(255, 0, 0), 2, StrokeType.Full, new Point(100, 100), 100, 100);
     lastColor = Color.copyColor(square2.strokeColor);
     tool['highlightPrimitive'](square2);
     expect(tool['currentSVG']).toBe(square2);
     expect(tool['lastStokeColor']).toEqual(lastColor);
-    expect(square2.strokeColor).toEqual(Color.copyColor(HIGHLIGH_BACKUP_COLOR));
+    expect(square2.strokeColor.isEquivalent(HIGHLIGH_BACKUP_COLOR)).toBe(false);
 
     const dummyText: TextPrimitive = new TextPrimitive(2, new Color(0, 0, 0), FONTS[0], ALIGNS[0], new Point(0, 0), true, true);
     tool['highlightPrimitive'](dummyText);
     expect(tool['currentSVG']).toBe(dummyText);
 
-    const dummyStamp: Stamp = new Stamp(2, 2, new Point(0, 0), DefaultStamps[1]);
+    const dummyStamp: Stamp = new Stamp(2, 2, new Point(0, 0), DEFAULT_STAMPS[1]);
     tool['highlightPrimitive'](dummyStamp);
     expect(tool['currentSVG']).toBe(dummyStamp);
   });
@@ -334,7 +334,7 @@ describe('EllipseTool', () => {
     tool['currentSVG'] = dummyText;
     expect(tool.getTemporaryPrimitives()).toEqual([perimeter, eraserIcone]);
 
-    const dummyStamp: Stamp = new Stamp(2, 2, new Point(0, 0), DefaultStamps[1]);
+    const dummyStamp: Stamp = new Stamp(2, 2, new Point(0, 0), DEFAULT_STAMPS[1]);
     tool['currentSVG'] = dummyStamp;
     expect(tool.getTemporaryPrimitives()).toEqual([perimeter, eraserIcone]);
 

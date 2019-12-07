@@ -8,16 +8,17 @@ export class Stamp extends SVGPrimitive {
 
   constructor(scale: number, angle: number, position: Point, info: StampInfo) {
     super();
-    this.stampScale = info.adjustedScale * (scale / 100.0);
+    this.stampScaleX = this.stampScaleY = info.adjustedScale * (scale / 100.0);
     this.angle = angle;
     this.position = position;
     this.info = info;
     this.createStampTransformationsStrings();
   }
   type = PrimitiveType.Stamp;
-  selectable = true;
+  SELECTABLE = true;
   selected = false;
-  stampScale: number;
+  stampScaleX: number;
+  stampScaleY: number;
   angle: number;
   position: Point;
   info: StampInfo;
@@ -30,29 +31,51 @@ export class Stamp extends SVGPrimitive {
 
   static createCopy(primitive: SVGPrimitive): Stamp {
     const stamp: Stamp = primitive as Stamp;
-    const newStamp: Stamp = new Stamp(stamp.stampScale, stamp.angle, stamp.position, stamp.info );
+    const newStamp: Stamp = new Stamp(stamp.stampScaleX, stamp.angle, Point.copyPoint(stamp.position), stamp.info );
 
-    newStamp.stampScale = stamp.stampScale;
+    newStamp.stampScaleX = stamp.stampScaleX;
+    newStamp.stampScaleY = stamp.stampScaleY;
     newStamp.stampTransformations = stamp.stampTransformations;
     newStamp.stampRotation = stamp.stampRotation;
     newStamp.stampTranslation = stamp.stampTranslation;
     newStamp.scaled = stamp.scaled;
     newStamp.origin = stamp.origin;
 
+    newStamp.topLeftCorner = Point.copyPoint(stamp.topLeftCorner);
+    newStamp.bottomRightCorner = Point.copyPoint(stamp.bottomRightCorner);
+
+    newStamp.rotation = stamp.rotation;
+    newStamp.scaleX = stamp.scaleX;
+    newStamp.scaleY = stamp.scaleY;
+    newStamp.transformations = stamp.transformations;
+
     return newStamp;
   }
 
+  scale(translation: Point, scaleFactorX: number, scaleFactorY: number): void {
+    this.stampScaleX *= scaleFactorX;
+    this.stampScaleY *= scaleFactorY;
+    this.move(translation);
+    this.createStampTransformationsStrings();
+  }
+
   createStampTransformationsStrings(): void {
-    this.stampTranslation = 'translate(' +  this.position.x  + ',' + this.position.y + ') ';
-    this.stampRotation = 'rotate(' + this.angle + ') ';
-    this.scaled = 'scale(' + this.stampScale + ') ';
-    this.stampTransformations = this.stampTranslation + this.stampRotation + this.scaled;
-    this.origin = 0 + 'px ' + 0  + 'px';
+    this.stampTranslation = `translate(${this.position.x},${this.position.y}) `;
+    this.stampRotation = `rotate(${(-1) * this.angle},${this.stampScaleX * this.info.centerX},${this.stampScaleX * this.info.centerY}) `;
+    this.scaled = `scale(${this.stampScaleX},${this.stampScaleY}) `;
+    this.stampTransformations = `${this.stampTranslation}${this.stampRotation}${this.scaled}`;
+    this.origin = `${0}px ${0 }px`;
     this.strokeColor = new Color(0, 0, 0);
   }
 
-  copy(): SVGPrimitive {
+  copy(): Stamp {
     return Stamp.createCopy(this);
+  }
+
+  move(translation: Point): void {
+    this.position.addPoint(translation);
+    this.createStampTransformationsStrings();
+    this.moveCorners(translation);
   }
 
 }

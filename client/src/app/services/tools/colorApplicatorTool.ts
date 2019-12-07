@@ -8,7 +8,7 @@ import { Point } from '../utils/point';
 import { Tool } from './tool';
 
 export class ColorApplicatorTool extends Tool {
-  type = ToolType.ColorApplicator;
+  TYPE = ToolType.ColorApplicator;
   private command: ColorApplicatorToolCommand;
   private commandSubject: Subject<ColorApplicatorToolCommand> = new Subject<ColorApplicatorToolCommand>();
   private primaryColor: Color;

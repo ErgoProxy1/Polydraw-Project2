@@ -13,7 +13,7 @@ export class StampInfo {
   readonly image: string;
 }
 
-export const DefaultStamps: StampInfo[] = [
+export const DEFAULT_STAMPS: StampInfo[] = [
  {
     name: 'Aucun', color: new Color(0, 0, 0, 0), adjustedScale: 0, initRotation: 0, centerX: 0, centerY: 0,
     image: 'None',

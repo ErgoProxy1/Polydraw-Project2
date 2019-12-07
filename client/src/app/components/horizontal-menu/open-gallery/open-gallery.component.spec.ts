@@ -3,7 +3,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbAlertModule, NgbModalModule, NgbTypeaheadModule } from '@ng-bootstrap/ng-bootstrap';
 import { TrustPipe } from 'src/app/pipes/trust-html.pipe';
-import { ControllerService } from 'src/app/services/controller/controller.service';
+import { CanvasControllerService } from 'src/app/services/canvasController/canvas-controller.service';
 import { DrawingHandlerService } from 'src/app/services/drawingHandler/drawing-handler.service';
 import { KeyboardService } from 'src/app/services/keyboard/keyboard.service';
 import { DrawingCommunicationService } from 'src/app/services/serverCommunication/drawing-communication.service';
@@ -22,7 +22,7 @@ describe('OpenGalleryComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [OpenGalleryComponent, TrustPipe],
-      providers: [KeyboardService, ControllerService, DrawingCommunicationService, TagCommunicationService, DrawingHandlerService],
+      providers: [KeyboardService, CanvasControllerService, DrawingCommunicationService, TagCommunicationService, DrawingHandlerService],
       imports: [FormsModule, ReactiveFormsModule, NgbModalModule, NgbAlertModule, NgbTypeaheadModule, HttpClientModule],
     })
     .compileComponents();
@@ -42,7 +42,7 @@ describe('OpenGalleryComponent', () => {
   });
 
   it('should set controller information correctly after selectDrawing is called', () => {
-    const controllerService: ControllerService = TestBed.get(ControllerService);
+    const controllerService: CanvasControllerService = TestBed.get(CanvasControllerService);
     controllerService.canvasInfo = new NewDrawingInfo(0, 0, new Color(0, 0, 0, 0));
     const emptyPrimitives: SVGPrimitive[] = [];
     const drawingInfo = new NewDrawingInfo(1554, 638, new Color(0, 0, 0, 0));

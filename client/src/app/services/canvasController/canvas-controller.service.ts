@@ -3,6 +3,7 @@ import { Observable, Subject, Subscription } from 'rxjs';
 import { DrawingService } from '../drawing/drawing.service';
 import { KeyboardService } from '../keyboard/keyboard.service';
 import { SVGPrimitive } from '../svgPrimitives/svgPrimitive';
+import { BackgroundColorCommand } from '../toolCommands/backgroundColorCommand';
 import { ToolCommand } from '../toolCommands/toolCommand';
 import { SelectorTool } from '../tools/selectorTool';
 import { Tool } from '../tools/tool';
@@ -16,7 +17,7 @@ import { Point } from '../utils/point';
   providedIn: 'root',
 })
 
-export class ControllerService implements OnDestroy {
+export class CanvasControllerService implements OnDestroy {
   private selectedToolSubscription: Subscription;
   private toolCommandSubscription: Subscription;
   private temporaryPrimitivesSubscription: Subscription;
@@ -157,10 +158,10 @@ export class ControllerService implements OnDestroy {
 
   private updatePrimitivesToDraw(): void {
     if (this.tool) {
-      this.temporaryPrimitives = this.tool.getTemporaryPrimitives();
-      if (this.tool.type === ToolType.SelectorTool) {
+      if (this.tool.TYPE === ToolType.SelectorTool) {
         (this.tool as SelectorTool).updatePrimitivesList(this.svgPrimitives);
       }
+      this.temporaryPrimitives = this.tool.getTemporaryPrimitives();
     }
     this.primitivesToDraw = this.svgPrimitives.concat(this.temporaryPrimitives);
   }
@@ -197,5 +198,9 @@ export class ControllerService implements OnDestroy {
 
   sendHTMLStringOfPrimitives(htmlPrimitives: string) {
     this.primitivesHTMLSubjectString.next(htmlPrimitives);
+  }
+
+  changeBackgroundColor(color: Color) {
+    this.applyNewCommand(new BackgroundColorCommand(this.drawingService, color, this.canvasInfo.color));
   }
 }

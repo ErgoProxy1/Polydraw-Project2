@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { Ellipse } from '../svgPrimitives/ellipse/ellispe';
+import { Ellipse } from '../svgPrimitives/ellipse/ellipse';
 import { Line } from '../svgPrimitives/line/line';
 import { Path } from '../svgPrimitives/path/path';
 import { Pen } from '../svgPrimitives/pen/pen';
@@ -11,7 +11,7 @@ import { TextPrimitive } from '../svgPrimitives/text/textPrimitive';
 import { Color } from '../utils/color';
 import { ALIGNS, FONTS, LineCap, LineJoin, Pattern, PrimitiveType, StrokeType } from '../utils/constantsAndEnums';
 import { Point } from '../utils/point';
-import { DefaultStamps } from '../utils/stampData';
+import { DEFAULT_STAMPS } from '../utils/stampData';
 import { EraserCommand } from './eraserCommand';
 
 describe('EraserToolCommand', () => {
@@ -57,7 +57,7 @@ describe('EraserToolCommand', () => {
                     randomSVGPrimitives.push(new Rectangle(new Color(0, 0, 0), new Color(0, 0, 0), 2, StrokeType.Full, new Point(10, 10)));
                     break;
                 case PrimitiveType.Stamp:
-                    randomSVGPrimitives.push(new Stamp(100, 135, new Point(100, 100), DefaultStamps[1]));
+                    randomSVGPrimitives.push(new Stamp(100, 135, new Point(100, 100), DEFAULT_STAMPS[1]));
                     break;
                 case PrimitiveType.Text:
                     randomSVGPrimitives.push(new TextPrimitive(16, new Color(0, 0, 0, 1),

@@ -16,7 +16,8 @@
 
                 <ellipse *ngSwitchCase="PrimitiveType.Ellipse" [attr.cx]="i.center.x" [attr.cy]="i.center.y"
                     [attr.rx]="i.radiusX" [attr.ry]="i.radiusY" [attr.fill]="i.fillColor.asString()"
-                    [attr.stroke]="i.strokeColor.asString()" [attr.stroke-width]="i.strokeWidth"></ellipse>
+                    [attr.stroke]="i.strokeColor.asString()" [attr.stroke-width]="i.strokeWidth"
+                    [attr.transform]="i.rotationTransformation"></ellipse>
 
                 <path *ngSwitchCase="PrimitiveType.Stamp" [attr.transform]="i.stampTransformations"
                     [attr.fill]="i.info.color.rgbaTextForm" [attr.d]="i.info.image" (wheel)="onScroll($event)"
@@ -40,14 +41,22 @@
                     <path [attr.d]="i.linePoints" [attr.stroke-linejoin]="LINE_JOIN_TYPE[i.lineJoin]"
                         [attr.stroke-linecap]="LINE_CAP_TYPE[i.lineCap]"
                         [attr.stroke-dasharray]="PATTERN_TYPE[i.pattern]" [attr.stroke]="i.strokeColor.asString()"
-                        [attr.stroke-width]="i.strokeWidth" fill="none" (dblclick)="ondblclick($event);">
+                        [attr.stroke-width]="i.strokeWidth" fill="none">
                     </path>
                     <g *ngFor="let cercle of i.circlePoints">
                         <circle [attr.cx]="cercle.x" [attr.cy]="cercle.y" [attr.r]="i.circleRadius"
                             [attr.fill]="i.strokeColor.asString()"></circle>
                     </g>
                 </g>
+                <g *ngSwitchCase="PrimitiveType.Fill">
 
+                    <path [attr.d]="i.commandSvg" [attr.stroke]="i.fillColor.asString()" fill="none" [attr.stroke-width]="i.fillStrokeWidth"
+                        stroke-linejoin="round" stroke-linecap="round">
+                    </path>
+                    <path [attr.d]="i.contourPath" [attr.stroke]="i.strokeColor.asString()" fill="none"
+                        [attr.stroke-width]="i.strokeWidth" stroke-linejoin="round" stroke-linecap="round">
+                    </path>
+                </g>
                 <g *ngSwitchCase="PrimitiveType.Pencil">
                     <path [attr.d]="i.commandSvg" [attr.stroke]="i.strokeColor.asString()" fill="none"
                         [attr.stroke-width]="i.strokeWidth" stroke-linejoin="round" stroke-linecap="round">
@@ -56,10 +65,22 @@
 
                 <g *ngSwitchCase="PrimitiveType.Pen">
                     <g *ngFor="let item of i.paths;">
-                        <path [attr.d]="item[0]" [attr.stroke]="i.strokeColor.asString()" fill="none"
-                            [attr.stroke-width]="item[1]" stroke-linejoin="round" stroke-linecap="round">
+                        <path [attr.d]="item.commandSVG" [attr.stroke]="i.strokeColor.asString()" fill="none"
+                            [attr.stroke-width]="item.strokeWidth" stroke-linejoin="round" stroke-linecap="round">
                         </path>
                     </g>
+                </g>
+                <g *ngSwitchCase="PrimitiveType.Quill">
+                    <g *ngFor="let points of i.linePoints;">
+                        <polyline [attr.points]="points" [attr.fill]="i.strokeColor.asString()"
+                            [attr.stroke]="i.strokeColor.asString()" stroke-width="1" stroke-linejoin="round">
+                        </polyline>
+                    </g>
+                </g>
+                <g *ngSwitchCase="PrimitiveType.Spraypaint">
+                    <circle *ngFor="let point of i.points;" [attr.cx]="point.x" [attr.cy]="point.y"
+                        [attr.r]="i.POINT_SIZE" [attr.fill]="i.strokeColor.asString()">
+                    </circle>
                 </g>
 
                 <defs *ngSwitchCase="PrimitiveType.Paint" [ngSwitch]="i.texture">
@@ -71,8 +92,8 @@
                         </feMerge>
                     </filter>
 
-                    <filter *ngSwitchCase="Texture.Degraded" [attr.id]="FILTER_IDS[1]" filterUnits="userSpaceOnUse"
-                        x="0" y="0" width="100%" height="100%">
+                    <filter *ngSwitchCase="Texture.Grayed" [attr.id]="FILTER_IDS[1]" filterUnits="userSpaceOnUse" x="0"
+                        y="0" width="100%" height="100%">
                         <feTurbulence type="turbulence" baseFrequency="0.06" numOctaves="6" result="turb">
                         </feTurbulence>
                         <feDisplacementMap in2="turb" in="SourceGraphic" scale="50" xChannelSelector="R"
@@ -93,7 +114,7 @@
                         </feMerge>
                     </filter>
 
-                    <filter *ngSwitchCase="Texture.Grayed" [attr.id]="FILTER_IDS[2]" filterUnits="userSpaceOnUse" x="0"
+                    <filter *ngSwitchCase="Texture.Light" [attr.id]="FILTER_IDS[2]" filterUnits="userSpaceOnUse" x="0"
                         y="0" width="100%" height="100%">
                         <feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="3" result="turb">
                         </feTurbulence>
@@ -115,9 +136,9 @@
                         </feMerge>
                     </filter>
 
-                    <filter *ngSwitchCase="Texture.Light" [attr.id]="FILTER_IDS[3]" filterUnits="userSpaceOnUse" x="0"
+                    <filter *ngSwitchCase="Texture.Frothy" [attr.id]="FILTER_IDS[3]" filterUnits="userSpaceOnUse" x="0"
                         y="0" width="100%" height="100%">
-                        <feTurbulence type="turbulence" baseFrequency="0.2" numOctaves="5" result="turb2">
+                        <feTurbulence type="turbulence" baseFrequency="0.8" numOctaves="5" result="turb2">
                         </feTurbulence>
                         <feDisplacementMap in2="turb2" in="SourceGraphic" result="disp-turb2" scale="30"
                             xChannelSelector="R" yChannelSelector="G"></feDisplacementMap>
@@ -126,8 +147,8 @@
                         </feMerge>
                     </filter>
 
-                    <filter *ngSwitchCase="Texture.Frothy" [attr.id]="FILTER_IDS[4]" filterUnits="userSpaceOnUse" x="0"
-                        y="0" width="100%" height="100%">
+                    <filter *ngSwitchCase="Texture.Degraded" [attr.id]="FILTER_IDS[4]" filterUnits="userSpaceOnUse"
+                        x="0" y="0" width="100%" height="100%">
                         <feTurbulence type="turbulence" baseFrequency="0.08" numOctaves="2" result="turb1">
                         </feTurbulence>
                         <feDisplacementMap in2="turb1" in="SourceGraphic" result="disp-turb1" scale="20"
@@ -140,7 +161,8 @@
 
                 <g *ngSwitchCase="PrimitiveType.Paint" [attr.filter]="'url('+'#'+FILTER_IDS[i.texture]+')'">
                     <path [attr.d]="i.commandSvg" [attr.stroke]="i.strokeColor.asString()" fill="none"
-                        [attr.stroke-width]="i.strokeWidth" stroke-linejoin="round" stroke-linecap="round">
+                        [attr.stroke-width]="i.strokeWidth" [attr.transform]="i.rotationTransformation"
+                        stroke-linejoin="round" stroke-linecap="round">
                     </path>
                 </g>
             </g>

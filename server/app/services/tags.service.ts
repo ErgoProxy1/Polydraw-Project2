@@ -1,25 +1,25 @@
+import * as fs from 'fs';
 import { injectable } from 'inversify';
 import 'reflect-metadata';
 import { TagsInfo } from '../../../common/communication/tags';
 
 @injectable()
 export class TagsService {
-  // tslint:disable-next-line: no-require-imports
-  private fs = require('fs');
-  readonly path = './data/tags.json';
+  readonly PATH = './data/tags.json';
   tags: TagsInfo[];
 
   constructor() {
-    if (!this.fs.existsSync(this.path)) {
+    if (!fs.existsSync(this.PATH)) {
       // Le fichier doit être créé
       this.tags = [];
-      this.fs.closeSync(this.fs.openSync(this.path, 'w'));
-      // tslint:disable-next-line: no-empty
-      this.fs.writeFile(this.path, '[]', () => { });
+      fs.closeSync(fs.openSync(this.PATH, 'w'));
+      fs.writeFile(this.PATH, '[]', () => {
+        //
+       });
     } else {
       // Le fichier existe
-      const file = this.fs.readFileSync(this.path);
-      this.tags = JSON.parse(file);
+      const file = fs.readFileSync(this.PATH);
+      this.tags = JSON.parse(file.toString());
     }
   }
 
@@ -38,7 +38,7 @@ export class TagsService {
     if (tagIn.id === -1) {
       tagIn.id = this.tags.length;
       this.tags.push(tagIn);
-      this.fs.writeFileSync(this.path, JSON.stringify(this.tags));
+      fs.writeFileSync(this.PATH, JSON.stringify(this.tags));
     }
     return tagIn;
   }

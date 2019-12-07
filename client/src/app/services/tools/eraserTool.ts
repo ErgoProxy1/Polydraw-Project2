@@ -11,7 +11,7 @@ import { Point } from '../utils/point';
 import { Tool } from './tool';
 
 export class EraserTool extends Tool {
-  type = ToolType.Eraser;
+  TYPE = ToolType.Eraser;
   eraserIcone: Rectangle;
   private command: EraserCommand;
   private commandSubject: Subject<EraserCommand> = new Subject<EraserCommand>();
@@ -32,6 +32,7 @@ export class EraserTool extends Tool {
     this.eraserSize = MIN_ERASER_SIZE;
     this.eraserIcone = new Rectangle(ERASER_FILL_COLOR, ERASER_STROKE_COLOR, 2, StrokeType.FullWithOutline,
       new Point(0 + this.eraserSize / 2.0, 0 + this.eraserSize / 2.0), this.eraserSize, this.eraserSize);
+    this.eraserIcone.SELECTABLE = false;
     this.isPressed = false;
     this.perimeter = new Rectangle(Color.WHITE, HIGHLIGH_COLOR, 2, StrokeType.Outline, new Point(0, 0));
     this.perimeter.strokeColor = Color.copyColor(HIGHLIGH_COLOR);

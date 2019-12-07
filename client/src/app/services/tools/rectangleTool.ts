@@ -6,7 +6,7 @@ import { Point } from '../utils/point';
 import { ShapeTool } from './shapeTool';
 
 export class RectangleTool extends ShapeTool {
-  type = ToolType.RectangleTool;
+  TYPE = ToolType.RectangleTool;
 
   constructor(fillColor: Color, strokeColor: Color) {
     super(fillColor, strokeColor);

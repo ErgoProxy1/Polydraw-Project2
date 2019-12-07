@@ -4,7 +4,8 @@ import { DEFAULT_STROKE_WIDTH, PrimitiveType, StrokeType } from '../../utils/con
 import { Point } from '../../utils/point';
 import { Polygon } from './polygon';
 
-describe('PolygonTest', () => {
+// tslint:disable: no-string-literal
+describe('Polygon', () => {
   const origin: Point = new Point(0, 0);
   let polygon: Polygon;
   const corner1: Point = new Point(100, 100);
@@ -12,7 +13,7 @@ describe('PolygonTest', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    polygon = new Polygon(Color.WHITE, Color.BLACK, DEFAULT_STROKE_WIDTH, StrokeType.FullWithOutline, origin, 50, 4);
+    polygon = new Polygon(Color.WHITE, Color.BLACK, DEFAULT_STROKE_WIDTH, StrokeType.FullWithOutline, origin, 5, 40);
   });
 
   it('should be created', () => {
@@ -22,19 +23,19 @@ describe('PolygonTest', () => {
     expect(polygon.strokeWidth).toEqual(DEFAULT_STROKE_WIDTH);
     expect(polygon.strokeType).toEqual(StrokeType.FullWithOutline);
     expect(polygon.center).toEqual(origin);
-    expect(polygon.radius).toEqual(4);
-    expect(polygon.sidesNumber).toEqual(50);
+    expect(polygon.sidesNumber).toEqual(5);
+    expect(polygon.radius).toEqual(40);
     expect(polygon.type).toEqual(PrimitiveType.Polygon);
   });
 
   it('should return the correct absolute width and height', () => {
-    expect(polygon.getAbsoluteHeight()).toEqual(8);
-    expect(polygon.getAbsoluteWidth()).toEqual(8);
+    expect(polygon.getAbsoluteHeight()).toEqual(80);
+    expect(polygon.getAbsoluteWidth()).toEqual(80);
   });
 
   it('should return the right number of coordinates for the polygon', () => {
     polygon.resize(corner1, corner2, true);
-    expect(polygon.points.length).toEqual(51);
+    expect(polygon.points.length).toEqual(6);
   });
 
   it('should return a good form of string', () => {
@@ -67,4 +68,12 @@ describe('PolygonTest', () => {
     expect(newPolygon).toEqual(polygon);
   });
 
+  it('#move should correctly change the position of the polygon', () => {
+    const translation: Point = new Point(100, 100);
+    const newPolygon: Polygon = new Polygon(Color.WHITE, Color.BLACK, DEFAULT_STROKE_WIDTH, StrokeType.FullWithOutline, translation, 5, 40);
+    polygon.move(translation);
+    newPolygon['topLeftCorner'] = translation;
+    newPolygon['bottomRightCorner'] = translation;
+    expect(newPolygon).toEqual(polygon);
+  });
 });

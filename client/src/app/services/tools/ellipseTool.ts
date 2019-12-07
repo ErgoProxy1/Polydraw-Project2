@@ -1,4 +1,4 @@
-import { Ellipse } from '../svgPrimitives/ellipse/ellispe';
+import { Ellipse } from '../svgPrimitives/ellipse/ellipse';
 import { ShapeToolCommand } from '../toolCommands/shapeToolCommand';
 import { Color } from '../utils/color';
 import { KeyboardEventType, ToolType } from '../utils/constantsAndEnums';
@@ -6,7 +6,7 @@ import { Point } from '../utils/point';
 import { ShapeTool } from './shapeTool';
 
 export class EllipseTool extends ShapeTool {
-  type = ToolType.EllipseTool;
+  TYPE = ToolType.EllipseTool;
 
   constructor(fillColor: Color, strokeColor: Color) {
     super(fillColor, strokeColor);

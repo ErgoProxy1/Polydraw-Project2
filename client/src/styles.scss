@@ -5,6 +5,9 @@ body{
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
 }
 
 .clickable{
@@ -51,14 +54,24 @@ p, button, input, label {
   color:black;
 }
 
-.successMessage{
+.popupMessage{
   position: absolute;
   top: 5px;
   left: 50%;
   -webkit-transform: translateX(-50%);
   transform: translateX(-50%);
+  // Valeur 1051 pour être au-dessus des fenêtres modales dont le z-index est 1050
+  z-index: 1051 !important;
 }
 
 .icon-color-disabled{
   color: rgb(83, 107, 109);
+}
+
+.custom-slider::-webkit-slider-thumb{
+  background-color: #DC3B16;
+}
+
+.custom-slider::-moz-range-thumb{
+  background-color: #DC3B16;
 }

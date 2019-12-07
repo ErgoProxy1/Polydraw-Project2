@@ -18,7 +18,7 @@ describe('ColorSelectionService', () => {
   });
   it('RGB numbers are properly converted to hex strings' , () => {
     const color: Color = new Color(1, 120, 78);
-    expect(service.convertRgbToHex(color)).toBe('#01784E');
+    expect(service.convertRgbToHex(color, true)).toBe('#01784E');
   });
   it('Hex Strings are properly converted to rgb numbers', () => {
     const hexValue = 'AA45BB';

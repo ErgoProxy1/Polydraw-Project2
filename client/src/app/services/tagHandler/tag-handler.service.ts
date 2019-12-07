@@ -60,9 +60,9 @@ export class TagHandlerService {
       msg = 'Étiquettes: ';
       tags.forEach((tag) => {
         if (this.isTagPresent(tag.tagName, tagsToMark)) {
-          msg += '<mark><b>' + tag.tagName + '</b></mark>, ';
+          msg += `<mark><b>${tag.tagName}</b></mark>, `;
         } else {
-          msg += tag.tagName + ', ';
+          msg += `${tag.tagName}, `;
         }
       });
       // enlevons la dernière virgule

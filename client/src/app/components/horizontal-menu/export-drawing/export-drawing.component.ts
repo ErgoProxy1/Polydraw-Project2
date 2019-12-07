@@ -2,7 +2,7 @@ import { Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 import { Subscription } from 'rxjs';
-import { ControllerService } from 'src/app/services/controller/controller.service';
+import { CanvasControllerService } from 'src/app/services/canvasController/canvas-controller.service';
 import { KeyboardService } from 'src/app/services/keyboard/keyboard.service';
 import { DrawingCommunicationService } from 'src/app/services/serverCommunication/drawing-communication.service';
 import { CanvasToBMP } from 'src/app/services/utils/canvasToBMP';
@@ -21,6 +21,8 @@ export class ExportDrawingComponent implements OnDestroy {
   private subscription: Subscription;
   private canvasElement: HTMLCanvasElement; // Assigner au nativeElement du canvasSim
   exportError = false;
+  includeGrid = false;
+  allowTogglePress = true;
   exportInfo: ExportInfo = { name: '', typeOfExport: EXPORT_TYPES[0], dimensions: [0, 0], uri: '' };
   url = '';
 
@@ -38,7 +40,7 @@ export class ExportDrawingComponent implements OnDestroy {
   constructor(private modalService: NgbModal,
               private keyboardService: KeyboardService,
               private drawingCommunicationService: DrawingCommunicationService,
-              private controller: ControllerService,
+              private controller: CanvasControllerService,
               private sanitizer: DomSanitizer) {
     this.subscription = this.keyboardService.getKeyboardShortcutType().subscribe((keyboardShortcut: KeyboardShortcutType) => {
       if (keyboardShortcut === KeyboardShortcutType.ExportDrawing) {
@@ -106,12 +108,12 @@ export class ExportDrawingComponent implements OnDestroy {
   openModal(): boolean {
     this.exportError = false;
     this.exportInfo = {
-      name: 'drawing',
+      name: 'dessin',
       typeOfExport: this.EXPORT_TYPES[0],
       dimensions: [this.controller.canvasInfo.width, this.controller.canvasInfo.height],
       uri: '',
     };
-    this.drawingCommunicationService.sendSvgHtmlRequest();
+    this.drawingCommunicationService.sendSvgHtmlRequest(false);
     this.keyboardService.modalWindowActive = true;
     this.modalService.open(this.exportModal, this.exportModalConfig);
     return this.modalService.hasOpenModals();
@@ -119,6 +121,7 @@ export class ExportDrawingComponent implements OnDestroy {
 
   closeModal(): boolean {
     this.keyboardService.modalWindowActive = false;
+    this.includeGrid = false;
     this.modalService.dismissAll();
     return this.modalService.hasOpenModals();
   }
@@ -129,6 +132,11 @@ export class ExportDrawingComponent implements OnDestroy {
         this.exportInfo.typeOfExport = type;
       }
     }
+  }
+
+  // Quand on change le toggle de montrer la grille
+  newSvgHtmlRequest() {
+    this.drawingCommunicationService.sendSvgHtmlRequest(this.includeGrid);
   }
 
   ngOnDestroy(): void {

@@ -1,16 +1,16 @@
 <div class="row">
   <div class="col-md-12">
-    <small for="rangeEpaisseur">Size : {{strokeWidth}} px</small>
-    <input id="strokewidthinput" type="range" class="custom-range" [(ngModel)]="strokeWidth" (change)="onChangeStrokeWidth()"
-      [min]="MIN_STROKE" [max]="MAX_STROKE" step="1">
+    <small for="rangeEpaisseur">Épaisseur : {{strokeWidth}} px</small>
+    <input id="strokewidthinput" type="range" class="custom-range custom-slider" [(ngModel)]="strokeWidth"
+      (change)="onChangeStrokeWidth()" [min]="MIN_STROKE" [max]="MAX_STROKE" step="1">
   </div>
 </div>
 <div class="row">
   <div class="col-md-12">
-    <small>Shape</small>
+    <small>Choix de la forme</small>
   </div>
   <div class="form-check col-md-12">
-    <select class="form-control form-control-sm" [(ngModel)]="toolType" (change)="onChangeShapeType()">
+    <select class="form-control form-control-sm clickable" [(ngModel)]="toolType" (change)="onChangeShapeType()">
       <option *ngFor="let shape of SHAPE_TYPE_NAMES_MAP | keyvalue" [ngValue]="shape.value">{{shape.key}}
       </option>
     </select>
@@ -19,22 +19,23 @@
 
 <div class="row">
   <div class="col-md-12">
-    <small>Style</small>
+    <small>Choix du style</small>
   </div>
   <div class="form-check col-md-12">
-    <select  class="form-control form-control-sm" [(ngModel)]="strokeType" (change)="onChangeStrokeType()">
+    <select class="form-control form-control-sm clickable" [(ngModel)]="strokeType" (change)="onChangeStrokeType()">
       <option *ngFor="let strokeType of STROKE_TYPE_NAMES_MAP | keyvalue" [ngValue]="strokeType.value">
         {{strokeType.key}}
       </option>
     </select>
   </div>
 </div>
-<div *ngIf="toolType === 7  " class="row">
+<div *ngIf="toolType === POLYGON_TYPE" class="row">
   <div class="col-md-12">
-    <small>Number of Sides</small>
+    <small>Nombre de côtés</small>
   </div>
   <div class="form-check col-md-12">
-    <select id="numberofsidesinput" class="form-control form-control-sm" [(ngModel)]="numberSidesPolygon" (change)="onChangeSidesNumber()">
+    <select id="numberofsidesinput" class="form-control form-control-sm clickable" [(ngModel)]="numberSidesPolygon"
+      (change)="onChangeSidesNumber()">
       <option *ngFor="let name of POLYGONS | keyvalue" [ngValue]="name.key">
         {{name.value}}
       </option>

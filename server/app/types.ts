@@ -5,4 +5,8 @@ export default {
     DrawingController: Symbol('DrawingController'),
     TagsService: Symbol('TagsService'),
     TagsController: Symbol('TagsController'),
+    MongoService: Symbol('MongoService'),
+    MongoController: Symbol('MongoController'),
+    FirebaseService: Symbol('FirebaseService'),
+    FirebaseController: Symbol('FirebaseController'),
 };

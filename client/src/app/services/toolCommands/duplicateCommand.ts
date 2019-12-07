@@ -13,11 +13,12 @@ export class DuplicateCommand implements ToolCommand {
     this.clipboardService.incrementDuplicateOffset(this.primitiveSelected);
     this.primitiveSelected.forEach((primitive) => {
       const newPrimitive: SVGPrimitive = primitive.copy();
-      newPrimitive.move(primitive.getTranslation().addPoint(this.clipboardService.getDuplicateOffset()));
+      newPrimitive.move(this.clipboardService.getDuplicateOffset());
       primitives.push(newPrimitive);
       this.svgMap.set(primitives.length - 1, newPrimitive);
     });
   }
+
   cancel(primitives: SVGPrimitive[]): void {
     this.clipboardService.decrementDuplicateOffset();
     let i = 0;

@@ -1,4 +1,4 @@
-import { Ellipse } from '../svgPrimitives/ellipse/ellispe';
+import { Ellipse } from '../svgPrimitives/ellipse/ellipse';
 import { Line } from '../svgPrimitives/line/line';
 import { Path } from '../svgPrimitives/path/path';
 import { Polygon } from '../svgPrimitives/polygon/polygon';
@@ -8,7 +8,7 @@ import { TextPrimitive } from '../svgPrimitives/text/textPrimitive';
 import { Color } from '../utils/color';
 import { ALIGNS, FONTS, LineCap, LineJoin, Pattern, PrimitiveType, StrokeType } from '../utils/constantsAndEnums';
 import { Point } from '../utils/point';
-import { DefaultStamps } from '../utils/stampData';
+import { DEFAULT_STAMPS } from '../utils/stampData';
 import { CollisionDetectionService } from './collision-detection.service';
 
 // tslint:disable: no-string-literal
@@ -248,7 +248,7 @@ describe('CollisionDetectionService', () => {
 
   // Collision rectangle with Stamp
     it('Rectangles and stamp shouldn\'t collide' , () => {
-    const dummyStamp: Stamp = new Stamp(2, 2, new Point(0, 0), DefaultStamps[1]);
+    const dummyStamp: Stamp = new Stamp(2, 2, new Point(0, 0), DEFAULT_STAMPS[1]);
     dummyStamp['topLeftCorner'] = new Point(5, 5);
     dummyStamp['bottomRightCorner'] = new Point(25, 15);
     const rectangle: Rectangle = new Rectangle(new Color(0, 0, 0), new Color(0, 0, 0), 3, StrokeType.FullWithOutline, new Point(0, 0));
@@ -266,7 +266,7 @@ describe('CollisionDetectionService', () => {
 
   // Collision rectangle with Stamp
     it('Rectangles and stamp should collide' , () => {
-    const dummyStamp: Stamp = new Stamp(2, 2, new Point(0, 0), DefaultStamps[1]);
+    const dummyStamp: Stamp = new Stamp(2, 2, new Point(0, 0), DEFAULT_STAMPS[1]);
     dummyStamp['topLeftCorner'] = new Point(5, 5);
     dummyStamp['bottomRightCorner'] = new Point(25, 15);
     const rectangle: Rectangle = new Rectangle(new Color(0, 0, 0), new Color(0, 0, 0), 3, StrokeType.FullWithOutline, new Point(0, 0));
@@ -684,7 +684,7 @@ describe('CollisionDetectionService', () => {
     expect(service['checkCollision'](eraser, dummyEllipse)).toBe(true);
 
     // Stamp
-    const dummyStamp: Stamp = new Stamp(2, 2, new Point(0, 0), DefaultStamps[1]);
+    const dummyStamp: Stamp = new Stamp(2, 2, new Point(0, 0), DEFAULT_STAMPS[1]);
     dummyStamp['topLeftCorner'] = new Point(5, 5);
     dummyStamp['bottomRightCorner'] = new Point(25, 15);
     eraser.setCenter(new Point(8, 8));

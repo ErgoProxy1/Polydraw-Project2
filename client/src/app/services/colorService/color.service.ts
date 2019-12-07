@@ -5,27 +5,27 @@ import { Color, MAX_ALPHA, MAX_RGB } from '../utils/color';
   providedIn: 'root',
 })
 export class ColorService {
-  previousColors: Color[] = [new Color(255, 0, 0, 1), new Color(0, 255, 0, 1),
-  new Color(0, 0, 255, 1), new Color(204, 0, 255, 1), new Color(1, 255, 255, 1)];
+  previousColors: Color[] = [new Color(0, 0, 0, 1), new Color(255, 255, 255, 1),
+  new Color(255, 0, 0, 1), new Color(0, 255, 0, 1), new Color(0, 0, 255, 1)];
 
   // Convertie les couleurs RGB en Hex
-  convertRgbToHex(color: Color): string {
+  convertRgbToHex(color: Color, withHashtag: boolean): string {
     const hexes: string[] = [Number(color.r).toString(16).toUpperCase(),
     Number(color.g).toString(16).toUpperCase(),
     Number(color.b).toString(16).toUpperCase()];
     for (let i = 0; i < 3; i++) {
       if (hexes[i].length < 2) {
-        hexes[i] = '0' + hexes[i];
+        hexes[i] = `0${hexes[i]}`;
       }
     }
-    return  `#${hexes.join('')}`;
+    return withHashtag ? `#${hexes.join('')}` : `${hexes.join('')}`;
   }
 
   // Convertie les couleurs Hex en RGB
   convertHextoRgb(currentHex: string): Color {
-    return new Color (parseInt(currentHex.slice(0, 2), 16),
-                      parseInt(currentHex.slice(2, 4), 16),
-                      parseInt(currentHex.slice(4, 6), 16));
+    return new Color(parseInt(currentHex.slice(0, 2), 16),
+      parseInt(currentHex.slice(2, 4), 16),
+      parseInt(currentHex.slice(4, 6), 16));
   }
 
   // Corrige les inputs de l'utilisateur invalides dans le champ du Hex
@@ -37,8 +37,8 @@ export class ColorService {
   // S'assure que les valeurs RGB entree sont valides
   isColorValid(color: Color): boolean {
     return (color.r <= MAX_RGB && color.r >= 0 &&
-            color.g <= MAX_RGB && color.g >= 0 &&
-            color.b <= MAX_RGB && color.b >= 0);
+      color.g <= MAX_RGB && color.g >= 0 &&
+      color.b <= MAX_RGB && color.b >= 0);
   }
 
   // Ajoute le # aux valeurs Hex afin de pouvoir les passer au html
@@ -57,7 +57,7 @@ export class ColorService {
       if (info.isEquivalent(colorSelected)) {
         const index: number = this.previousColors.indexOf(info);
         this.previousColors.splice(index, 1);
-        this.previousColors  = this.decalageTableauCouleur(this.previousColors, info);
+        this.previousColors = this.decalageTableauCouleur(this.previousColors, info);
         return;
       }
     }
@@ -68,7 +68,7 @@ export class ColorService {
   private decalageTableauCouleur(oldArray: Color[], lastColor: Color): Color[] {
     const tempColorStorage: Color[] = [];
     tempColorStorage[0] = new Color(lastColor.r, lastColor.g, lastColor.b, lastColor.a);
-    for (let i  = 0; i < this.previousColors.length; i++) {
+    for (let i = 0; i < this.previousColors.length; i++) {
       tempColorStorage[i + 1] = oldArray[i];
     }
     if (tempColorStorage.length > 10) {

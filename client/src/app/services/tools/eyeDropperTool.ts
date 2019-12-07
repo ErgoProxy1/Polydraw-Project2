@@ -1,10 +1,12 @@
 import { Observable, Subject } from 'rxjs';
-import { Ellipse } from '../svgPrimitives/ellipse/ellispe';
+import { Ellipse } from '../svgPrimitives/ellipse/ellipse';
 import { Line } from '../svgPrimitives/line/line';
 import { Path } from '../svgPrimitives/path/path';
 import { Polygon } from '../svgPrimitives/polygon/polygon';
+import { Quill } from '../svgPrimitives/quill/quill';
 import { Rectangle } from '../svgPrimitives/rectangle/rectangle';
 import { Shape } from '../svgPrimitives/shape/shape';
+import { Spraypaint } from '../svgPrimitives/spraypaint/spraypaint';
 import { Stamp } from '../svgPrimitives/stamp/stamp';
 import { SVGPrimitive } from '../svgPrimitives/svgPrimitive';
 import { TextPrimitive } from '../svgPrimitives/text/textPrimitive';
@@ -15,7 +17,7 @@ import { Point } from '../utils/point';
 import { Tool } from './tool';
 
 export class EyeDropperTool extends Tool {
-  type = ToolType.EyeDropper;
+  TYPE = ToolType.EyeDropper;
 
   eyeDropperPrimaryObservable: Observable<Color>;
   private eyeDropperPrimarySubject = new Subject<Color>();
@@ -57,6 +59,10 @@ export class EyeDropperTool extends Tool {
       return (primitive as Line).strokeColor;
     } else if (primitive.type === PrimitiveType.Text) {
       return (primitive as TextPrimitive).textColor;
+    } else if (primitive.type === PrimitiveType.Quill) {
+      return (primitive as Quill).strokeColor;
+    } else if (primitive.type === PrimitiveType.Spraypaint) {
+      return (primitive as Spraypaint).strokeColor;
     } else if (primitive.type === PrimitiveType.Pencil || primitive.type === PrimitiveType.Paint || primitive.type === PrimitiveType.Pen) {
       return (primitive as Path).strokeColor;
     } else {

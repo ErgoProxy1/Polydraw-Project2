@@ -1,0 +1,14 @@
+<div class="row">
+    <div class="col-md-12">
+      <small for="rangeEpaisseur">Étendue : {{range}} px</small>
+      <input id="sprayStretchInput" type="range" class="custom-range custom-slider" [(ngModel)]="range"
+        (change)="onChangeRange()" [min]="MIN_RANGE" [max]="MAX_RANGE" step="1">
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <small>Débit:  {{paintDelay}} jets/s</small>
+        <input id="sprayPaintFlowInput" type="range" class="custom-range custom-slider" [(ngModel)]="paintDelay"
+        (change)="onChangePaintDelay()" [min]="MIN_PAINTDELAY" [max]="MAX_PAINTDELAY" step="1">
+    </div>
+</div>

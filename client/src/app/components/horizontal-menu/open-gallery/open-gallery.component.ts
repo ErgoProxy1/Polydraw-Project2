@@ -2,14 +2,15 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
 import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
 import { merge, Observable, Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
-import { ControllerService } from 'src/app/services/controller/controller.service';
+import { CanvasControllerService } from 'src/app/services/canvasController/canvas-controller.service';
 import { DrawingHandlerService } from 'src/app/services/drawingHandler/drawing-handler.service';
 import { KeyboardService } from 'src/app/services/keyboard/keyboard.service';
+import { MessageHandlerService } from 'src/app/services/messageHandler/message-handler.service';
 import { PrimitiveFactoryService } from 'src/app/services/primitivesFactory/primitive-factory.service';
 import { SVGPrimitive } from 'src/app/services/svgPrimitives/svgPrimitive';
 import { TagHandlerService } from 'src/app/services/tagHandler/tag-handler.service';
 import { Color } from 'src/app/services/utils/color';
-import { KeyboardEventType, KeyboardShortcutType } from 'src/app/services/utils/constantsAndEnums';
+import { KeyboardEventType, KeyboardShortcutType, MessageType } from 'src/app/services/utils/constantsAndEnums';
 import { NewDrawingInfo } from 'src/app/services/utils/newDrawingInfo';
 import { DrawingInfo } from '../../../../../../common/communication/drawingInfo';
 import { TagsInfo } from '../../../../../../common/communication/tags';
@@ -35,11 +36,6 @@ export class OpenGalleryComponent {
   keyAdded = '';
   tagEntryActive = false;
 
-  successMessage = '';
-  errorMessage = '';
-  isSuccess = false;
-  isError = false;
-
   @ViewChild('galleryModal', { static: true }) galleryModal: ElementRef;
 
   galleryModalConfig: NgbModalOptions = {
@@ -51,10 +47,11 @@ export class OpenGalleryComponent {
 
   constructor(private keyboardService: KeyboardService,
               private modalService: NgbModal,
-              private controllerService: ControllerService,
+              private controllerService: CanvasControllerService,
               private drawingHandler: DrawingHandlerService,
               private tagHandlerService: TagHandlerService,
-              private primitiveFactory: PrimitiveFactoryService) {
+              private primitiveFactory: PrimitiveFactoryService,
+              private messageHandlerService: MessageHandlerService) {
     this.keyboardServiceSubscription = this.keyboardService.getKeyboardShortcutType().subscribe(
       (keyboardShortcut: KeyboardShortcutType) => {
         if (keyboardShortcut === KeyboardShortcutType.OpenGallery) {
@@ -93,26 +90,23 @@ export class OpenGalleryComponent {
   loadDrawingsAndTags(): void {
     this.drawingHandler.loadDrawings().then((success) => {
       if (!success) {
-        this.errorMessage = 'Error while fetching drawing list.';
-        this.showMessage(true);
+        this.messageHandlerService.showMessage('Erreur dans la tentative de récupération des dessins.', MessageType.Danger, 5000);
       }
       this.filterDrawings();
       this.loading = false;
     }).catch((error) => {
-      this.errorMessage = `Server Communication Error: ${error}`;
-      this.showMessage(true);
+      this.messageHandlerService.showMessage(`Erreur de communication avec le server (loadDrawing) ERREUR: ${error}`,
+                                              MessageType.Danger, 5000);
       this.loading = false;
     });
-
     this.tagHandlerService.loadTags().then((success) => {
       if (!success) {
-        this.errorMessage = 'Error while fetching tags list.';
-        this.showMessage(true);
+        this.messageHandlerService.showMessage('Erreur dans la tentative de récupération des tags.', MessageType.Danger, 5000);
       }
       this.loading = false;
     }).catch((error) => {
-      this.errorMessage = `Server Communication Error:: ${error}`;
-      this.showMessage(true);
+      this.messageHandlerService.showMessage(`Erreur de communication avec le server (loadTags) ERREUR: ${error}`,
+                                              MessageType.Danger, 5000);
       this.loading = false;
     });
   }
@@ -128,7 +122,7 @@ export class OpenGalleryComponent {
           const unparsedDrawing: DrawingInfo = JSON.parse(unparsedFile);
           this.selectDrawing(unparsedDrawing);
         } catch (e) {
-          if (!confirm('Invalid file type, please select another file.')) {
+          if (!confirm('Fichier non valide. Veuillez réessayer.')) {
             this.setErrorInvalidFile();
             return;
           }
@@ -136,14 +130,14 @@ export class OpenGalleryComponent {
         }
       };
       fileLoader.onerror = (error) => {
-        if (!confirm('Invalid file type, please select another file.')) {
+        if (!confirm('Fichier non valide. Veuillez réessayer.')) {
           this.setErrorInvalidFile();
           return;
         }
         this.loading = false;
       };
     } else {
-      if (!confirm('Invalid file type, please select another file.')) {
+      if (!confirm('Fichier non valide. Veuillez réessayer.')) {
         this.setErrorInvalidFile();
         return;
       }
@@ -151,22 +145,32 @@ export class OpenGalleryComponent {
   }
 
   private setErrorInvalidFile(): void {
-    this.errorMessage = 'Invalid file type, please select another file.';
-    this.showMessage(true);
+    this.messageHandlerService.showMessage('Erreur de fichier non valide, veuillez réessayer',
+                                              MessageType.Danger, 5000);
   }
 
-  // TODO
-  // deleteDrawing(drawing: DrawingInfo) {
-  //   if (!confirm('Cette action supprimera le dessin de la galerie!')) {
-  //     return;
-  //   }
-  //   this.drawingCommunicationService.deleteDrawing(drawing);
-  // }
+  deleteDrawing(drawing: DrawingInfo) {
+    if (!confirm('Cette action supprimera le dessin de la galerie!')) {
+      return;
+    }
+    this.loading = true;
+    this.drawingHandler.deleteDrawing(drawing).then((success) => {
+      this.messageHandlerService.showMessage('Dessin supprimé avec succès!',
+                                                MessageType.Success, 5000);
+      this.loading = false;
+      this.drawingsToShow = [];
+      this.loadDrawingsAndTags();
+    }).catch((error) => {
+      this.messageHandlerService.showMessage(`Erreur durant la suppression ERREUR: ${error}`,
+                                                MessageType.Danger, 5000);
+      this.loading = false;
+    });
+  }
 
   selectDrawing(drawing: DrawingInfo): void {
     if (drawing) {
       if (!this.controllerService.isEmptyPrimitives()) {
-        if (!confirm('This action will permenantly delete your drawing!')) {
+        if (!confirm('Cette action supprimera votre dessin actuel!')) {
           this.setErrorInvalidFile();
           return;
         }
@@ -177,12 +181,12 @@ export class OpenGalleryComponent {
       const primitives: SVGPrimitive[] = this.primitiveFactory.generatePrimitives(drawing.primitives);
       this.controllerService.setPrimitives(primitives);
       this.closeModal();
-      this.successMessage = 'Loading Successful';
-      this.showMessage(false);
+      this.messageHandlerService.showMessage('Ouverture réussie',
+                                                MessageType.Success, 5000);
     } else {
-      if (!confirm('No reponse from loader. Please try again')) {
-        this.errorMessage = 'No reponse from loader. Please try again';
-        this.showMessage(true);
+      if (!confirm('L\'ouverture n\'a pas fonctionné. Veuillez réessayer.')) {
+        this.messageHandlerService.showMessage('L\'ouverture n\'a pas fonctionné. Veuillez réessayer.',
+                                                  MessageType.Danger, 5000);
         return;
       }
     }
@@ -201,8 +205,8 @@ export class OpenGalleryComponent {
       }
       this.currentTagInput = '';
     } else {
-      this.errorMessage = 'Tag is too long (Max: 30 characters).';
-      this.showMessage(true);
+      this.messageHandlerService.showMessage('Étiquette trop longue (maximum 30 caractères), veuillez réviser.',
+                                                MessageType.Success, 5000);
     }
   }
 
@@ -235,16 +239,5 @@ export class OpenGalleryComponent {
     this.keyboardService.modalWindowActive = false;
     this.modalService.dismissAll();
     return this.modalService.hasOpenModals();
-  }
-
-  showMessage(error: boolean) {
-    if (error) {
-      this.isError = true;
-      setTimeout(() => this.isError = false, 5000);
-
-    } else {
-      this.isSuccess = true;
-      setTimeout(() => this.isSuccess = false, 5000);
-    }
   }
 }

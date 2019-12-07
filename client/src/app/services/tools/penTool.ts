@@ -8,7 +8,7 @@ import { Point } from '../utils/point';
 import { DrawingTool } from './drawingTool';
 
 export class PenTool extends DrawingTool {
-  type = ToolType.Pen;
+  TYPE = ToolType.Pen;
   minStrokeWidth: number;
 
   initialPosition: Point = new Point(0, 0);
@@ -50,7 +50,6 @@ export class PenTool extends DrawingTool {
 
   protected begin(position: Point): void {
     this.command = new DrawingToolCommand(this.strokeColor, this.strokeWidth, PrimitiveType.Pen);
-    this.command.path.points.push(position);
     this.isCreatingPath = true;
   }
 
@@ -64,7 +63,7 @@ export class PenTool extends DrawingTool {
       const cursorSpeed = Math.sqrt( Math.pow(position.x - this.initialPosition.x, 2) +
                           Math.pow(position.y - this.initialPosition.y, 2)) /
                           ( 1 + (Date.now() - this.startTime) / SECOND_TO_MILI_SECOND);
-      const newStrokeWidth = this.command.constantStrokeWidth * (1 - cursorSpeed / CURSOR_SPEED_FACTOR);
+      const newStrokeWidth = this.command.STROKE_WIDTH * (1 - cursorSpeed / CURSOR_SPEED_FACTOR);
       this.command.path.strokeWidth =  Math.max(this.minStrokeWidth,  newStrokeWidth );
       (this.command.path as Pen).addPath(position, this.command.path.strokeWidth);
     }

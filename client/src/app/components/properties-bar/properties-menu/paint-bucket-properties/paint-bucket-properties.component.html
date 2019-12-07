@@ -1,10 +1,39 @@
 <div class="row">
   <div class="col-md-12">
-    <small>Tool</small>
+    <small>Choix du styles</small>
   </div>
-  <div class="form-check col-md-12 ">
-    <select class="form-control form-control-sm">
-      <option value="1">Color Applicator</option>
+  <div class="col-md-12 ">
+    <select id="bucketTypeDropdown" class="form-control form-control-sm clickable" [(ngModel)]="paintBucketType"
+      (change)="onChangePaintBucketType()">
+      <option *ngFor="let type of PAINT_BUCKET_TYPE_MAP | keyvalue" [ngValue]="type.value">{{type.key}}</option>
     </select>
   </div>
 </div>
+<div *ngIf="isFill">
+  <div class="row mt-2">
+    <div class="col-md-12">
+      <select class="form-control form-control-sm clickable" [(ngModel)]="strokeType" (change)="onChangeStrokeType()">
+        <option *ngFor="let strokeType of STROKE_TYPE_NAMES_MAP | keyvalue" [ngValue]="strokeType.value">
+          {{strokeType.key}}
+        </option>
+      </select>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <small for="rangeEpaisseur">Épaisseur du trait: {{strokeWidth}} px</small>
+      <input id="strokewidthRange" type="range" class="custom-range custom-slider" [(ngModel)]="strokeWidth"
+        (change)="onChangeStrokeWidth()" [min]="_MIN_STROKE_WIDTH" [max]="_MAX_STROKE_WIDTH" step="1">
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <small for="rangeEpaisseur">Tolérance : {{tolerance}} %</small>
+      <input id="toleranceRange" type="range" class="custom-range custom-slider" [(ngModel)]="tolerance"
+        (change)="onChangeTolerance()" [min]="_MIN_PAINT_BUCKET_TOLERANCE" [max]="_MAX_PAINT_BUCKET_TOLERANCE" step="1">
+    </div>
+  </div>
+</div>
+
+
+<canvas #canvasSim class="canvasSim" [attr.width]="canvasWidth" [attr.height]="canvasHeight"></canvas>

@@ -1,6 +1,9 @@
 import { Line } from '../svgPrimitives/line/line';
+import { FillingPath } from '../svgPrimitives/path/fillPath/fillPath';
 import { Path } from '../svgPrimitives/path/path';
+import { Quill } from '../svgPrimitives/quill/quill';
 import { Shape } from '../svgPrimitives/shape/shape';
+import { Spraypaint } from '../svgPrimitives/spraypaint/spraypaint';
 import { SVGPrimitive } from '../svgPrimitives/svgPrimitive';
 import { TextPrimitive } from '../svgPrimitives/text/textPrimitive';
 import { Color } from '../utils/color';
@@ -33,6 +36,16 @@ export class ColorApplicatorToolCommand implements ToolCommand {
                     shape.strokeColor = Color.copyColor(color);
                 }
                 break;
+            case PrimitiveType.Fill:
+                const fill: FillingPath = (this.primitive as FillingPath);
+                if (this.isPrimary && fill.strokeType !== StrokeType.Outline) {
+                    this.lastColor = fill.fillColor;
+                    fill.fillColor = color;
+                } else if (!this.isPrimary && fill.strokeType !== StrokeType.Full) {
+                    this.lastColor = fill.strokeColor;
+                    fill.strokeColor = color;
+                }
+                break;
             case PrimitiveType.Polygon:
                 const polygon: Shape = (this.primitive as Shape);
                 if (this.isPrimary && polygon.strokeType !== StrokeType.Outline) {
@@ -48,6 +61,13 @@ export class ColorApplicatorToolCommand implements ToolCommand {
                 if (this.isPrimary) {
                     this.lastColor = Color.copyColor(path.strokeColor);
                     path.strokeColor = Color.copyColor(color);
+                }
+                break;
+            case PrimitiveType.Spraypaint:
+                const sprapaint: Spraypaint = (this.primitive as Spraypaint);
+                if (this.isPrimary) {
+                    this.lastColor = Color.copyColor(sprapaint.strokeColor);
+                    sprapaint.strokeColor = Color.copyColor(color);
                 }
                 break;
             case PrimitiveType.Pencil:
@@ -69,6 +89,13 @@ export class ColorApplicatorToolCommand implements ToolCommand {
                 if (this.isPrimary) {
                     this.lastColor = Color.copyColor(pen.strokeColor);
                     pen.strokeColor = Color.copyColor(color);
+                }
+                break;
+            case PrimitiveType.Quill:
+                const quill: Quill = (this.primitive as Quill);
+                if (this.isPrimary) {
+                    this.lastColor = Color.copyColor(quill.strokeColor);
+                    quill.strokeColor = Color.copyColor(color);
                 }
                 break;
             case PrimitiveType.Text:

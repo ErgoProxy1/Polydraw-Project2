@@ -178,11 +178,4 @@ describe('SaveDrawingComponent', () => {
     expect(component.drawingInfo.tags.length).toEqual(2);
     expect(component.drawingInfo.tags).toContain(tag1);
   });
-
-  it('should set variables correctly when calling showMessage', () => {
-    component.showMessage(false);
-    expect(component.isError).toBe(false);
-    component.showMessage(true);
-    expect(component.isError).toBe(true);
-  });
 });

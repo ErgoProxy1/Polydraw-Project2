@@ -1,5 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
+import { HttpClientModule } from '@angular/common/http';
 import { UndoComponent } from './undo.component';
 
 describe('UndoComponent', () => {
@@ -9,6 +10,7 @@ describe('UndoComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ UndoComponent ],
+      imports: [HttpClientModule],
     })
     .compileComponents();
   }));

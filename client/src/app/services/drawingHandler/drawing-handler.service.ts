@@ -33,11 +33,7 @@ export class DrawingHandlerService {
   async exportToServer(drawing: DrawingInfo): Promise<boolean> {
     return new Promise((resolve, reject) => {
       this.drawingCommunicationService.saveDrawing(drawing).subscribe((success) => {
-        if (success) {
-          resolve(true);
-        } else {
-          resolve(false);
-        }
+        resolve(success);
       }, () => {
         reject('Erreur de communication avec le server');
       });
@@ -54,20 +50,15 @@ export class DrawingHandlerService {
     a.click();
   }
 
-  // TODO SPRINT 4
-  // async deleteDrawing(drawing: DrawingInfo): Promise<boolean> {
-  //   return new Promise((resolve, reject) => {
-  //     this.drawingCommunicationService.deleteDrawing(drawing).subscribe((success: boolean) => {
-  //       if (success) {
-  //         resolve(true);
-  //       } else {
-  //         resolve(false);
-  //       }
-  //     }, () => {
-  //       reject('Erreur de communication avec le server');
-  //     });
-  //   });
-  // }
+  async deleteDrawing(drawing: DrawingInfo): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      this.drawingCommunicationService.deleteDrawing(drawing).subscribe((success: boolean) => {
+        resolve(success);
+      }, () => {
+        reject('Erreur de communication avec le server');
+      });
+    });
+  }
 
   filterDrawingsByTags(tags: TagsInfo[]): DrawingInfo[] {
     let drawingsToShow: DrawingInfo[] = [];

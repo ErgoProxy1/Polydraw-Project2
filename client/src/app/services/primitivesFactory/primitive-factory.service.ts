@@ -1,10 +1,12 @@
 import { Injectable } from '@angular/core';
-import { Ellipse } from '../svgPrimitives/ellipse/ellispe';
+import { Ellipse } from '../svgPrimitives/ellipse/ellipse';
 import { Line } from '../svgPrimitives/line/line';
+import { FillingPath } from '../svgPrimitives/path/fillPath/fillPath';
 import { Path } from '../svgPrimitives/path/path';
 import { Pen } from '../svgPrimitives/pen/pen';
 import { Polygon } from '../svgPrimitives/polygon/polygon';
 import { Rectangle } from '../svgPrimitives/rectangle/rectangle';
+import { Spraypaint } from '../svgPrimitives/spraypaint/spraypaint';
 import { Stamp } from '../svgPrimitives/stamp/stamp';
 import { SVGPrimitive } from '../svgPrimitives/svgPrimitive';
 import { TextPrimitive } from '../svgPrimitives/text/textPrimitive';
@@ -18,52 +20,55 @@ export class PrimitiveFactoryService {
     const primitives: SVGPrimitive[] = [];
     const tabTemp: SVGPrimitive[] = JSON.parse(primitivesToGenerate);
     tabTemp.forEach((prim: SVGPrimitive) => {
+      let primitive: SVGPrimitive | undefined;
       switch (prim.type) {
         case PrimitiveType.Ellipse: {
-          const ellipse: Ellipse = Ellipse.createCopy(prim);
-          primitives.push(ellipse);
+          primitive = Ellipse.createCopy(prim);
           break;
         }
         case PrimitiveType.Line: {
-          const line: Line = Line.createCopy(prim);
-          primitives.push(line);
+          primitive = Line.createCopy(prim);
           break;
         }
         case PrimitiveType.Pen: {
-          const pen: Pen = Pen.createCopy(prim);
-          primitives.push(pen);
+          primitive = Pen.createCopy(prim);
           break;
         }
         case PrimitiveType.Paint: {
-          const paint: Path = Path.createCopy(prim);
-          primitives.push(paint);
+          primitive = Path.createCopy(prim);
           break;
         }
         case PrimitiveType.Pencil: {
-          const path: Path = Path.createCopy(prim);
-          primitives.push(path);
+          primitive = Path.createCopy(prim);
+          break;
+        }
+        case PrimitiveType.Fill: {
+          primitive = FillingPath.createCopy(prim);
+          break;
+        }
+        case PrimitiveType.Spraypaint: {
+          primitive = Spraypaint.createCopy(prim);
           break;
         }
         case PrimitiveType.Rectangle: {
-          const rectangle: Rectangle = Rectangle.createCopy(prim);
-          primitives.push(rectangle);
+          primitive = Rectangle.createCopy(prim);
           break;
         }
         case PrimitiveType.Stamp: {
-          const stamp: Stamp = Stamp.createCopy(prim);
-          primitives.push(stamp);
+          primitive = Stamp.createCopy(prim);
           break;
         }
         case PrimitiveType.Polygon: {
-          const polygon: Polygon = Polygon.createCopy(prim);
-          primitives.push(polygon);
+          primitive = Polygon.createCopy(prim);
           break;
         }
         case PrimitiveType.Text: {
-          const text: TextPrimitive = TextPrimitive.createCopy(prim);
-          primitives.push(text);
+          primitive = TextPrimitive.createCopy(prim);
           break;
         }
+      }
+      if (primitive) {
+        primitives.push(primitive);
       }
     });
 

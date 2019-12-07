@@ -13,64 +13,44 @@ import { RoutingConstants } from 'src/app/services/utils/routingConstants';
 export class SideBarComponent {
   subscription: Subscription;
 
-  readonly _ROUTE_TO_PAINT_BRUSH = RoutingConstants.ROUTE_TO_PAINT_BRUSH;
-  readonly _ROUTE_TO_PENCIL = RoutingConstants.ROUTE_TO_PENCIL;
-  readonly _ROUTE_TO_PEN = RoutingConstants.ROUTE_TO_PEN;
-  readonly _ROUTE_TO_LINE = RoutingConstants.ROUTE_TO_LINE;
-  readonly _ROUTE_TO_SHAPE = RoutingConstants.ROUTE_TO_SHAPE;
-  readonly _ROUTE_TO_PAINT_BUCKET = RoutingConstants.ROUTE_TO_PAINT_BUCKET;
-  readonly _ROUTE_TO_SELECTION = RoutingConstants.ROUTE_TO_SELECTION;
-  readonly _ROUTE_TO_GRID = RoutingConstants.ROUTE_TO_GRID;
-  readonly _ROUTE_TO_ERASER = RoutingConstants.ROUTE_TO_ERASER;
-  readonly _ROUTE_TO_TEXT = RoutingConstants.ROUTE_TO_TEXT;
-  readonly _ROUTE_TO_EYEDROPPER = RoutingConstants.ROUTE_TO_EYEDROPPER;
-  readonly _ROUTE_TO_STAMP = RoutingConstants.ROUTE_TO_STAMP;
+  readonly _ROUTE_TO_PAINT_BRUSH: string = RoutingConstants.ROUTE_TO_PAINT_BRUSH;
+  readonly _ROUTE_TO_SPRAYPAINT: string = RoutingConstants.ROUTE_TO_SPRAYPAINT;
+  readonly _ROUTE_TO_PENCIL: string = RoutingConstants.ROUTE_TO_PENCIL;
+  readonly _ROUTE_TO_PEN: string = RoutingConstants.ROUTE_TO_PEN;
+  readonly _ROUTE_TO_LINE: string = RoutingConstants.ROUTE_TO_LINE;
+  readonly _ROUTE_TO_SHAPE: string = RoutingConstants.ROUTE_TO_SHAPE;
+  readonly _ROUTE_TO_PAINT_BUCKET: string = RoutingConstants.ROUTE_TO_PAINT_BUCKET;
+  readonly _ROUTE_TO_SELECTION: string = RoutingConstants.ROUTE_TO_SELECTION;
+  readonly _ROUTE_TO_GRID: string = RoutingConstants.ROUTE_TO_GRID;
+  readonly _ROUTE_TO_ERASER: string = RoutingConstants.ROUTE_TO_ERASER;
+  readonly _ROUTE_TO_TEXT: string = RoutingConstants.ROUTE_TO_TEXT;
+  readonly _ROUTE_TO_EYEDROPPER: string = RoutingConstants.ROUTE_TO_EYEDROPPER;
+  readonly _ROUTE_TO_STAMP: string = RoutingConstants.ROUTE_TO_STAMP;
+  readonly _ROUTE_TO_QUILL: string = RoutingConstants.ROUTE_TO_QUILL;
+
+  readonly ROUTEMAP: Map<KeyboardShortcutType, string> = new Map([
+    [KeyboardShortcutType.PaintBrush, this._ROUTE_TO_PAINT_BRUSH],
+    [KeyboardShortcutType.Line, this._ROUTE_TO_LINE],
+    [KeyboardShortcutType.Pencil, this._ROUTE_TO_PENCIL],
+    [KeyboardShortcutType.Pen, this._ROUTE_TO_PEN],
+    [KeyboardShortcutType.Quill, this._ROUTE_TO_QUILL],
+    [KeyboardShortcutType.SprayPaint, this._ROUTE_TO_SPRAYPAINT],
+    [KeyboardShortcutType.Rectangle, `${this._ROUTE_TO_SHAPE}/${RoutingConstants.RECTANGLE_SHAPE_TYPE}`],
+    [KeyboardShortcutType.Ellipse, `${this._ROUTE_TO_SHAPE}/${RoutingConstants.ELLIPSE_SHAPE_TYPE}`],
+    [KeyboardShortcutType.Polygon, `${this._ROUTE_TO_SHAPE}/${RoutingConstants.POLYGON_SHAPE_TYPE}`],
+    [KeyboardShortcutType.ColorApplicator, `${this._ROUTE_TO_PAINT_BUCKET}/${RoutingConstants.COLOR_APPLICATOR_TYPE}`],
+    [KeyboardShortcutType.PaintBucket, `${this._ROUTE_TO_PAINT_BUCKET}/${RoutingConstants.PAINT_BUCKET_FILL_TYPE}`],
+    [KeyboardShortcutType.Dropper, this._ROUTE_TO_EYEDROPPER],
+    [KeyboardShortcutType.Select, this._ROUTE_TO_SELECTION],
+    [KeyboardShortcutType.Eraser, this._ROUTE_TO_ERASER],
+    [KeyboardShortcutType.Text, this._ROUTE_TO_TEXT],
+  ]);
 
   constructor(private keyboardService: KeyboardService, private router: Router) {
     this.subscription = this.keyboardService.getKeyboardShortcutType().subscribe((keyboardShortcut: KeyboardShortcutType) => {
-      switch (keyboardShortcut) {
-        case KeyboardShortcutType.PaintBrush:
-          this.router.navigate([RoutingConstants.ROUTE_TO_PAINT_BRUSH]);
-          break;
-
-        case KeyboardShortcutType.Line:
-          this.router.navigate([RoutingConstants.ROUTE_TO_LINE]);
-          break;
-
-        case KeyboardShortcutType.Pencil:
-          this.router.navigate([RoutingConstants.ROUTE_TO_PENCIL]);
-          break;
-        case KeyboardShortcutType.Pen:
-            this.router.navigate([RoutingConstants.ROUTE_TO_PEN]);
-            break;
-
-        case KeyboardShortcutType.Rectangle:
-          this.router.navigate([RoutingConstants.ROUTE_TO_SHAPE, RoutingConstants.RECTANGLE_SHAPE_TYPE]);
-          break;
-
-        case KeyboardShortcutType.Ellipse:
-          this.router.navigate([RoutingConstants.ROUTE_TO_SHAPE, RoutingConstants.ELLIPSE_SHAPE_TYPE]);
-          break;
-
-        case KeyboardShortcutType.Polygon:
-          this.router.navigate([RoutingConstants.ROUTE_TO_SHAPE, RoutingConstants.POLYGON_SHAPE_TYPE]);
-          break;
-
-        case KeyboardShortcutType.ColorApplicator:
-          this.router.navigate([RoutingConstants.ROUTE_TO_PAINT_BUCKET]);
-          break;
-        case KeyboardShortcutType.Dropper:
-          this.router.navigate([RoutingConstants.ROUTE_TO_EYEDROPPER]);
-          break;
-        case KeyboardShortcutType.Select:
-          this.router.navigate([RoutingConstants.ROUTE_TO_SELECTION]);
-          break;
-        case KeyboardShortcutType.Eraser:
-          this.router.navigate([RoutingConstants.ROUTE_TO_ERASER]);
-          break;
-        case KeyboardShortcutType.Text:
-          this.router.navigate([RoutingConstants.ROUTE_TO_TEXT]);
-          break;
+      const url: string | undefined = this.ROUTEMAP.get(keyboardShortcut);
+      if (url) {
+        this.router.navigateByUrl(url);
       }
     });
   }

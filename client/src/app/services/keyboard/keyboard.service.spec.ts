@@ -19,18 +19,18 @@ describe('KeyboardService', () => {
 
   it('validateEntry should return the correct KeyboardShortcutType', () => {
     // Valeurs de string indéfinies
-    expect(keyboardService.validateShortcutEntry('oihaieruhge', keyboardService.shortcutMap)).toBe(KeyboardShortcutType.None);
-    expect(keyboardService.validateShortcutEntry('-1', keyboardService.shortcutMap)).toBe(KeyboardShortcutType.None);
-    expect(keyboardService.validateShortcutEntry('4', keyboardService.shortcutMap)).toBe(KeyboardShortcutType.None);
-    expect(keyboardService.validateShortcutEntry('aiuerhgiurehg', keyboardService.ctrlShortcutMap)).toBe(KeyboardShortcutType.None);
-    expect(keyboardService.validateShortcutEntry('4', keyboardService.ctrlShortcutMap)).toBe(KeyboardShortcutType.None);
-    expect(keyboardService.validateShortcutEntry('eriugheriuhg', keyboardService.ctrlShiftShortcutMap)).toBe(KeyboardShortcutType.None);
-    expect(keyboardService.validateShortcutEntry('4', keyboardService.ctrlShiftShortcutMap)).toBe(KeyboardShortcutType.None);
+    expect(keyboardService.validateShortcutEntry('oihaieruhge', keyboardService.SHORTCUT_MAP)).toBe(KeyboardShortcutType.None);
+    expect(keyboardService.validateShortcutEntry('-1', keyboardService.SHORTCUT_MAP)).toBe(KeyboardShortcutType.None);
+    expect(keyboardService.validateShortcutEntry('4', keyboardService.SHORTCUT_MAP)).toBe(KeyboardShortcutType.None);
+    expect(keyboardService.validateShortcutEntry('aiuerhgiurehg', keyboardService.CTRL_SHORTCUT_MAP)).toBe(KeyboardShortcutType.None);
+    expect(keyboardService.validateShortcutEntry('4', keyboardService.CTRL_SHORTCUT_MAP)).toBe(KeyboardShortcutType.None);
+    expect(keyboardService.validateShortcutEntry('eriugheriuhg', keyboardService.CTRL_SHIFT_SHORTCUT_MAP)).toBe(KeyboardShortcutType.None);
+    expect(keyboardService.validateShortcutEntry('4', keyboardService.CTRL_SHIFT_SHORTCUT_MAP)).toBe(KeyboardShortcutType.None);
     // Valeurs recevables
-    expect(keyboardService.validateShortcutEntry('c', keyboardService.shortcutMap)).toBe(KeyboardShortcutType.Pencil);
-    expect(keyboardService.validateShortcutEntry('w', keyboardService.shortcutMap)).toBe(KeyboardShortcutType.PaintBrush);
-    expect(keyboardService.validateShortcutEntry('o', keyboardService.ctrlShortcutMap)).toBe(KeyboardShortcutType.CreateDrawing);
-    expect(keyboardService.validateShortcutEntry('c', keyboardService.ctrlShortcutMap)).toBe(KeyboardShortcutType.Copy);
-    expect(keyboardService.validateShortcutEntry('z', keyboardService.ctrlShiftShortcutMap)).toBe(KeyboardShortcutType.Redo);
+    expect(keyboardService.validateShortcutEntry('c', keyboardService.SHORTCUT_MAP)).toBe(KeyboardShortcutType.Pencil);
+    expect(keyboardService.validateShortcutEntry('w', keyboardService.SHORTCUT_MAP)).toBe(KeyboardShortcutType.PaintBrush);
+    expect(keyboardService.validateShortcutEntry('o', keyboardService.CTRL_SHORTCUT_MAP)).toBe(KeyboardShortcutType.CreateDrawing);
+    expect(keyboardService.validateShortcutEntry('c', keyboardService.CTRL_SHORTCUT_MAP)).toBe(KeyboardShortcutType.Copy);
+    expect(keyboardService.validateShortcutEntry('z', keyboardService.CTRL_SHIFT_SHORTCUT_MAP)).toBe(KeyboardShortcutType.Redo);
   });
 });

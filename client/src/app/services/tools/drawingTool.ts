@@ -8,7 +8,7 @@ import { Point } from '../utils/point';
 import { Tool } from './tool';
 
 export abstract class DrawingTool extends Tool {
-  type = ToolType.None;
+  TYPE = ToolType.None;
   strokeWidth: number = DEFAULT_STROKE_WIDTH;
   texture: Texture = Texture.Basic;
   protected strokeColor: Color;
@@ -66,5 +66,9 @@ export abstract class DrawingTool extends Tool {
       this.isCreatingPath = false;
       this.commandSubject.next(this.command);
     }
+  }
+
+  standby(): void {
+    this.finish();
   }
 }

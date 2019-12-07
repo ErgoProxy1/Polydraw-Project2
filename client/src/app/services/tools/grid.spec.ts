@@ -1,4 +1,5 @@
-import { KeyboardEventType, MAX_ALPHA, MAX_GRID_SIZE, MIN_GRID_ALPHA, MIN_GRID_SIZE, MouseEventType } from '../utils/constantsAndEnums';
+// tslint:disable-next-line
+import { KeyboardEventType, DEFAULT_GRID_SIZE, MAX_ALPHA, MAX_GRID_SIZE, MIN_GRID_ALPHA, MIN_GRID_SIZE, MouseEventType } from '../utils/constantsAndEnums';
 import { Point } from '../utils/point';
 import { Grid } from './grid';
 
@@ -12,9 +13,13 @@ describe('Grid', () => {
         expect(grid).toBeTruthy();
     });
 
-    it('Should have size of MIN_GRID_SIZE',  () => {
+    it('Should be initialized with DEFAULT_GRID_SIZE',  () => {
+        expect(grid.sizeOfSquare()).toEqual(DEFAULT_GRID_SIZE);
+    });
+
+    it('Should not have size lower than MIN_GRID_SIZE',  () => {
         grid = new Grid();
-        expect(grid.sizeOfSquare()).toEqual(MIN_GRID_SIZE);
+        expect(grid.sizeOfSquare()).toEqual(DEFAULT_GRID_SIZE);
         expect(grid.sizeOfSquare(-123)).toEqual(MIN_GRID_SIZE);
     });
 

@@ -1,5 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
+import { HttpClientModule } from '@angular/common/http';
 import { EyeDropperPropertiesComponent } from './eye-dropper-properties.component';
 
 describe('EyeDropperPropertiesComponent', () => {
@@ -9,6 +10,7 @@ describe('EyeDropperPropertiesComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ EyeDropperPropertiesComponent ],
+      imports : [HttpClientModule],
     })
     .compileComponents();
   }));

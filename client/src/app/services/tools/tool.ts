@@ -5,7 +5,7 @@ import { DEFAULT_CURSOR, KeyboardEventType, MouseEventType, ToolType } from '../
 import { Point } from '../utils/point';
 
 export abstract class Tool {
-  readonly type: ToolType;
+  readonly TYPE: ToolType;
   protected temporaryPrimitivesAvailable: Subject<void> = new Subject<void>();
 
    /**

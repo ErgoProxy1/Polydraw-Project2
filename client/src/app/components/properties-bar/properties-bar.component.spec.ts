@@ -1,5 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
+import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
 import { ColorToolComponent } from '../color-tool/color-tool.component';
@@ -12,7 +13,7 @@ describe('PropertiesBarComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ PropertiesBarComponent, ColorToolComponent ],
-      imports: [RouterTestingModule, FormsModule, ReactiveFormsModule],
+      imports: [RouterTestingModule, FormsModule, ReactiveFormsModule, HttpClientModule],
     })
     .compileComponents();
   }));

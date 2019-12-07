@@ -13,8 +13,8 @@ export class DrawingCommunicationService {
   svgHtmlElements: ElementRef;
 
   // Communication bi-directionelle entre la fenetre export et le canvas
-  exportButtonObservable: Observable<null>;
-  private exportButtonSubject = new Subject<null>();
+  exportButtonObservable: Observable<boolean>;
+  private exportButtonSubject = new Subject<boolean>();
   canvasObservable: Observable<string>;
   private canvasSubject = new Subject<string>();
 
@@ -23,8 +23,8 @@ export class DrawingCommunicationService {
     this.canvasObservable = this.canvasSubject.asObservable();
   }
 
-  sendSvgHtmlRequest(): void {
-    this.exportButtonSubject.next();
+  sendSvgHtmlRequest(withGrid: boolean): void {
+    this.exportButtonSubject.next(withGrid);
   }
 
   sendSvgHtml(svgData: string): void {
@@ -55,8 +55,7 @@ export class DrawingCommunicationService {
     return this.http.post(SERVER_BASE_URL + '/drawing/save', {drawingInfo});
   }
 
-  // TODO
-  // deleteDrawing(drawingInfo: DrawingInfo): Observable<any> {
-  //   return this.http.post(SERVER_BASE_URL + '/drawing/delete', {drawingInfo});
-  // }
+  deleteDrawing(drawingInfo: DrawingInfo): Observable<any> {
+    return this.http.post(SERVER_BASE_URL + '/drawing/delete', {drawingInfo});
+  }
 }

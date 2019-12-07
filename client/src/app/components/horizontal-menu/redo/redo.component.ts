@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ControllerService } from 'src/app/services/controller/controller.service';
+import { CanvasControllerService } from 'src/app/services/canvasController/canvas-controller.service';
 
 @Component({
   selector: 'app-redo',
@@ -7,7 +7,7 @@ import { ControllerService } from 'src/app/services/controller/controller.servic
   styleUrls: ['./redo.component.scss'],
 })
 export class RedoComponent {
-  constructor(private controller: ControllerService) {
+  constructor(private controller: CanvasControllerService) {
 
   }
 

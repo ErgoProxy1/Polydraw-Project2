@@ -1,5 +1,5 @@
 import { Color } from 'src/app/services/utils/color';
-import { StrokeType } from 'src/app/services/utils/constantsAndEnums';
+import { HandleType, StrokeType } from 'src/app/services/utils/constantsAndEnums';
 import { Point } from 'src/app/services/utils/point';
 import { Handle } from './handle';
 
@@ -7,7 +7,7 @@ describe('Handle', () => {
     let handle: Handle;
 
     beforeEach(() => {
-        handle = new Handle(new Point(100, 100));
+        handle = new Handle(new Point(100, 100), HandleType.None);
     });
 
     it('Properly constructed', () => {

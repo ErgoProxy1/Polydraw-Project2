@@ -1,4 +1,4 @@
-import { Ellipse } from '../svgPrimitives/ellipse/ellispe';
+import { Ellipse } from '../svgPrimitives/ellipse/ellipse';
 import { Perimeter } from '../svgPrimitives/rectangle/perimeter/perimeter';
 import { ShapeToolCommand } from '../toolCommands/shapeToolCommand';
 import { Color } from '../utils/color';

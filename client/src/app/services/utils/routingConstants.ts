@@ -4,7 +4,10 @@ export abstract class RoutingConstants {
     static readonly ROUTE_TO_PEN = 'stylo';
     static readonly ROUTE_TO_LINE = 'ligne';
     static readonly ROUTE_TO_PAINT_BRUSH = 'pinceau';
-    static readonly ROUTE_TO_PAINT_BUCKET = 'application-couleur';
+    static readonly ROUTE_TO_PAINT_BUCKET = 'seau-de-peinture';
+    static readonly PAINT_BUCKET_FILL_TYPE = 'remplissage';
+    static readonly COLOR_APPLICATOR_TYPE = 'applicateur-couleur';
+    static readonly ROUTE_TO_SPRAYPAINT = 'aerosol';
     static readonly ROUTE_TO_STAMP = 'etampe';
     static readonly ROUTE_TO_EYEDROPPER = 'pipette';
     static readonly ROUTE_TO_GRID = 'grille';
@@ -14,4 +17,5 @@ export abstract class RoutingConstants {
     static readonly ROUTE_TO_SELECTION = 'selection';
     static readonly ROUTE_TO_ERASER = 'efface';
     static readonly ROUTE_TO_TEXT = 'texte';
+    static readonly ROUTE_TO_QUILL = 'quill';
   }

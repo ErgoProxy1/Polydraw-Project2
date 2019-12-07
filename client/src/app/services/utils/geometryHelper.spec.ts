@@ -13,29 +13,29 @@ describe('GeometryHelper', () => {
     const point4: Point = new Point(40, 40);
 
     it('#isPrimitiveIntersectingRectangle should return true if the primitive is entirely inside the rectangle', () => {
-        rectangle1.resize(point1, point4, false);
-        rectangle2.resize(point2, point3, false);
+        rectangle1.resize(point1, point4, false, true);
+        rectangle2.resize(point2, point3, false, true);
 
         expect(GeometryHelper.isPrimitiveIntersectingRectangle(rectangle2, rectangle1)).toEqual(true);
     });
 
     it('#isPrimitiveIntersectingRectangle should return true if the primitive is partially inside the rectangle', () => {
-        rectangle1.resize(point1, point3, false);
-        rectangle2.resize(point2, point4, false);
+        rectangle1.resize(point1, point3, false, true);
+        rectangle2.resize(point2, point4, false, true);
 
         expect(GeometryHelper.isPrimitiveIntersectingRectangle(rectangle2, rectangle1)).toEqual(true);
     });
 
     it('#isPrimitiveIntersectingRectangle should return true if the rectangle is entirely inside the primitive', () => {
-        rectangle1.resize(point2, point3, false);
-        rectangle2.resize(point1, point4, false);
+        rectangle1.resize(point2, point3, false, true);
+        rectangle2.resize(point1, point4, false, true);
 
         expect(GeometryHelper.isPrimitiveIntersectingRectangle(rectangle2, rectangle1)).toEqual(true);
     });
 
     it('#isPrimitiveIntersectingRectangle should return false if the primitive is entirely outside the rectangle', () => {
-        rectangle1.resize(point1, point2, false);
-        rectangle2.resize(point3, point4, false);
+        rectangle1.resize(point1, point2, false, true);
+        rectangle2.resize(point3, point4, false, true);
 
         expect(GeometryHelper.isPrimitiveIntersectingRectangle(rectangle2, rectangle1)).toEqual(false);
     });

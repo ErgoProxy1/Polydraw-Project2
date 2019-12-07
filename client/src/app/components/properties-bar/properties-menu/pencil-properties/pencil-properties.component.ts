@@ -25,8 +25,8 @@ export class PencilPropertiesComponent implements OnInit, OnDestroy {
     });
 
     this.toolsService.newToolSelected(ToolType.Pencil);
-
-    this.strokeWidth = this.pencil.strokeWidth;
+    this.strokeWidth =  MIN_STROKE_WIDTH;
+    this.pencil.strokeWidth = MIN_STROKE_WIDTH;
   }
 
   ngOnDestroy(): void {

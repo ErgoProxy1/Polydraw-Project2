@@ -6,7 +6,7 @@ import { Point } from '../utils/point';
 import { DrawingTool } from './drawingTool';
 
 export class PencilTool extends DrawingTool {
-  type = ToolType.Pencil;
+  TYPE = ToolType.Pencil;
   path: Path;
 
   constructor(strokeColor: Color) {

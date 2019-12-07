@@ -19,13 +19,13 @@ export class ShapePropertiesComponent implements OnInit, OnDestroy {
   private toolType: ToolType = ToolType.RectangleTool;
   readonly SHAPE_TYPE_NAMES_MAP: Map<string, ToolType> = new Map([
     ['Rectangle', ToolType.RectangleTool],
-    ['Ellipses', ToolType.EllipseTool],
-    ['Polygon', ToolType.PolygonTool],
+    ['Ellipse', ToolType.EllipseTool],
+    ['Polygone', ToolType.PolygonTool],
   ]);
   readonly STROKE_TYPE_NAMES_MAP: Map<string, StrokeType> = new Map([
-    ['Stroke and Fill', StrokeType.FullWithOutline],
-    ['Fill Only', StrokeType.Full],
-    ['Stroke Only', StrokeType.Outline],
+    ['Contour et remplissage', StrokeType.FullWithOutline],
+    ['Remplissage seulement', StrokeType.Full],
+    ['Contour seulement', StrokeType.Outline],
   ]);
   readonly POLYGONS: Map<number, string> = POLYGON_NAMES;
   readonly POLYGON_TYPE = ToolType.PolygonTool;
@@ -38,7 +38,7 @@ export class ShapePropertiesComponent implements OnInit, OnDestroy {
 
   constructor(private toolsService: ToolsService, private router: Router, private route: ActivatedRoute) {
     this.ngOnInit();
-    if (this.tool && this.tool.type === ToolType.PolygonTool) {
+    if (this.tool && this.tool.TYPE === ToolType.PolygonTool) {
      this.numberSidesPolygon = (this.tool as PolygonTool).numberOfSides;
     }
    }
@@ -47,7 +47,7 @@ export class ShapePropertiesComponent implements OnInit, OnDestroy {
     this.selectedToolSubscription = this.toolsService.subscribeToToolChanged().subscribe((toolSelected) => {
       this.tool = toolSelected as ShapeTool;
       if (this.tool) {
-        this.toolType = this.tool.type;
+        this.toolType = this.tool.TYPE;
         this.strokeWidth = this.tool.strokeWidth;
         this.strokeType = this.tool.strokeType;
       }

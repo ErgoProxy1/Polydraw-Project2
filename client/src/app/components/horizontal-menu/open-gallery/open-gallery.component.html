@@ -1,23 +1,19 @@
 <div class="text-center p-0" (click)="openModal()">
   <i class="far fa-folder-open clickable fa-2x align-middle"></i>
 </div>
-<ngb-alert *ngIf="isSuccess" class="successMessage" type="success" (close)="isSuccess = false">{{successMessage}}
-</ngb-alert>
-<ngb-alert *ngIf="isError" class="successMessage" type="danger" (close)="isError = false">{{errorMessage}}</ngb-alert>
-
 
 <ng-template #galleryModal let-modal>
   <div class="modal-header">
-    <h5 class="modal-title">Open Drawing</h5>
+    <h5 class="modal-title">Ouvrir un dessin</h5>
     <label class="btn btn-success">
-      <input type="file" id="file" accept=".json" (change)="readLocalFile($event.target.files[0])" />Choose local
-      file...</label>
+      <input type="file" id="file" accept=".json" (change)="readLocalFile($event.target.files[0])" />Choisir un fichier
+      sur l'ordinateur...</label>
   </div>
   <div class="modal-body text-center">
     <div class="row form-inline justify-content-between">
       <div class="col-md-6">
         <div class="row mt-2">
-          <label class="col-md-5 my-auto">Tags: </label>
+          <label class="col-md-5 my-auto">Étiquettes: </label>
           <div class="col-md-7">
             <div class="input-group">
               <input class="form-control" name="tags" type="text" id="tags" [(ngModel)]="currentTagInput"
@@ -40,7 +36,7 @@
           <div class="custom-control custom-switch">
             <input type="checkbox" class="clickable custom-control-input " id="limitToEight" name="show"
               [(ngModel)]="limitToEight" (change)="showMoreOrLess()">
-            <label class="custom-control-label" for="limitToEight">Limit Results</label>
+            <label class="custom-control-label" for="limitToEight">Limiter les résultats</label>
           </div>
         </form>
       </div>
@@ -54,7 +50,6 @@
     </div>
     <hr />
     <div class="row">
-
       <div *ngFor="let drawing of drawingsToShow | slice:0:limitToShow " class="col-md-4 mb-1">
         <div class="card h-100">
           <div class="card-img-top">
@@ -65,19 +60,22 @@
             <p class="card-text" [innerHTML]="getTagString(drawing)">
             </p>
           </div>
-          <div class="card-footer">
-            <button class="btn btn-outline-success mt-auto" (click)="selectDrawing(drawing)">Select</button>
+          <div class="card-footer text-center px-1">
+              <button class="btn btn-outline-danger mt-auto btn-sm float-left"
+                (click)="deleteDrawing(drawing)">Supprimer</button>
+              <button class="btn btn-outline-success mt-auto btn-sm float-right"
+                (click)="selectDrawing(drawing)">Sélectionner</button>
           </div>
         </div>
       </div>
     </div>
-    <label *ngIf="drawingsToShow.length==0 && !loading" class="text-danger">No Drawings Found!</label>
+    <label *ngIf="drawingsToShow.length==0 && !loading" class="text-danger">Aucun dessin trouvé!</label>
 
     <div *ngIf="loading" class="spinner-border text-dark" role="status">
-      <span class="sr-only">Loading...</span>
+      <span class="sr-only">Chargement...</span>
     </div>
   </div>
   <div class="modal-footer">
-    <button id="dismiss" type="button" class="btn btn-outline-dark" (click)="closeModal()">Cancel</button>
+    <button id="dismiss" type="button" class="btn btn-secondary" (click)="closeModal()">Annuler</button>
   </div>
 </ng-template>

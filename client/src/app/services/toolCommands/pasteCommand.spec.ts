@@ -1,6 +1,6 @@
 import { ClipboardService } from '../clipboard/clipboard.service';
 import { DrawingService } from '../drawing/drawing.service';
-import { Ellipse } from '../svgPrimitives/ellipse/ellispe';
+import { Ellipse } from '../svgPrimitives/ellipse/ellipse';
 import { Line } from '../svgPrimitives/line/line';
 import { Path } from '../svgPrimitives/path/path';
 import { Pen } from '../svgPrimitives/pen/pen';
@@ -33,7 +33,7 @@ describe('PasteCommand', () => {
   let command: PasteCommand;
 
   beforeEach(() => {
-    clipboardService.primitives = primitiveClipboard;
+    clipboardService.setPrimitives(primitiveClipboard);
     // tslint:disable-next-line: no-string-literal
     clipboardService['canvasHeight'] = 100;
     // tslint:disable-next-line: no-string-literal
@@ -64,7 +64,7 @@ describe('PasteCommand', () => {
   });
 
   it('should reset offset when the primitives duplicated would be outside the canvas', () => {
-    clipboardService.primitives = [new Rectangle(Color.BLACK, Color.WHITE, 2, StrokeType.FullWithOutline, ORIGIN, 10, 10)];
+    clipboardService.setPrimitives([new Rectangle(Color.BLACK, Color.WHITE, 2, StrokeType.FullWithOutline, ORIGIN, 10, 10)]);
     command = new PasteCommand(clipboardService);
     command.apply(primitives);
     command = new PasteCommand(clipboardService);
@@ -73,18 +73,18 @@ describe('PasteCommand', () => {
   });
 
   it('should increment offset when the command is applied', () => {
-    clipboardService.primitives = [new Rectangle(Color.BLACK, Color.WHITE, 2, StrokeType.FullWithOutline, ORIGIN, 10, 10)];
+    clipboardService.setPrimitives([new Rectangle(Color.BLACK, Color.WHITE, 2, StrokeType.FullWithOutline, ORIGIN, 10, 10)]);
     command = new PasteCommand(clipboardService);
     command.apply(primitives);
-    expect(clipboardService.getPasteOffset()).toEqual(ORIGIN.addPoint(PASTE_OFFSET));
+    expect(clipboardService.getPasteOffset()).toEqual(Point.sumPoints(ORIGIN, PASTE_OFFSET));
   });
 
   it('should decrement offset when the command is cancelled', () => {
-    clipboardService.primitives = [new Rectangle(Color.BLACK, Color.WHITE, 2, StrokeType.FullWithOutline, ORIGIN, 10, 10)];
+    clipboardService.setPrimitives([new Rectangle(Color.BLACK, Color.WHITE, 2, StrokeType.FullWithOutline, ORIGIN, 10, 10)]);
     command = new PasteCommand(clipboardService);
     command.apply(primitives);
     const currentOffset: Point = Point.copyPoint(clipboardService.getPasteOffset());
     command.cancel(primitives);
-    expect(clipboardService.getPasteOffset()).toEqual(currentOffset.substractPoint(PASTE_OFFSET));
+    expect(clipboardService.getPasteOffset()).toEqual(Point.substractPoints(currentOffset, PASTE_OFFSET));
   });
 });

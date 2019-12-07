@@ -9,20 +9,21 @@ import { KeyboardEventType, KeyboardShortcutType } from '../utils/constantsAndEn
 export class KeyboardService {
   modalWindowActive = false;
   inputFocusedActive = false;
-  private readonly keyShortcutSubject: Subject<KeyboardShortcutType>;
-  private readonly keyPressSubject: Subject<KeyboardEventType>;
+  textToolActive = false;
+  private readonly KEY_SHORTCUT_SUBJECT: Subject<KeyboardShortcutType>;
+  private readonly KEY_PRESS_SUBJECT: Subject<KeyboardEventType>;
   private keyOut = '';
-  readonly shortcutMap: Map<string, KeyboardShortcutType>;
-  readonly ctrlShortcutMap: Map<string, KeyboardShortcutType>;
-  readonly ctrlShiftShortcutMap: Map<string, KeyboardShortcutType>;
+  readonly SHORTCUT_MAP: Map<string, KeyboardShortcutType>;
+  readonly CTRL_SHORTCUT_MAP: Map<string, KeyboardShortcutType>;
+  readonly CTRL_SHIFT_SHORTCUT_MAP: Map<string, KeyboardShortcutType>;
 
   constructor() {
-    this.keyShortcutSubject = new Subject<KeyboardShortcutType>();
-    this.keyPressSubject = new Subject<KeyboardEventType>();
-    this.shortcutMap = new Map<string, KeyboardShortcutType>([
+    this.KEY_SHORTCUT_SUBJECT = new Subject<KeyboardShortcutType>();
+    this.KEY_PRESS_SUBJECT = new Subject<KeyboardEventType>();
+    this.SHORTCUT_MAP = new Map<string, KeyboardShortcutType>([
       ['c', KeyboardShortcutType.Pencil],
       ['w', KeyboardShortcutType.PaintBrush],
-      ['p', KeyboardShortcutType.FountainPen],
+      ['p', KeyboardShortcutType.Quill],
       ['y', KeyboardShortcutType.Pen],
       ['a', KeyboardShortcutType.SprayPaint],
       ['1', KeyboardShortcutType.Rectangle],
@@ -41,7 +42,7 @@ export class KeyboardService {
       ['-', KeyboardShortcutType.ZoomOutGrid],
       ['delete', KeyboardShortcutType.Delete],
     ]);
-    this.ctrlShortcutMap = new Map<string, KeyboardShortcutType>([
+    this.CTRL_SHORTCUT_MAP = new Map<string, KeyboardShortcutType>([
       ['o', KeyboardShortcutType.CreateDrawing],
       ['s', KeyboardShortcutType.SaveDrawing],
       ['g', KeyboardShortcutType.OpenGallery],
@@ -53,7 +54,7 @@ export class KeyboardService {
       ['z', KeyboardShortcutType.Undo],
       ['a', KeyboardShortcutType.SelectAll],
     ]);
-    this.ctrlShiftShortcutMap = new Map<string, KeyboardShortcutType>([
+    this.CTRL_SHIFT_SHORTCUT_MAP = new Map<string, KeyboardShortcutType>([
       ['z', KeyboardShortcutType.Redo],
     ]);
   }
@@ -63,11 +64,11 @@ export class KeyboardService {
   }
 
   getKeyboardShortcutType(): Observable<KeyboardShortcutType> {
-    return this.keyShortcutSubject.asObservable();
+    return this.KEY_SHORTCUT_SUBJECT.asObservable();
   }
 
   getKeyboardEventType(): Observable<KeyboardEventType> {
-    return this.keyPressSubject.asObservable();
+    return this.KEY_PRESS_SUBJECT.asObservable();
   }
 
   // Valide l'entrée pour gérer les undefined
@@ -87,11 +88,9 @@ export class KeyboardService {
       // Clés avec CTRL enfoncé
       if (keyboard.ctrlKey) {
         // CTRL+SHIFT+z
-        if (keyboard.shiftKey) {
-          keyboardShortcutType = this.validateShortcutEntry(key, this.ctrlShiftShortcutMap);
-        } else {
-          keyboardShortcutType = this.validateShortcutEntry(key, this.ctrlShortcutMap);
-        }
+        keyboard.shiftKey ?
+        keyboardShortcutType = this.validateShortcutEntry(key, this.CTRL_SHIFT_SHORTCUT_MAP) :
+        keyboardShortcutType = this.validateShortcutEntry(key, this.CTRL_SHORTCUT_MAP);
       // Clés seules
       } else if (!this.inputFocusedActive) {
         if (keyboard.code === 'Delete') {
@@ -105,11 +104,11 @@ export class KeyboardService {
         } else if (keyboard.code === 'Backspace') {
           keyboardEventType = KeyboardEventType.BackspaceDown;
         }
-        keyboardShortcutType = this.validateShortcutEntry(key, this.shortcutMap);
+        keyboardShortcutType = this.validateShortcutEntry(key, this.SHORTCUT_MAP);
       } else { keyboardEventType = KeyboardEventType.KeyDown; }
     }
-    this.keyPressSubject.next(keyboardEventType);
-    this.keyShortcutSubject.next(keyboardShortcutType);
+    this.KEY_PRESS_SUBJECT.next(keyboardEventType);
+    this.KEY_SHORTCUT_SUBJECT.next(keyboardShortcutType);
   }
 
   onKeyUp(keyboard: KeyboardEvent): void {
@@ -123,7 +122,7 @@ export class KeyboardService {
         keyboardEventType = KeyboardEventType.ShiftUp;
       } else { keyboardEventType = KeyboardEventType.KeyUp; }
     }
-    this.keyPressSubject.next(keyboardEventType);
+    this.KEY_PRESS_SUBJECT.next(keyboardEventType);
   }
 
   // empêcher les clés par défaut du browser (ie. ouvrir un nouveau document HTML, sauvegarder HTML, etc.)
@@ -140,8 +139,12 @@ export class KeyboardService {
         || key === 'd'
         || (key === 'a' && !this.inputFocusedActive)
         || (key === 'z' && !this.inputFocusedActive))
-        || (!this.inputFocusedActive && (keyboard.code === 'Backspace' || keyboard.code === 'Delete' || keyboard.code === 'Escape' ||
-        keyboard.altKey || keyboard.shiftKey || (keyboard.altKey && keyboard.shiftKey) || (keyboard.shiftKey && keyboard.altKey)))) {
+        || (
+          !this.inputFocusedActive && (keyboard.code === 'Backspace' || keyboard.code === 'Delete' || keyboard.code === 'Escape' ||
+          keyboard.altKey || keyboard.shiftKey || (keyboard.altKey && keyboard.shiftKey) || (keyboard.shiftKey && keyboard.altKey))
+          )
+        || ((keyboard.code === 'Backspace') && this.textToolActive)
+        ) {
       keyboard.preventDefault();
       keyboard.stopPropagation();
     }

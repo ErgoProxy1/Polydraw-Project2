@@ -47,7 +47,7 @@ export class TextToolCommand implements ToolCommand {
     this.currentLine++;
     this.moveLines(1);
     this.text.lines.splice(this.currentLine, 0, {
-      innertext: ('|' + splitText[1]),
+      innertext: (`|${splitText[1]}`),
       position: new Point(
         this.text.position.x, this.text.lines[this.currentLine - 1].position.y + this.text.size,
       ),
@@ -181,6 +181,7 @@ export class TextToolCommand implements ToolCommand {
 
   // Met le perimetre pointille a jour
   updatePerimeter(): void {
+    // this.text.centerOriginSet = false;
     this.perimeter.resize(this.text.getTopLeftCorner(), this.text.getBottomRightCorner());
   }
 

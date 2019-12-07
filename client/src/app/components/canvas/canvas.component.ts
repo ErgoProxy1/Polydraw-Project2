@@ -1,8 +1,7 @@
 import { AfterViewInit, Component, ElementRef, HostListener, OnDestroy, ViewChild } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { BoundingBoxService } from 'src/app/services/boundingBoxService/bounding-box.service';
-import { ControllerService } from 'src/app/services/controller/controller.service';
-// import { TextTool } from 'src/app/services/tools/textTool';
+import { CanvasControllerService } from 'src/app/services/canvasController/canvas-controller.service';
 import { KeyboardService } from 'src/app/services/keyboard/keyboard.service';
 import { DrawingCommunicationService } from 'src/app/services/serverCommunication/drawing-communication.service';
 import { SVGPrimitive } from 'src/app/services/svgPrimitives/svgPrimitive';
@@ -44,9 +43,7 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
   numberOfSquareHeight = 0;
   viewBox = '0 0 0 0';
 
-  private wheelTrigered = false;
-
-  constructor(private drawingService: DrawingService, private controller: ControllerService,
+  constructor(private drawingService: DrawingService, private controller: CanvasControllerService,
               private toolService: ToolsService, private keyboardService: KeyboardService,
               private drawingCommunicationService: DrawingCommunicationService,
               private boundingBoxService: BoundingBoxService) {
@@ -65,13 +62,12 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     this.controllerHTMLPrimitiveSubscription = this.controller.getPrimitivesHTMLObservable().subscribe((send) => {
       this.screenShoting = true;
       if (send) {
-        this.viewBox = '0 0 ' + this.canvasWidth + ' ' + this.canvasHeight;
+        this.viewBox = `0 0 ${this.canvasWidth} ${this.canvasHeight}`;
         setTimeout(() => { // juste pour permettre de cacher la grille avant le screenshot
-          // tranformation du svg pour base64 en un image
           const serializer = new XMLSerializer();
           const data = serializer.serializeToString(this.htmlOfPrimitives.nativeElement);
           controller.sendHTMLStringOfPrimitives(
-            'data:image/svg+xml;charset=utf-8;base64,' + btoa(unescape(encodeURIComponent(data))),
+            `data:image/svg+xml;charset=utf-8;base64,${btoa(unescape(encodeURIComponent(data)))}`,
           );
           this.screenShoting = false;
         }, 1);
@@ -93,32 +89,24 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
       this.defineDimensions(data[0], data[1]);
     });
 
-    this.drawingCommunicationService.exportButtonObservable.subscribe(() => {
-      this.screenShoting = true;
-      this.viewBox = '0 0 ' + this.canvasWidth + ' ' + this.canvasHeight;
+    this.drawingCommunicationService.exportButtonObservable.subscribe((withGrid) => {
+      this.screenShoting = !withGrid;
+      this.viewBox = `0 0 ${this.canvasWidth} ${this.canvasHeight}`;
       setTimeout(() => {
         const serializer = new XMLSerializer();
         const data = serializer.serializeToString(this.htmlOfPrimitives.nativeElement);
         this.screenShoting = false;
         this.drawingCommunicationService.sendSvgHtml(
-          'data:image/svg+xml;charset=utf-8;base64,' + btoa(unescape(encodeURIComponent(data))),
+          `data:image/svg+xml;charset=utf-8;base64,${btoa(unescape(encodeURIComponent(data)))}`,
         );
+        this.screenShoting = false;
       }, 1);
     });
   }
 
   @HostListener('wheel', ['$event']) onScroll(event: WheelEvent) {
-    if (!this.wheelTrigered) {
-      this.wheelTrigered = !this.wheelTrigered;
-      if (this.controller.tool.type === ToolType.StampTool) {
-        event.preventDefault();
-      }
-      this.controller.mouseWheelEventOnCanvas(Math.sign(event.deltaY));
-      this.updatePrimitives();
-    } else {
-      this.wheelTrigered = !this.wheelTrigered;
-      return;
-    }
+    this.controller.mouseWheelEventOnCanvas(Math.sign(event.deltaY));
+    this.updatePrimitives();
   }
 
   @HostListener('dblclick', ['$event']) ondblclick(event: MouseEvent): void {
@@ -131,6 +119,20 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     if (event.button === 0) {
       this.sendMouseEventToController(MouseEventType.MouseLeave, event.clientX, event.clientY);
     }
+  }
+
+  @HostListener('mousedown', ['$event']) mouseDownOnCanvas(event: PointerEvent, primitive?: SVGPrimitive): void {
+    event.stopPropagation();
+    if (this.controller.tool.TYPE === ToolType.EyeDropper) {
+      this.toolService.sendBackgroundColorToDropper(event, this.canvasBackground);
+    }
+    let mouseEventType = MouseEventType.InvalidEvent;
+    if (event.button === LEFT_MOUSE_BUTTON) {
+      mouseEventType = MouseEventType.MouseDownLeft;
+    } else if (event.button === RIGHT_MOUSE_BUTTON) {
+      mouseEventType = MouseEventType.MouseDownRight;
+    }
+    this.sendMouseEventToController(mouseEventType, event.clientX, event.clientY, primitive);
   }
 
   ngAfterViewInit(): void {
@@ -155,7 +157,7 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     if (!this.canvasWidth || !(this.canvasHeight)) {
       this.viewBox = '0 0 0 0 ';
     } else {
-      this.viewBox = '0 0 ' + this.canvasWidth + ' ' + this.canvasHeight;
+      this.viewBox = `0 0 ${this.canvasWidth} ${this.canvasHeight}`;
     }
 
     this.calculateGrid();
@@ -167,20 +169,6 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     }
     this.canvasBackground = color.rgbaTextForm;
     this.controller.canvasInfo.color = color;
-  }
-
-  mouseDownOnCanvas(event: PointerEvent, primitive?: SVGPrimitive): void {
-    event.stopPropagation();
-    if (this.controller.tool.type === ToolType.EyeDropper) {
-      this.toolService.sendBackgroundColorToDropper(event, this.canvasBackground);
-    }
-    let mouseEventType = MouseEventType.InvalidEvent;
-    if (event.button === LEFT_MOUSE_BUTTON) {
-      mouseEventType = MouseEventType.MouseDownLeft;
-    } else if (event.button === RIGHT_MOUSE_BUTTON) {
-      mouseEventType = MouseEventType.MouseDownRight;
-    }
-    this.sendMouseEventToController(mouseEventType, event.clientX, event.clientY, primitive);
   }
 
   mouseMoveOnCanvas(event: PointerEvent, primitive?: SVGPrimitive): void {
@@ -239,12 +227,12 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
   private updatePrimitives(): void {
     this.drawingService.sendPrimitives(this.controller.primitivesToDraw);
     if (this.controller.tool) {
-      if (this.controller.tool.type === ToolType.TextTool && (this.controller.tool as TextTool).typing) {
+      if (this.controller.tool.TYPE === ToolType.TextTool && (this.controller.tool as TextTool).typing) {
         this.boundingBoxService.updatePrimitives(this.canvas, this.fixedPrimitives.htmlOfPrimitives, this.controller.svgPrimitives);
         this.boundingBoxService.updatePrimitives(this.canvas, this.temporaryPrimitives.htmlOfPrimitives,
           this.controller.temporaryPrimitives);
         (this.controller.tool as TextTool).getCommand().updatePerimeter();
-      } else if (this.controller.tool.type === ToolType.SelectorTool || this.controller.tool.type === ToolType.Eraser) {
+      } else if (this.controller.tool.TYPE === ToolType.SelectorTool || this.controller.tool.TYPE === ToolType.Eraser) {
         // Si l'outil selectionne est le selecteur ou l'efface, on met a jour les coins des primitives pour lesquelles
         // ce n'est pas deja fait
         this.boundingBoxService.updatePrimitives(this.canvas, this.fixedPrimitives.htmlOfPrimitives, this.controller.svgPrimitives);

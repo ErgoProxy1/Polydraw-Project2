@@ -44,6 +44,9 @@ export class PenPropertiesComponent implements OnInit, OnDestroy {
     } else if (this.strokeWidth < MIN_OF_MAX_PEN_STROKE_WIDTH) {
       this.strokeWidth = MIN_OF_MAX_PEN_STROKE_WIDTH;
     }
+    if (this.strokeWidth < this.minStrokeWidth) {
+      this.minStrokeWidth = this.strokeWidth;
+    }
     this.pen.strokeWidth = this.strokeWidth;
   }
 
@@ -52,6 +55,9 @@ export class PenPropertiesComponent implements OnInit, OnDestroy {
       this.minStrokeWidth = MAX_OF_MIN_PEN_STROKE_WIDTH;
     } else if (this.minStrokeWidth < MIN_OF_MIN_PEN_STROKE_WIDTH) {
       this.minStrokeWidth = MIN_OF_MIN_PEN_STROKE_WIDTH;
+    }
+    if (this.minStrokeWidth > this.strokeWidth) {
+      this.strokeWidth = this.minStrokeWidth;
     }
     this.pen.minStrokeWidth = this.minStrokeWidth;
   }

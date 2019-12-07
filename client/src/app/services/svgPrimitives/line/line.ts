@@ -6,20 +6,18 @@ import { SVGPrimitive } from '../svgPrimitive';
 export class Line extends SVGPrimitive {
 
   type = PrimitiveType.Line;
-  selectable = true;
+  SELECTABLE = true;
   selected = false;
   strokeWidth: number;
   points: Point[] = [];
   tempPoint: Point;
   linePoints = '';                          // Le string de points utilisé dans le html
   pattern: Pattern;                         // Le motif de la ligne
-  lineCap: LineCap;                         // Permet de dèfinir la forme de la fin des lignes
+  lineCap: LineCap;                         // Permet de définir la forme de la fin des lignes
   lineJoin: LineJoin;                       // Permet de définir la forme de la jonction des lignes.
   circlePoints: Point[] = [];
   circleRadius: number;
   lineRounding: number;
-  topLeftCorner: Point;
-  bottomRightCorner: Point;
   closePath: boolean;
 
   constructor(strokeColor: Color,
@@ -44,15 +42,36 @@ export class Line extends SVGPrimitive {
     const line: Line = primitive as Line;
     const newLine: Line = new Line(Color.copyColor(line.strokeColor),
     line.strokeWidth, line.pattern, line.lineJoin, line.lineCap, line.circleRadius, line.lineRounding);
-    newLine.points = line.points;
-    newLine.tempPoint = line.tempPoint;
+    newLine.points = [];
+    line.points.forEach((point: Point) => {
+      newLine.points.push(Point.copyPoint(point));
+    });
+    newLine.tempPoint = Point.copyPoint(line.tempPoint);
     newLine.linePoints = line.linePoints;
     newLine.circlePoints = line.circlePoints;
-    newLine.topLeftCorner = line.topLeftCorner;
-    newLine.bottomRightCorner = line.bottomRightCorner;
-    newLine.tempPoint = line.tempPoint;
+    newLine.topLeftCorner = Point.copyPoint(line.topLeftCorner);
+    newLine.bottomRightCorner = Point.copyPoint(line.bottomRightCorner);
     newLine.closePath = line.closePath;
+
+    newLine.rotation = line.rotation;
+    newLine.scaleX = line.scaleX;
+    newLine.scaleY = line.scaleY;
+    newLine.transformations = line.transformations;
+
     return newLine;
+  }
+
+  scale(translation: Point, scaleFactorX: number, scaleFactorY: number) {
+    const center: Point = this.getCenter();
+    this.points.forEach((point: Point) => {
+      const distanceToCenter: Point = Point.substractPoints(point, center);
+      point.x = center.x + distanceToCenter.x * scaleFactorX;
+      point.y = center.y + distanceToCenter.y * scaleFactorY;
+    });
+    const distanceFromTempPointToCenter = Point.substractPoints(this.tempPoint, center);
+    this.tempPoint.x = center.x + distanceFromTempPointToCenter.x * scaleFactorX;
+    this.tempPoint.y = center.y + distanceFromTempPointToCenter.y * scaleFactorY;
+    this.move(translation);
   }
 
   addPoint(point: Point): void {
@@ -61,7 +80,7 @@ export class Line extends SVGPrimitive {
   }
 
   update(position: Point): void {
-    this.tempPoint = position;
+    this.tempPoint = Point.copyPoint(position);
     this.lineJoin !== LineJoin.BezierRound ? this.setPath() : this.setRoundingPath();
   }
 
@@ -70,11 +89,11 @@ export class Line extends SVGPrimitive {
     this.points.forEach((point) => {
       if (path.length === 0) {
         path += `M${point.x} ${point.y}`;
-      } else {
+      } else if (this.points.length > 0) {
         path += ` L${point.x} ${point.y}`;
       }
-  });
-    if (this.tempPoint !== undefined) {
+    });
+    if (this.tempPoint !== undefined && this.points.length > 0) {
       path += ` L${this.tempPoint.x} ${this.tempPoint.y}`;
     }
     this.linePoints = path;
@@ -86,7 +105,7 @@ export class Line extends SVGPrimitive {
    */
   setRoundingPath(): void {
     let path = '';
-    if (path.length === 0) {
+    if (path.length === 0 && this.points.length >= 1) {
       path = `M${this.points[0].x} ${this.points[0].y}`;
     }
     if (this.points.length === 2 ) {
@@ -100,7 +119,7 @@ export class Line extends SVGPrimitive {
       const len = this.points.length;
       path += `${this.roundingButt(this.points[len - 2], this.points[len - 1], this.tempPoint, this.lineRounding)}`;
     }
-    path += ` L${this.tempPoint.x} ${this.tempPoint.y}`;
+    path += (this.tempPoint !== undefined) ? ` L${this.tempPoint.x} ${this.tempPoint.y}` : '' ;
     this.linePoints = path;
   }
 
@@ -148,7 +167,16 @@ export class Line extends SVGPrimitive {
                     Math.sqrt(1 / (1 + Math.pow((startPoint.y - slopePoint.y) / (startPoint.x - slopePoint.x), 2))) + slopePoint.y);
   }
 
-  copy(): SVGPrimitive {
+  move(translation: Point): void {
+    this.points.forEach((point: Point) => {
+      point.addPoint(translation);
+    });
+    this.tempPoint.addPoint(translation);
+    this.update(this.tempPoint);
+    this.moveCorners(translation);
+  }
+
+  copy(): Line {
     return Line.createCopy(this);
   }
 }

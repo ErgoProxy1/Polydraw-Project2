@@ -1,4 +1,4 @@
-import { Ellipse } from '../svgPrimitives/ellipse/ellispe';
+import { Ellipse } from '../svgPrimitives/ellipse/ellipse';
 import { Line } from '../svgPrimitives/line/line';
 import { Path } from '../svgPrimitives/path/path';
 import { Polygon } from '../svgPrimitives/polygon/polygon';
@@ -8,7 +8,7 @@ import { Color } from '../utils/color';
 // tslint:disable-next-line
 import { DEFAULT_LINE_ROUNDING, KeyboardEventType, LineCap, LineJoin, Pattern, PrimitiveType, StrokeType, Texture } from '../utils/constantsAndEnums';
 import { Point } from '../utils/point';
-import { DefaultStamps } from '../utils/stampData';
+import { DEFAULT_STAMPS } from '../utils/stampData';
 import { EyeDropperTool } from './eyeDropperTool';
 
 describe('EyeDropperTool', () => {
@@ -23,7 +23,7 @@ describe('EyeDropperTool', () => {
         new Color(64, 64, 64, 0.5), new Color(32, 32, 32, 0.5), 10, StrokeType.Full, new Point(50, 50), 10, 8,
     );
     const stamp: Stamp = new Stamp(
-        100, 135, new Point(50, 50), DefaultStamps[4], // Coeur
+        100, 135, new Point(50, 50), DEFAULT_STAMPS[4], // Coeur
     );
     const line: Line = new Line(
         new Color(64, 64, 64, 0.5), 10, Pattern.FullLine, LineJoin.Arcs, LineCap.Butt, 10, DEFAULT_LINE_ROUNDING,
@@ -46,7 +46,7 @@ describe('EyeDropperTool', () => {
         expect(tool.determineFillOrStroke(new Point(75, 75), ellipse)).toEqual(ellipse.fillColor);
         polygon.resize(new Point(20, 20), new Point (80, 80), true);
         expect(tool.determineFillOrStroke(new Point(50, 50), polygon)).toEqual(polygon.fillColor);
-        expect(tool.determineFillOrStroke(new Point(60, 60), stamp)).toEqual(DefaultStamps[4].color);
+        expect(tool.determineFillOrStroke(new Point(60, 60), stamp)).toEqual(DEFAULT_STAMPS[4].color);
         expect(tool.determineFillOrStroke(new Point(0, 0), line)).toEqual(line.strokeColor);
         expect(tool.determineFillOrStroke(new Point(0, 0), path)).toEqual(path.strokeColor);
     });

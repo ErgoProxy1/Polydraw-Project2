@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs';
 import { StampTool } from 'src/app/services/tools/stampTool';
 import { ToolsService } from 'src/app/services/tools/tools.service';
 import { ToolType } from 'src/app/services/utils/constantsAndEnums';
-import { DefaultStamps, StampInfo } from 'src/app/services/utils/stampData';
+import { DEFAULT_STAMPS, StampInfo } from 'src/app/services/utils/stampData';
 
 @Component({
   selector: 'app-stamp-properties',
@@ -15,7 +15,7 @@ export class StampPropertiesComponent implements OnInit, OnDestroy {
   readonly MAX_ANGLE: number = 359;
   readonly MIN_SCALE: number = 25;
   readonly MAX_SCALE: number = 300;
-  readonly STAMPS: StampInfo[] = DefaultStamps;
+  readonly STAMPS: StampInfo[] = DEFAULT_STAMPS;
 
   private selectedToolSubscription: Subscription;
   stamp: StampTool;

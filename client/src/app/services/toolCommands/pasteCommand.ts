@@ -7,13 +7,13 @@ export class PasteCommand implements ToolCommand {
   svgMap: Map<number, SVGPrimitive> = new Map<number, SVGPrimitive>();
 
   constructor(private clipboardService: ClipboardService) {
-    this.svgClipboard = clipboardService.primitives;
+    this.svgClipboard = clipboardService.getPrimitives();
   }
   apply(primitives: SVGPrimitive[]): void {
     this.clipboardService.incrementPasteOffset();
     this.svgClipboard.forEach((primitive: SVGPrimitive) => {
       const newPrimitive: SVGPrimitive = primitive.copy();
-      newPrimitive.move(primitive.getTranslation().addPoint(this.clipboardService.getPasteOffset()));
+      newPrimitive.move(this.clipboardService.getPasteOffset());
       primitives.push(newPrimitive);
       this.svgMap.set(primitives.length - 1, newPrimitive);
     });

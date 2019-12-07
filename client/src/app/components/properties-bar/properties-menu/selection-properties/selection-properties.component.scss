@@ -1,7 +1,14 @@
 .options{
     height:100%;   
-    width: 50px;
+    width: 16%;
     padding-left: 2px;
     padding-right:2px;
+    padding-top: 5px;
     display: inline-block;
+    text-align: center;
+}
+
+.no-pointer{
+    cursor: not-allowed;
+    pointer-events: none;
 }

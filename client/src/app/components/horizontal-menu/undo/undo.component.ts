@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ControllerService } from 'src/app/services/controller/controller.service';
+import { CanvasControllerService } from 'src/app/services/canvasController/canvas-controller.service';
 
 @Component({
   selector: 'app-undo',
@@ -7,7 +7,7 @@ import { ControllerService } from 'src/app/services/controller/controller.servic
   styleUrls: ['./undo.component.scss'],
 })
 export class UndoComponent {
-  constructor(private controller: ControllerService) {
+  constructor(private controller: CanvasControllerService) {
 
   }
 

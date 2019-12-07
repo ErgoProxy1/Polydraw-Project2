@@ -20,7 +20,7 @@ describe('LineTool', () => {
     expect(lineTool.strokeWidth).toBe(DEFAULT_LINE_STROKE_WIDTH);
     expect(lineTool.pattern).toBe(Pattern.FullLine);
     expect(lineTool.lineJoin).toBe(LineJoin.Round);
-    expect(lineTool.type).toBe(ToolType.Line);
+    expect(lineTool.TYPE).toBe(ToolType.Line);
     expect(lineTool.lineCap).toBe(LineCap.Butt);
   });
 

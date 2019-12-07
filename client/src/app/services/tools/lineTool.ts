@@ -11,7 +11,7 @@ import { Point } from '../utils/point';
 import { Tool } from './tool';
 
 export class LineTool extends Tool {
-  type = ToolType.Line;
+  TYPE = ToolType.Line;
   pattern: Pattern = Pattern.FullLine;
   lineJoin: LineJoin = LineJoin.Round;
   lineCap: LineCap = LineCap.Butt;
@@ -42,6 +42,7 @@ export class LineTool extends Tool {
           this.update(position);
           this.command.line.linePoints += ' Z';
           this.command.line.closePath = true;
+          this.isFinish = true;
           this.finish(true);
         }
         break;
@@ -74,6 +75,10 @@ export class LineTool extends Tool {
     if (eventType === KeyboardEventType.ShiftDown) {
       if (this.isCreatingLine) {
         this.isShiftDown = true;      // On attend que l'usager face son dblClick.
+      }
+    } else if (eventType === KeyboardEventType.ShiftUp) {
+      if (this.isCreatingLine) {
+        this.isShiftDown = false;      // On attend que l'usager face son dblClick.
       }
     } else if (eventType === KeyboardEventType.BackspaceDown && !this.isFinish) {
       this.command.line.points.pop();
@@ -136,5 +141,9 @@ export class LineTool extends Tool {
         this.commandSubject.next(this.command);
       }
     }
+  }
+
+  standby(): void {
+    this.finish(true);
   }
 }

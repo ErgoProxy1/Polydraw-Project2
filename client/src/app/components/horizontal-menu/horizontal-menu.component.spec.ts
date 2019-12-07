@@ -9,6 +9,7 @@ import { NewDrawingComponent } from './new-drawing/new-drawing.component';
 import { OpenGalleryComponent } from './open-gallery/open-gallery.component';
 import { RedoComponent } from './redo/redo.component';
 import { SaveDrawingComponent } from './save-drawing/save-drawing.component';
+import { TutorialComponent } from './tutorial/tutorial.component';
 import { UndoComponent } from './undo/undo.component';
 
 describe('HorizontalMenuComponent', () => {
@@ -26,6 +27,7 @@ describe('HorizontalMenuComponent', () => {
         TrustPipe,
         UndoComponent,
         RedoComponent,
+        TutorialComponent,
       ],
       imports: [ FormsModule, ReactiveFormsModule, NgbAlertModule, NgbTypeaheadModule, HttpClientModule],
     })

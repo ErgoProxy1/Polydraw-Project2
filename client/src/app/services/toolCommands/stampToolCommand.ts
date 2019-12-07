@@ -13,20 +13,12 @@ export class StampToolCommand implements ToolCommand {
 
   rotate(rate: number): void {
     this.stamp.angle = this.stamp.angle + rate;
-    this.stamp.stampRotation = 'rotate(' + (-1) * this.stamp.angle + ', '
-      + (this.stamp.stampScale) * this.stamp.info.centerX + ', ' + (this.stamp.stampScale) * this.stamp.info.centerY + ')';
-
-    this.stamp.stampTranslation = 'translate(' + this.stamp.position.x + ',' + this.stamp.position.y + ')';
-    this.stamp.stampTransformations = this.stamp.stampTranslation + this.stamp.stampRotation + this.stamp.scaled;
+    this.stamp.createStampTransformationsStrings();
   }
 
   move(newPosition: Point): void {
     this.stamp.position = newPosition;
-    this.stamp.stampRotation = 'rotate(' + (-1) * this.stamp.angle + ', '
-      + (this.stamp.stampScale) * this.stamp.info.centerX + ', ' + (this.stamp.stampScale) * this.stamp.info.centerY + ')';
-
-    this.stamp.stampTranslation = 'translate(' + this.stamp.position.x + ',' + this.stamp.position.y + ')';
-    this.stamp.stampTransformations = this.stamp.stampTranslation + this.stamp.stampRotation + this.stamp.scaled;
+    this.stamp.createStampTransformationsStrings();
   }
 
   apply(primitives: SVGPrimitive[]): void {

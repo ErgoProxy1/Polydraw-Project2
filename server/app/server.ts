@@ -38,7 +38,7 @@ export class Server {
         if (error.syscall !== 'listen') {
             throw error;
         }
-        const bind: string = (typeof this.appPort === 'string') ? 'Pipe ' + this.appPort : 'Port ' + this.appPort;
+        const bind: string = `${(typeof this.appPort === 'string') ? 'Pipe ' : 'Port '}${this.appPort}`;
         switch (error.code) {
             case 'EACCES':
                 console.error(`${bind} requires elevated privileges`);

@@ -1,5 +1,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
+import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { MAX_ERASER_SIZE, MIN_ERASER_SIZE } from 'src/app/services/utils/constantsAndEnums';
 import { EraserPropertiesComponent } from './eraser-properties.component';
@@ -11,7 +12,7 @@ describe('EraserPropertiesComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ EraserPropertiesComponent ],
-      imports: [FormsModule],
+      imports: [FormsModule, HttpClientModule],
     })
     .compileComponents();
   }));

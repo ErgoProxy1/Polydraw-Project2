@@ -13,6 +13,7 @@ export class Color {
 
   static readonly BLACK: Color = new Color(0, 0, 0, MAX_ALPHA);
   static readonly WHITE: Color = new Color(MAX_RGB, MAX_RGB, MAX_RGB, MAX_ALPHA);
+  static readonly TRANSPARENT: Color = new Color(MAX_RGB, MAX_RGB, MAX_RGB, 0);
   static readonly TRANSPARENT_RGBA_TEXT_FORM: string = 'none';
 
   r: number; // Valeur du rouge, variant de 0 a 255
@@ -33,7 +34,7 @@ export class Color {
   }
 
   asString(): string {
-    this.rgbaTextForm = 'rgba(' + this.r + ',' + this.g + ',' + this.b + ',' + this.a + ')';
+    this.rgbaTextForm = `rgba(${this.r},${this.g},${this.b},${this.a})`;
     if (this.a === 0) {
       this.rgbaTextForm = Color.TRANSPARENT_RGBA_TEXT_FORM;
     }

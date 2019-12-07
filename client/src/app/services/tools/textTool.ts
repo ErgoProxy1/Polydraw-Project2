@@ -12,12 +12,10 @@ import { Tool } from './tool';
 
 export class TextTool extends Tool implements OnDestroy {
   private keyboardServiceSubscription: Subscription;
-  readonly FONTS: FontInfo[] = FONTS;
-  readonly ALIGNS: AlignInfo[] = ALIGNS;
-  selectedFont = 0;
-  selectedAlign = 0;
+  selectedFont: FontInfo = FONTS[0];
+  selectedAlign: AlignInfo = ALIGNS[0];
 
-  type = ToolType.TextTool;
+  TYPE = ToolType.TextTool;
 
   private command: TextToolCommand;
   private commandSubject: Subject<TextToolCommand> = new Subject<TextToolCommand>();
@@ -83,6 +81,7 @@ export class TextTool extends Tool implements OnDestroy {
 
   private begin(position: Point): void {
     this.keyboardService.inputFocusedActive = true;
+    this.keyboardService.textToolActive = true;
     this.typing = true;
     this.perimeter = new Perimeter(position);
     this.perimeter.resize(
@@ -90,7 +89,7 @@ export class TextTool extends Tool implements OnDestroy {
       new Point((this.perimeter.position.x + this.size), this.perimeter.position.y + this.size),
     );
     this.command = new TextToolCommand(
-      this.size, this.textColor, this.FONTS[this.selectedFont], this.ALIGNS[this.selectedAlign],
+      this.size, this.textColor, this.selectedFont, this.selectedAlign,
       this.position, this.perimeter, this.bold, this.italics,
     );
   }
@@ -119,6 +118,7 @@ export class TextTool extends Tool implements OnDestroy {
   }
 
   private executeFinishSequence(): void {
+    this.keyboardService.textToolActive = false;
     let allLinesEmpty = true;
     this.typing = false;
     if (this.command) {

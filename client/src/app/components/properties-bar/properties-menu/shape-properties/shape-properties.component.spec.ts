@@ -1,8 +1,8 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
+import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
-// import { PolygonTool } from 'src/app/services/tools/polygonTool';
 import { MAX_STROKE_WIDTH, MIN_STROKE_WIDTH} from 'src/app/services/utils/constantsAndEnums';
 import { RoutingConstants } from 'src/app/services/utils/routingConstants';
 import { ShapePropertiesComponent } from './shape-properties.component';
@@ -14,7 +14,7 @@ describe('ShapePropertiesComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ ShapePropertiesComponent ],
-      imports: [FormsModule, RouterTestingModule.withRoutes([
+      imports: [FormsModule, HttpClientModule, RouterTestingModule.withRoutes([
         { path: RoutingConstants.ROUTE_TO_SHAPE, component: ShapePropertiesComponent },
         { path: RoutingConstants.ROUTE_TO_SHAPE + '/:shapeType', component: ShapePropertiesComponent },
       ])],

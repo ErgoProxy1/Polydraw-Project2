@@ -1,17 +1,18 @@
 <div class="row">
   <div class="col-md-12">
-    <small for="rangescale">Scale : {{scale}} %</small>
-    <input id="rotationAngleInput" type="range" class="custom-range" [(ngModel)]="scale"
-      (change)="onChangeScale()" [min]="25" [max]="300" step="1">
+    <small for="rangescale">Echelle : {{scale}} %</small>
+    <input id="rotationAngleInput" type="range" class="custom-range custom-slider" [(ngModel)]="scale" (change)="onChangeScale()"
+      [min]="25" [max]="300" step="1">
   </div>
   <div class="col-md-12">
     <small for="rangerotation">Rotation : {{rotationAngle}} °</small>
-    <input id="rotationAngleInput" type="range" class="custom-range" [(ngModel)]="rotationAngle"
+    <input id="rotationAngleInput" type="range" class="custom-range custom-slider" [(ngModel)]="rotationAngle"
       (change)="onChangeRotation()" [min]="MIN_ANGLE" [max]="MAX_ANGLE" step="1">
   </div>
   <div class="col-md-12">
-    <small>Stamp</small>
-    <select #stampSelection class="form-control form-control-sm" (change)="onChangeStamp(stampSelection.value)">
+    <small>Etampe</small>
+    <select #stampSelection class="form-control form-control-sm clickable"
+      (change)="onChangeStamp(stampSelection.value)">
       <option *ngFor="let stamp of STAMPS" [ngValue]="stamp.name">
         {{stamp.name}}
       </option>

@@ -29,29 +29,27 @@ export class TextPropertiesComponent implements OnInit, OnDestroy {
       this.textTool = toolSelected as TextTool;
     });
     this.toolsService.newToolSelected(ToolType.TextTool);
-    this.textTool.selectedFont = 0;
-    this.textTool.selectedAlign = 0;
+    this.textTool.selectedFont = FONTS[0];
+    this.textTool.selectedAlign = ALIGNS[0];
   }
 
   ngOnDestroy(): void {
     this.selectedToolSubscription.unsubscribe();
   }
 
-  onChangeFont(value: string): void {
-    for (let i = 0; i < FONTS.length; i++) {
-      if (FONTS[i].name === value) {
-        this.currentFontFamily = FONTS[i].family;
-        this.textTool.selectedFont = i;
-      }
+  onChangeFont(name: string): void {
+    const font: FontInfo | undefined = FONTS.find((value: FontInfo) => value.name === name);
+    if (font) {
+      this.currentFontFamily = font.family;
+      this.textTool.selectedFont = font;
     }
   }
 
-  onChangeAlign(value: string): void {
-    for (let i = 0; i < ALIGNS.length; i++) {
-      if (ALIGNS[i].name === value) {
-        this.currentAlign = ALIGNS[i];
-        this.textTool.selectedAlign = i;
-      }
+  onChangeAlign(name: string): void {
+    const align: AlignInfo | undefined = ALIGNS.find((value: AlignInfo) => value.name === name);
+    if (align) {
+      this.currentAlign = align;
+      this.textTool.selectedAlign = align;
     }
   }
 

@@ -28,7 +28,7 @@ import { CanvasComponent } from '../../canvas/canvas.component';
 
 export class NewDrawingComponent implements OnDestroy {
   subscription: Subscription;
-  readonly palettesChoicesRGB: Color[] = PALETTE_CHOICES_RGB;
+  readonly _PALETTE_CHOICES_RGB: Color[] = PALETTE_CHOICES_RGB;
 
   @ViewChild('newDrawModal', { static: true }) newDrawModal: ElementRef;
 
@@ -104,7 +104,7 @@ export class NewDrawingComponent implements OnDestroy {
   newDrawing(drawingForm: FormGroup): void {
     if (this.checkDimensionValues()) {
       if (this.primitivesPresent) {
-        if (!confirm('This action will permenantly delete your drawing!')) {
+        if (!confirm('Cette action supprimera votre dessin actuel!')) {
           return;
         }
       }
@@ -121,10 +121,10 @@ export class NewDrawingComponent implements OnDestroy {
     if (this.drawingForm.value.width >= this.MIN_CANVAS_SIZE && this.drawingForm.value.width <= this.MAX_CANVAS_SIZE
       && this.drawingForm.value.height >= this.MIN_CANVAS_SIZE && this.drawingForm.value.height <= this.MAX_CANVAS_SIZE) {
       this.errorsInDimensions = false;
-      return true;
+      return !this.errorsInDimensions;
     } else {
       this.errorsInDimensions = true;
-      return false;
+      return !this.errorsInDimensions;
     }
   }
 
@@ -135,12 +135,57 @@ export class NewDrawingComponent implements OnDestroy {
 
   // Applique la couleur RBG. Convertie aussi le RGB en Hex.
   confirmRGBColor(): void {
-    const currentRGB: Color =  new Color(this.drawingForm.value.red,
-    this.drawingForm.value.green, this.drawingForm.value.blue);
-    this.errorInColors = !this.colorSelection.isColorValid(currentRGB);
-    const converted: string = this.colorSelection.convertRgbToHex(currentRGB);
-    this.drawingForm.patchValue({ hex: converted.split('#')[1] });
-    this.currentColorHex = converted;
+    this.validateRGBRange();
+    const currentRGB: Color = new Color(this.drawingForm.value.red,
+      this.drawingForm.value.green, this.drawingForm.value.blue);
+    if (currentRGB.r !== null && currentRGB.g !== null && currentRGB.b !== null) {
+      this.errorInColors = false;
+      const converted: string = this.colorSelection.convertRgbToHex(currentRGB, false);
+      this.drawingForm.patchValue({
+        hex: converted,
+        red: currentRGB.r,
+        green: currentRGB.g,
+        blue: currentRGB.b,
+        alpha: currentRGB.a,
+      });
+      this.currentColorHex = this.colorSelection.convertRgbToHex(currentRGB, true);
+    } else {
+      this.errorInColors = true;
+    }
+  }
+
+  validateRGBRange(): void {
+    if (this.drawingForm.value.red > 255) {
+      this.drawingForm.patchValue({ red: 255 });
+    } else if (this.drawingForm.value.red < 0) {
+      this.drawingForm.patchValue({ red: 0 });
+    }
+
+    if (this.drawingForm.value.green > 255) {
+      this.drawingForm.patchValue({ green: 255 });
+    } else if (this.drawingForm.value.green < 0) {
+      this.drawingForm.patchValue({ green: 0 });
+    }
+
+    if (this.drawingForm.value.blue > 255) {
+      this.drawingForm.patchValue({ blue: 255 });
+    } else if (this.drawingForm.value.blue < 0) {
+      this.drawingForm.patchValue({ blue: 0 });
+    }
+  }
+
+  correctEmptyRGBInput(): void {
+    if (this.drawingForm.value.red === null) {
+      this.drawingForm.patchValue({ red: 0 });
+    }
+
+    if (this.drawingForm.value.green === null) {
+      this.drawingForm.patchValue({ green: 0 });
+    }
+
+    if (this.drawingForm.value.blue === null) {
+      this.drawingForm.patchValue({ blue: 0 });
+    }
   }
 
   // Confirme la valeur du alpha. Valeur est mise a 1 si une erreur est detecté
@@ -151,6 +196,7 @@ export class NewDrawingComponent implements OnDestroy {
 
   // Applique la couleur HEX. Convertie aussi le Hex en RGB.
   confirmHexColor(): void {
+    this.correctEmptyRGBInput();
     const currentHex: string = this.drawingForm.value.hex;
     if (currentHex.length === 6) {
       this.errorInColors = false;
@@ -184,9 +230,9 @@ export class NewDrawingComponent implements OnDestroy {
   // Update les valeurs de couleur en fonction de la couleur cliquer sur la palette
   updateFromPalette(color: Color): void {
     this.drawingForm.markAsDirty();
-    const currentHex: string = this.colorSelection.convertRgbToHex(color);
-    this.currentColorHex = currentHex;
-    this.drawingForm.patchValue({ hex: currentHex.split('#')[1] });
+    const currentHex: string = this.colorSelection.convertRgbToHex(color, false);
+    this.currentColorHex = this.colorSelection.convertRgbToHex(color, true);
+    this.drawingForm.patchValue({ hex: currentHex });
     this.confirmHexColor();
     this.confirmAlpha();
     this.confirmRGBColor();

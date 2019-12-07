@@ -1,0 +1,12 @@
+<div class="row">
+    <div class="col-md-12">
+      <small for="rangeEpaisseur">Longeur : {{quillLength}} px</small>
+      <input id="quillLengthInput" type="range" class="custom-range custom-slider" [(ngModel)]="quillLength" (change)="onChangeQuillLength()"
+        [min]="MIN_LENGTH" [max]="MAX_LENGTH" step="1">
+    </div>
+    <div class="col-md-12">
+      <small for="rangerotation">Rotation : {{rotationAngle}} °</small>
+      <input id="rotationAngleInput" type="range" class="custom-range custom-slider" [(ngModel)]="rotationAngle"
+        (change)="onChangeRotation()" [min]="MIN_ANGLE" [max]="MAX_ANGLE" step="1">
+    </div>
+  </div>

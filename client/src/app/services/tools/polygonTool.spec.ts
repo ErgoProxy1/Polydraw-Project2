@@ -6,7 +6,7 @@ import { DEFAULT_STROKE_WIDTH, KeyboardEventType, MouseEventType, StrokeType } f
 import { Point } from '../utils/point';
 import { PolygonTool } from './polygonTool';
 
-describe('PolygonToolService', () => {
+describe('PolygonTool', () => {
   let polygone: PolygonTool;
   beforeEach(() => {
     polygone = new PolygonTool(new Color(128, 64, 32, 0.5), new Color(32, 64, 128, 0.5));
@@ -20,6 +20,7 @@ describe('PolygonToolService', () => {
     polygone.mouseEvent(MouseEventType.MouseDownLeft, new Point(0, 0));
     expect(polygone.getTemporaryPrimitives()).toEqual([expectedCommand.shape, expectedPerimeter]);
   });
+
   it('Size is correctly updated when a mouse move occurs', () => {
     const point1: Point = new Point(0, 0);
     const point2: Point = new Point(50, 50);
@@ -28,7 +29,7 @@ describe('PolygonToolService', () => {
     const expectedCommand: ShapeToolCommand = new ShapeToolCommand(new Polygon(
       new Color(128, 64, 32, 0.5), new Color(32, 64, 128, 0.5),
       DEFAULT_STROKE_WIDTH, StrokeType.FullWithOutline, point1, 3));
-    expectedCommand.resize(point1, point2, false);
+    expectedCommand.resize(point1, point2, true);
     polygone.mouseEvent(MouseEventType.MouseDownLeft, point1);
     polygone.mouseEvent(MouseEventType.MouseMove, point2);
     expect(polygone.getTemporaryPrimitives()).toEqual([expectedCommand.shape,

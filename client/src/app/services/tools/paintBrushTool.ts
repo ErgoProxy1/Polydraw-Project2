@@ -5,7 +5,7 @@ import { Point } from '../utils/point';
 import { DrawingTool } from './drawingTool';
 
 export class PaintBrushTool extends DrawingTool {
-  type = ToolType.PaintBrushTool;
+  TYPE = ToolType.PaintBrushTool;
   texture: Texture = Texture.Basic;
 
   constructor(strokeColor: Color) {

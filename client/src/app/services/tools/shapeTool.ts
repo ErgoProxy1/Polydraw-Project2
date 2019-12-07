@@ -9,7 +9,7 @@ import { Point } from '../utils/point';
 import { Tool } from './tool';
 
 export abstract class ShapeTool extends Tool {
-  type = ToolType.None;
+  TYPE = ToolType.None;
   protected fillColor: Color;
   protected strokeColor: Color;
   strokeWidth: number = DEFAULT_STROKE_WIDTH;
@@ -73,5 +73,9 @@ export abstract class ShapeTool extends Tool {
       this.isCreatingShape = false;
       this.commandSubject.next(this.command);
     }
+  }
+
+  standby(): void {
+    this.finish();
   }
 }

@@ -1,3 +1,4 @@
+import { HttpClientModule } from '@angular/common/http';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { MAX_STROKE_WIDTH, MIN_STROKE_WIDTH } from 'src/app/services/utils/constantsAndEnums';
@@ -9,10 +10,10 @@ describe('PencilPropertiesComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ PencilPropertiesComponent ],
-      imports: [FormsModule],
+      declarations: [PencilPropertiesComponent],
+      imports: [FormsModule, HttpClientModule],
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

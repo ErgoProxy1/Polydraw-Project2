@@ -5,7 +5,7 @@ import { SVGPrimitive } from '../../svgPrimitive';
 import { Rectangle } from '../rectangle';
 
 export class Perimeter extends Rectangle {
-    selectable = false;
+    SELECTABLE = false;
     type = PrimitiveType.Perimeter;
 
     constructor(position: Point, strokeColor: Color = Color.BLACK) {
@@ -15,6 +15,6 @@ export class Perimeter extends Rectangle {
       return primitive as Rectangle;
     }
     resize(corner1: Point, corner2: Point): void {
-      super.resize(corner1, corner2, false);
+      super.resize(corner1, corner2, false, true);
     }
 }

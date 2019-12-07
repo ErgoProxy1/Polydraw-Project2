@@ -25,7 +25,7 @@ describe('SvgComponent', () => {
     expect(component).toBeTruthy();
     expect(component.FILTER_IDS.length).toBe(5);
     expect(component.FILTER_IDS[0]).toBe('basic');
-    expect(component.FILTER_IDS[4]).toBe('frothy');
+    expect(component.FILTER_IDS[4]).toBe('degraded');
     expect(component.FILTER_IDS[5]).toBeUndefined();
   });
 });

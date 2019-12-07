@@ -1,10 +1,10 @@
 import { TestBed } from '@angular/core/testing';
-
 import { Color } from '../../utils/color';
 import { MIN_STROKE_WIDTH, PrimitiveType, StrokeType } from '../../utils/constantsAndEnums';
 import { Point } from '../../utils/point';
 import { Rectangle } from './rectangle';
 
+// tslint:disable: no-string-literal
 describe('Rectangle', () => {
   let rectangle: Rectangle;
   const origin: Point = new Point(0, 0);
@@ -12,7 +12,36 @@ describe('Rectangle', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({});
     rectangle = new Rectangle(Color.WHITE, Color.BLACK, MIN_STROKE_WIDTH, StrokeType.FullWithOutline, origin, 100, 50);
+  });
 
+  it('should scale properly', () => {
+    const nullTranslation = new Point(0, 0);
+    const expectedRectangle = new Rectangle(Color.WHITE, Color.BLACK, MIN_STROKE_WIDTH, StrokeType.FullWithOutline, origin, 100, 50);
+
+    // Scales nuls
+    rectangle.scale(nullTranslation, 1, 1);
+    expect(rectangle).toEqual(expectedRectangle);
+
+    // Scale en X seulement
+    rectangle = new Rectangle(Color.WHITE, Color.BLACK, MIN_STROKE_WIDTH, StrokeType.FullWithOutline, new Point(100, 100), 100, 50);
+    const expectedRectangleX = new Rectangle(Color.WHITE, Color.BLACK, MIN_STROKE_WIDTH, StrokeType.FullWithOutline,
+      new Point(50, 100), 200, 50);
+    rectangle.scale(nullTranslation, 2, 1);
+    expect(rectangle).toEqual(expectedRectangleX);
+
+    // Scale en Y seulement
+    rectangle = new Rectangle(Color.WHITE, Color.BLACK, MIN_STROKE_WIDTH, StrokeType.FullWithOutline, new Point(100, 100), 100, 50);
+    const expectedRectangleY = new Rectangle(Color.WHITE, Color.BLACK, MIN_STROKE_WIDTH, StrokeType.FullWithOutline,
+      new Point(100, 75), 100, 100);
+    rectangle.scale(nullTranslation, 1, 2);
+    expect(rectangle).toEqual(expectedRectangleY);
+
+    // Scales combinés
+    rectangle = new Rectangle(Color.WHITE, Color.BLACK, MIN_STROKE_WIDTH, StrokeType.FullWithOutline, new Point(100, 100), 100, 50);
+    const expectedRectangleXY = new Rectangle(Color.WHITE, Color.BLACK, MIN_STROKE_WIDTH, StrokeType.FullWithOutline,
+      new Point(50, 75), 200, 100);
+    rectangle.scale(nullTranslation, 2, 2);
+    expect(rectangle).toEqual(expectedRectangleXY);
   });
 
   it('should be properly created', () => {
@@ -110,4 +139,13 @@ describe('Rectangle', () => {
     expect(newRectangle.position).toEqual(new Point(4, 4));
   });
 
+  it('#move should correctly change the position of the rectangle', () => {
+    const newPosition: Point = new Point(100, 100);
+    const newRectangle = new Rectangle(Color.WHITE, Color.BLACK, MIN_STROKE_WIDTH, StrokeType.FullWithOutline, newPosition, 100, 50);
+    newRectangle.resize(newRectangle.corner1, newRectangle.corner2, false);
+    rectangle.move(newPosition);
+    newRectangle['topLeftCorner'] = newPosition;
+    newRectangle['bottomRightCorner'] = newPosition;
+    expect(newRectangle).toEqual(rectangle);
+  });
 });

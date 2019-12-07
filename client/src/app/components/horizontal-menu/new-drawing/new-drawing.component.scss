@@ -36,9 +36,55 @@
     width:12%;
     padding-bottom:11%;
     margin:1%;
+    margin-bottom: 2%;
     float:left;
     border-radius: 50%;
     border-style:solid;
     border-width: 2px;
     border-color: rgb(154, 161, 154);
+}
+
+.range-wrapper{
+    overflow:hidden;
+    border: 1px solid rgba(0,0,0,0.1);
+}
+
+.custom-range{
+    border: none;
+}
+
+.slider-red::-webkit-slider-thumb{
+    background-color: red;
+}
+
+.slider-red::-moz-range-thumb{
+    background-color: red;
+}
+
+.slider-green::-webkit-slider-thumb{
+    background-color: green;
+}
+
+.slider-green::-moz-range-thumb{
+    background-color: green;
+}
+
+.slider-blue::-webkit-slider-thumb{
+    background-color: blue;
+}
+
+.slider-blue::-moz-range-thumb{
+    background-color: blue;
+}
+
+.slider-alpha::-webkit-slider-thumb{
+    background-color: rgba(0,0,0,0.3);
+}
+
+.slider-alpha::-moz-range-thumb{
+    background-color: rgba(0,0,0,0.3);
+}
+
+input[type='range']{
+    float: right;
 }

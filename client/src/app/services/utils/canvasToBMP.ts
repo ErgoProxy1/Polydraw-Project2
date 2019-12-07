@@ -81,6 +81,6 @@ export class CanvasToBMP {
         while (i < length) {
             bs += String.fromCharCode(buffer[i++]);
         }
-        return 'data:image/bmp;base64,' + btoa(bs);
+        return `data:image/bmp;base64,${btoa(bs)}`;
     }
 }

@@ -1,12 +1,12 @@
 <div class="row">
-    <div class="col-md-12">
-      <small for="rangeEpaisseur">Max : {{strokeWidth}} px</small>
-      <input id="penMaxStrokewidthinput" type="range" class="custom-range" [(ngModel)]="strokeWidth" (change)="onChangeStrokeWidth()"
-        [min]="MAX_SLIDER_MIN_STROKEWITH" [max]="MAX_SLIDER_MAX_STROKEWITH" step="1">
-    </div>
-    <div class="col-md-12">
-      <small for="rangeEpaisseur">Min : {{minStrokeWidth}} px</small>
-      <input id="penMinStrokewidthinput" type="range" class="custom-range" [(ngModel)]="minStrokeWidth" (change)="onChangeMinStrokeWidth()"
-        [min]="MIN_SLIDER_MIN_STROKEWITH" [max]="MIN_SLIDER_MAX_STROKEWITH" step="1">
-    </div>
+  <div class="col-md-12">
+    <small for="rangeEpaisseur">Max : {{strokeWidth}} px</small>
+    <input id="penMaxStrokewidthinput" type="range" class="custom-range custom-slider" [(ngModel)]="strokeWidth"
+      (change)="onChangeStrokeWidth()" [min]="MAX_SLIDER_MIN_STROKEWITH" [max]="MAX_SLIDER_MAX_STROKEWITH" step="1">
+  </div>
+  <div class="col-md-12">
+    <small for="rangeEpaisseur">Min : {{minStrokeWidth}} px</small>
+    <input id="penMinStrokewidthinput" type="range" class="custom-range custom-slider" [(ngModel)]="minStrokeWidth"
+      (change)="onChangeMinStrokeWidth()" [min]="MIN_SLIDER_MIN_STROKEWITH" [max]="MIN_SLIDER_MAX_STROKEWITH" step="1">
+  </div>
 </div>

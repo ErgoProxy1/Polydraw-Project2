@@ -5,17 +5,21 @@ import * as express from 'express';
 import { inject, injectable } from 'inversify';
 import * as logger from 'morgan';
 import { DrawingController } from './controllers/drawing.controller';
+import { FirebaseController } from './controllers/firebase.controller';
+import { MongoController } from './controllers/mongo.controller';
 import { TagsController } from './controllers/tags.controller';
 import Types from './types';
 
 @injectable()
 export class Application {
 
-  private readonly internalError: number = 500;
+  private readonly INTERNAL_ERROR: number = 500;
   app: express.Application;
 
   constructor(@inject(Types.DrawingController) private drawingController: DrawingController,
-              @inject(Types.TagsController) private tagsController: TagsController) {
+              @inject(Types.TagsController) private tagsController: TagsController,
+              @inject(Types.FirebaseController) private firebaseController: FirebaseController,
+              @inject(Types.MongoController) private mongoController: MongoController) {
     this.app = express();
 
     this.config();
@@ -36,6 +40,8 @@ export class Application {
     // Notre application utilise le routeur de notre API `Index`
     this.app.use('/api/drawing', this.drawingController.router);
     this.app.use('/api/tags', this.tagsController.router);
+    this.app.use('/api/drawing', this.mongoController.router);
+    this.app.use('/api/drawing', this.firebaseController.router);
     this.errorHandling();
   }
 
@@ -50,7 +56,7 @@ export class Application {
     // will print stacktrace
     if (this.app.get('env') === 'development') {
       this.app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
-        res.status(err.status || this.internalError);
+        res.status(err.status || this.INTERNAL_ERROR);
         res.send({
           message: err.message,
           error: err,
@@ -61,7 +67,7 @@ export class Application {
     // production error handler
     // no stacktraces leaked to user (in production env only)
     this.app.use((err: any, req: express.Request, res: express.Response, next: express.NextFunction) => {
-      res.status(err.status || this.internalError);
+      res.status(err.status || this.INTERNAL_ERROR);
       res.send({
         message: err.message,
         error: {},

@@ -135,7 +135,7 @@ describe('NewDrawingComponent', () => {
     expect(component.errorInColors).toBe(false);
 
     component.drawingForm.patchValue({
-      red: -128,
+      red: null,
       green: 64,
       blue: 32,
     });
@@ -152,8 +152,8 @@ describe('NewDrawingComponent', () => {
 
     component.drawingForm.patchValue({
       red: 128,
-      green: -64,
-      blue: -32,
+      green: null,
+      blue: null,
     });
     component.confirmRGBColor();
     expect(component.errorInColors).toBe(true);

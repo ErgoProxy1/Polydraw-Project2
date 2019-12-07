@@ -5,6 +5,7 @@ import { CIRCLE_RADIUS_FACTOR, DEFAULT_LINE_ROUNDING, LineCap,
 import { Point } from '../../utils/point';
 import { Line } from './line';
 
+// tslint:disable: no-string-literal
 describe('Line', () => {
   let line: Line;
 
@@ -111,5 +112,80 @@ describe('Line', () => {
   it('#copy should correctly copies the line', () => {
     line.tempPoint = new Point(120, 150);
     expect(line.copy()).toEqual(line);
+  });
+
+  it('#move should correctly change the position of the line', () => {
+    const newLine: Line = new Line(Color.BLACK, MIN_STROKE_WIDTH, Pattern.FullLine, LineJoin.Miter,
+      LineCap.Round, CIRCLE_RADIUS_FACTOR * MIN_STROKE_WIDTH, DEFAULT_LINE_ROUNDING);
+    const linePoints: Point[] = [new Point(0, 0), new Point(50, 50), new Point(25, 25)];
+    linePoints.forEach((point: Point) => {
+      line.addPoint(point);
+      line.update(point);
     });
+    const newLinePoints: Point[] = [new Point(100, 100), new Point(150, 150), new Point(125, 125)];
+    newLinePoints.forEach((point: Point) => {
+      newLine.addPoint(point);
+      newLine.update(point);
+    });
+    const translation: Point = new Point(100, 100);
+    line.move(translation);
+    newLine['topLeftCorner'] = translation;
+    newLine['bottomRightCorner'] = translation;
+    expect(newLine).toEqual(line);
+  });
+
+  it('should scale correctly', () => {
+    const nullTranslation = new Point(0, 0);
+
+    line.addPoint(new Point(100, 100));
+    line.addPoint(new Point(200, 100));
+
+    // Scale conservé
+    line.scale(nullTranslation, 1, 1);
+    expect(line.points.length).toEqual(2);
+    expect(line.points[0].x).toEqual(100);
+    expect(line.points[0].y).toEqual(100);
+    expect(line.points[1].x).toEqual(200);
+    expect(line.points[1].y).toEqual(100);
+
+    // En X seulement
+    line.scale(nullTranslation, 2, 1);
+    expect(line.points[0].x).toEqual(200);
+    expect(line.points[0].y).toEqual(100);
+    expect(line.points[1].x).toEqual(400);
+    expect(line.points[1].y).toEqual(100);
+
+    // En Y seulement
+    line = new Line(Color.BLACK, MIN_STROKE_WIDTH, Pattern.FullLine, LineJoin.Miter,
+      LineCap.Round, CIRCLE_RADIUS_FACTOR * MIN_STROKE_WIDTH, DEFAULT_LINE_ROUNDING);
+    line.addPoint(new Point(100, 100));
+    line.addPoint(new Point(100, 200));
+    line.scale(nullTranslation, 1, 2);
+    expect(line.points[0].x).toEqual(100);
+    expect(line.points[0].y).toEqual(200);
+    expect(line.points[1].x).toEqual(100);
+    expect(line.points[1].y).toEqual(800);
+
+    // Combiné
+    line = new Line(Color.BLACK, MIN_STROKE_WIDTH, Pattern.FullLine, LineJoin.Miter,
+      LineCap.Round, CIRCLE_RADIUS_FACTOR * MIN_STROKE_WIDTH, DEFAULT_LINE_ROUNDING);
+    line.addPoint(new Point(100, 100));
+    line.addPoint(new Point(200, 200));
+    line.scale(nullTranslation, 2, 2);
+    expect(line.points[0].x).toEqual(200);
+    expect(line.points[0].y).toEqual(200);
+    expect(line.points[1].x).toEqual(800);
+    expect(line.points[1].y).toEqual(800);
+
+    // Combiné négatif
+    line = new Line(Color.BLACK, MIN_STROKE_WIDTH, Pattern.FullLine, LineJoin.Miter,
+      LineCap.Round, CIRCLE_RADIUS_FACTOR * MIN_STROKE_WIDTH, DEFAULT_LINE_ROUNDING);
+    line.addPoint(new Point(100, 100));
+    line.addPoint(new Point(110, 110));
+    line.scale(nullTranslation, -1, -1);
+    expect(line.points[0].x).toEqual(-100);
+    expect(line.points[0].y).toEqual(-100);
+    expect(line.points[1].x).toEqual(110);
+    expect(line.points[1].y).toEqual(110);
+  });
 });

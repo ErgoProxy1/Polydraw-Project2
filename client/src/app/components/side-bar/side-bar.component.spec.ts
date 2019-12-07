@@ -4,15 +4,15 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { EraserButtonComponent } from './icones/eraser-button/eraser-button.component';
 import { EyedropperButtonComponent } from './icones/eyedropper-button/eyedropper-button.component';
 import { GridButtonComponent } from './icones/grid-button/grid-button.component';
-// import { ColorButtonComponent } from './icones/color-button/color-button.component';
 import { LineButtonComponent } from './icones/line-button/line-button.component';
 import { PaintBrushButtonComponent } from './icones/paint-brush-button/paint-brush-button.component';
 import { PaintBucketButtonComponent } from './icones/paint-bucket-button/paint-bucket-button.component';
 import { PenButtonComponent } from './icones/pen-button/pen-button.component';
 import { PencilButtonComponent } from './icones/pencil-button/pencil-button.component';
+import { QuillButtonComponent } from './icones/quill-button/quill-button.component';
 import { SelectionButtonComponent } from './icones/selection-button/selection-button.component';
 import { ShapesButtonComponent } from './icones/shapes-button/shapes-button.component';
-import { SprayButtonComponent } from './icones/spray-button/spray-button.component';
+import { SpraypaintButtonComponent } from './icones/spraypaint-button/spraypaint-button.component';
 import { StampButtonComponent } from './icones/stamp-button/stamp-button.component';
 import { TextButtonComponent } from './icones/text-button/text-button.component';
 import { SideBarComponent } from './side-bar.component';
@@ -30,13 +30,14 @@ describe('SideBarComponent', () => {
       PaintBucketButtonComponent,
       LineButtonComponent,
       ShapesButtonComponent,
-      SprayButtonComponent,
+      SpraypaintButtonComponent,
       EyedropperButtonComponent,
       StampButtonComponent,
       SelectionButtonComponent,
       GridButtonComponent,
       EraserButtonComponent,
-      TextButtonComponent],
+      TextButtonComponent,
+      QuillButtonComponent],
 
       imports: [FontAwesomeModule, RouterTestingModule],
     })
