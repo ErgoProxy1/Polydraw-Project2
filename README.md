@@ -18,7 +18,7 @@ Following features were implemented during third sprint:
     
     - The ability to save and open savefiles locally.
     
-    - A general clipboard for copying, cuttning, pasting, deletion, and duplication
+    - A general clipboard for copying, cutting, pasting, deletion, and duplication
     
     - Much better overall preformance
     
